@@ -1,0 +1,163 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = Java
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+ScannerCaseSensitive = false
+ScannerTable = Full
+Input = Stream
+Parser = LL
+#RegularDefinitions
+letra: [a-z A-Z]
+digito: [0-9]
+#Tokens
+// identificadores
+id: {letra} ((_)?({letra}|{digito})+)*(_)?
+
+numero: {digito}*
+literal: \"[^\"]*\"
+
+//Palavrasreservadas
+CREATE = id:"CREATE"
+DATABASE = id:"DATABASE"
+TABLE = id:"TABLE"
+INDEX = id:"INDEX"
+ON = id:"ON"
+INSERT = id:"INSERT"
+INTO = id:"INTO"
+VALUES = id:"VALUES"
+SELECT = id:"SELECT"
+FROM = id:"FROM"
+WHERE = id:"WHERE"
+AND = id:"AND"
+OR = id:"OR"
+DROP = id:"DROP"
+DESCRIBE = id:"DESCRIBE"
+SET = id:"SET"
+
+integer = id:"integer"
+varchar = id:"varchar"
+char = id:"char"
+null = id:"null"
+
+// Simbolos
+
+"=" 
+">" 
+"<" 
+">=" 
+"<=" 
+"<>"
+
+"."
+","
+"*"
+
+"("
+")"
+
+// Ignorados
+
+:![\s\n\t]
+// comentario de linha
+:! "-""-"[^\n]*
+:! "/*"[^/\*]*"*/"
+#NonTerminals
+<ACAO>
+<CRIAR>              
+<CRIAR2>             
+<ATRIBUTOS>         
+<ATRIBUTO>          
+<RATRIBUTOS>        
+<TIPO>              
+<LISTAIDS>          
+<RLISTAIDS>         
+<INCLUIR>           
+<COLUNAS>           
+<LISTAVALORES>      
+<VALOR>             
+<RLISTAVALORES>     
+<SELECIONAR>        
+<CAMPOS>            
+<RCAMPOS>           
+<CAMPO>             
+<CAMPO2>            
+<TABELAS>           
+<RTABELAS>          
+<TABELA>            
+<CLAUSULA_WHERE>    
+<CONDICOES>         
+<CONDICAO>          
+<RCONDICAO>
+<OPERADOR_REL>
+<OPERADOR_LOG>
+<EXCLUIR>
+<EXCLUIR2>  
+<DESCREVER>
+<SETAR_BANCO>
+#Grammar
+<ACAO>              ::= <CRIAR> | <INCLUIR> | <SELECIONAR> | <EXCLUIR> | <DESCREVER> | <SETAR_BANCO> ;
+
+<CRIAR>              ::= CREATE <CRIAR2> ;
+
+<CRIAR2>             ::= DATABASE id | TABLE id "(" <ATRIBUTOS> ")" | INDEX id  ON id "(" <ATRIBUTOS> ")";
+
+<ATRIBUTOS>         ::= <ATRIBUTO> <RATRIBUTOS>;
+
+<ATRIBUTO>          ::= id <TIPO>  ;
+
+<RATRIBUTOS>        ::= "," <ATRIBUTOS> | î;
+
+<TIPO>              ::= integer | varchar "(" numero ")" | char "(" numero ")";
+
+<LISTAIDS>          ::= id <RLISTAIDS> | id ;
+
+<RLISTAIDS>         ::= "," <LISTAIDS> | î;
+
+<INCLUIR>           ::= INSERT INTO id  <COLUNAS> VALUES "(" <LISTAVALORES> ")" ;
+
+<COLUNAS>           ::= "(" <LISTAIDS> ")" | î;
+
+<LISTAVALORES>      ::= <VALOR> <RLISTAVALORES>;
+
+<VALOR>             ::= numero | literal | null;
+
+<RLISTAVALORES>     ::= "," <LISTAVALORES> | î;
+
+<SELECIONAR>        ::= SELECT <CAMPOS> FROM <TABELAS> <CLAUSULA_WHERE>;
+
+<CAMPOS>            ::= <CAMPO> <RCAMPOS> |id "." "*";
+
+<RCAMPOS>           ::= "," <CAMPOS> | î;
+
+<CAMPO>             ::= id <CAMPO2> ;
+
+<CAMPO2>            ::= "."id | î;
+
+<TABELAS>           ::= <TABELA> <RTABELAS>;
+
+<RTABELAS>          ::= "," <TABELAS> | î;
+
+<TABELA>            ::= id ;
+
+<CLAUSULA_WHERE>    ::= WHERE <CONDICOES> | î;
+
+<CONDICOES>         ::= <CONDICAO> <RCONDICAO>;
+
+<CONDICAO>          ::= <CAMPO> <OPERADOR_REL> <VALOR>;
+
+<RCONDICAO>         ::= <OPERADOR_LOG> <CONDICOES> |  î;
+
+<OPERADOR_REL>      ::= "=" | ">" | "<" | ">=" | "<=" | "<>";
+
+<OPERADOR_LOG>      ::= AND | OR;
+
+<EXCLUIR>	    ::= DROP <EXCLUIR2>;
+
+<EXCLUIR2>          ::= TABLE id | INDEX id; 
+
+<DESCREVER>         ::= DESCRIBE id; 
+
+<SETAR_BANCO>       ::= SET DATABASE id; 
