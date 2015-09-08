@@ -81,7 +81,9 @@ null = id:"null"
 <RLISTAVALORES>     
 <SELECIONAR>        
 <CAMPOS>            
-<RCAMPOS>           
+<RCAMPOS>
+<CAMPOS2>          
+<CAMPOS3> 
 <CAMPO>             
 <CAMPO2>            
 <TABELAS>           
@@ -112,9 +114,9 @@ null = id:"null"
 
 <TIPO>              ::= integer | varchar "(" numero ")" | char "(" numero ")";
 
-<LISTAIDS>          ::= id <RLISTAIDS> | id ;
+<LISTAIDS>          ::= id <RLISTAIDS>;
 
-<RLISTAIDS>         ::= "," <LISTAIDS> | î;
+<RLISTAIDS>         ::= "," id <LISTAIDS> | î;
 
 <INCLUIR>           ::= INSERT INTO id  <COLUNAS> VALUES "(" <LISTAVALORES> ")" ;
 
@@ -128,11 +130,15 @@ null = id:"null"
 
 <SELECIONAR>        ::= SELECT <CAMPOS> FROM <TABELAS> <CLAUSULA_WHERE>;
 
-<CAMPOS>            ::= <CAMPO> <RCAMPOS> |id "." "*";
+<CAMPOS>            ::= id <CAMPOS2>;
 
-<RCAMPOS>           ::= "," <CAMPOS> | î;
+<CAMPOS2>	   ::= "." <CAMPOS3>;
 
-<CAMPO>             ::= id <CAMPO2> ;
+<CAMPOS3>	   ::= id <RCAMPOS> | "*";
+
+<RCAMPOS>           ::= "," <CAMPO> | î;
+
+<CAMPO>             ::= id <CAMPO2> <RCAMPOS>;
 
 <CAMPO2>            ::= "."id | î;
 
