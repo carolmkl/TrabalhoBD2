@@ -7,7 +7,7 @@ ParserName = Sintatico
 SemanticName = Semantico
 ScannerCaseSensitive = false
 ScannerTable = Full
-Input = Stream
+Input = String
 Parser = LL
 #RegularDefinitions
 letra: [a-z A-Z]
@@ -54,7 +54,7 @@ null = id:"null"
 "."
 ","
 "*"
-
+";"
 "("
 ")"
 
@@ -65,6 +65,7 @@ null = id:"null"
 :! "-""-"[^\n]*
 :! "/*"[^/\*]*"*/"
 #NonTerminals
+<COMANDO>
 <ACAO>
 <CRIAR>              
 <CRIAR2>             
@@ -85,7 +86,6 @@ null = id:"null"
 <CAMPOS2>          
 <CAMPOS3> 
 <CAMPO>             
-<CAMPO2>            
 <TABELAS>           
 <RTABELAS>          
 <TABELA>            
@@ -100,11 +100,13 @@ null = id:"null"
 <DESCREVER>
 <SETAR_BANCO>
 #Grammar
+<COMANDO>          ::= <ACAO> ";";
+
 <ACAO>              ::= <CRIAR> | <INCLUIR> | <SELECIONAR> | <EXCLUIR> | <DESCREVER> | <SETAR_BANCO> ;
 
 <CRIAR>              ::= CREATE <CRIAR2> ;
 
-<CRIAR2>             ::= DATABASE id | TABLE id "(" <ATRIBUTOS> ")" | INDEX id  ON id "(" <ATRIBUTOS> ")";
+<CRIAR2>             ::= DATABASE id | TABLE id "(" <ATRIBUTOS> ")" | INDEX id  ON id "(" <LISTAIDS> ")";
 
 <ATRIBUTOS>         ::= <ATRIBUTO> <RATRIBUTOS>;
 
@@ -130,17 +132,13 @@ null = id:"null"
 
 <SELECIONAR>        ::= SELECT <CAMPOS> FROM <TABELAS> <CLAUSULA_WHERE>;
 
-<CAMPOS>            ::= id <CAMPOS2>;
+<CAMPOS>            ::= id "." <CAMPOS2>;
 
-<CAMPOS2>	   ::= "." <CAMPOS3>;
-
-<CAMPOS3>	   ::= id <RCAMPOS> | "*";
+<CAMPOS2>	   ::= id <RCAMPOS> | "*";
 
 <RCAMPOS>           ::= "," <CAMPO> | î;
 
-<CAMPO>             ::= id <CAMPO2> <RCAMPOS>;
-
-<CAMPO2>            ::= "."id | î;
+<CAMPO>             ::= id"."id <RCAMPOS>;
 
 <TABELAS>           ::= <TABELA> <RTABELAS>;
 
