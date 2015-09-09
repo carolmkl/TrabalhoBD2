@@ -7,7 +7,7 @@ ParserName = Sintatico
 SemanticName = Semantico
 ScannerCaseSensitive = false
 ScannerTable = Full
-Input = String
+Input = Stream
 Parser = LL
 #RegularDefinitions
 letra: [a-z A-Z]
@@ -36,6 +36,10 @@ OR = id:"OR"
 DROP = id:"DROP"
 DESCRIBE = id:"DESCRIBE"
 SET = id:"SET"
+ORDER = id:"ORDER"
+BY = id:"BY"
+DESC = id:"DESC"
+AS = id:"AS"
 
 integer = id:"integer"
 varchar = id:"varchar"
@@ -55,6 +59,7 @@ null = id:"null"
 ","
 "*"
 ";"
+"`"
 "("
 ")"
 
@@ -84,14 +89,18 @@ null = id:"null"
 <CAMPOS>            
 <RCAMPOS>
 <CAMPOS2>          
-<CAMPOS3> 
 <CAMPO>             
+<AS>
+<CAMPO2>
 <TABELAS>           
 <RTABELAS>          
 <TABELA>            
-<CLAUSULA_WHERE>    
+<CLAUSULA_WHERE>
+<CLAUSUALA_ORDER> 
+<DESC>   
 <CONDICOES>         
 <CONDICAO>          
+<CONDICAO2>
 <RCONDICAO>
 <OPERADOR_REL>
 <OPERADOR_LOG>
@@ -130,15 +139,16 @@ null = id:"null"
 
 <RLISTAVALORES>     ::= "," <LISTAVALORES> | î;
 
-<SELECIONAR>        ::= SELECT <CAMPOS> FROM <TABELAS> <CLAUSULA_WHERE>;
+<SELECIONAR>        ::= SELECT <CAMPOS> FROM <TABELAS> <CLAUSULA_WHERE> <CLAUSUALA_ORDER>;
 
 <CAMPOS>            ::= id "." <CAMPOS2>;
 
-<CAMPOS2>	   ::= id <RCAMPOS> | "*";
+<CAMPOS2>	   ::= id <AS> <RCAMPOS> | "*";
 
-<RCAMPOS>           ::= "," <CAMPO> | î;
+<RCAMPOS>           ::= "," <CAMPO> <RCAMPOS> | î;
 
-<CAMPO>             ::= id"."id <RCAMPOS>;
+<CAMPO>             ::= id"."id <AS>;
+<AS>		   ::= AS "`" id "`" | î;
 
 <TABELAS>           ::= <TABELA> <RTABELAS>;
 
@@ -146,11 +156,15 @@ null = id:"null"
 
 <TABELA>            ::= id ;
 
-<CLAUSULA_WHERE>    ::= WHERE <CONDICOES> | î;
+<CLAUSULA_WHERE>    ::= WHERE <CONDICOES>| î;
+<CLAUSUALA_ORDER>   ::= ORDER BY <CAMPO><RCAMPOS> <DESC>| î;
+<DESC>		    ::= DESC | î;
 
 <CONDICOES>         ::= <CONDICAO> <RCONDICAO>;
 
-<CONDICAO>          ::= <CAMPO> <OPERADOR_REL> <VALOR>;
+<CONDICAO>          ::= <CAMPO2> <OPERADOR_REL> <CONDICAO2>;
+<CONDICAO2>	   ::= <CAMPO2> | <VALOR>;
+<CAMPO2>             ::= id"."id;
 
 <RCONDICAO>         ::= <OPERADOR_LOG> <CONDICOES> |  î;
 
@@ -164,4 +178,4 @@ null = id:"null"
 
 <DESCREVER>         ::= DESCRIBE id; 
 
-<SETAR_BANCO>       ::= SET DATABASE id; 
+<SETAR_BANCO>       ::= SET DATABASE id;
