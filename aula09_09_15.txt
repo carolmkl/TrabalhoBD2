@@ -1,0 +1,70 @@
+Organização FIsica dos Dados:
+
+	- Arquivo Sequencial:
+		- guarda os arquivos sequencialmente, usando uma chave de ordenação;
+		- é pode ter mais de um campo chave, assim se tiver empate no primeiro ele vai pro proximo;
+		- ele usa um arquivo intermediario(temporario) pra fazer as operações;
+		- registro de tamanho fixo(é tudo q foi expecificado);
+		- mais primitivo, só o que armazenada pela ordem de inserção;
+		
+	Tem dois tipos de exclusão:
+		- logica: coloca uma marca pra dizer que é excluido e não exibe;
+		- fisica: vai lá e remove de onde está armazeenada;
+		
+	Formas de acesso:
+		- sequencial: vai lendo até localizar;
+		- aleatória: o campo de acesso tem q tá ordenada, pois geralmente ele faz uma pesquisa ordenada;
+	
+	- Arquivo Sequencial Indexado(MySql Mysan):
+		- ele usa indides, como um somário;
+		- devem ser armazenados ordenadamente;
+		- ele tem um arquivo de indices;
+		- tem a chave de acesso; 
+		- ele tem o objetivo de decidir quantos registros vão em cada bloco(20? 30? vc decide);
+		- ele indexa blocos de registros, usando a maior chave pra o indice, ex: indice 1  vai até 130;
+		- como ele cria o indice:
+			- usa áreas de extenxão que levam a outras áreas;
+		- so tem um indice sequencial indexado, depois é indice binario;
+		
+		// indice esparço - para cada conjunto de entrada tem um indice;
+	
+	- Arquivo Indexado:
+		- um ponteiro para cada registro;
+		- cada entrada no arquivo de dados gera uma entrada no arquivo de indice;
+		// indice denso - pra cada entrada tem entrada no registro de indices;
+		- os arquivos de indices são os unicos ordenados, os arquivos de dados podem ser conforme a ordem que foram inceridos;
+		- mais de um indice?é so criar outro arquivo;
+		- a ordem(nos indices) normalamente é o maior para o menor, mas pode ser ao contrario;
+		- quando ocorre uma exclusão pode ser fisica ou lógica, no arquivo indexado não pode ter problemas, tem que tar redondinho;
+	
+	- Arquivo Direta:
+		- é uma função matemática onde se coloca algo pra ter um valor "unico";
+		- se repetir o indice então vai pra uma área de extenxão;
+	
+	- Arquivo Invertido:
+		- é como um index no final de um livro;
+		- também pode fazer um acesso sequencial;
+		- campo de indexação: no arquivo de indices o valor e as posições onde ele aparece;
+			- se não existe é mais um registro pra tabela; se já existe só coloca a posição;
+			
+=======================================================================================================================================
+
+Segmentos de Dados:
+
+	- Trabalham em blocos;
+	- As estruturas de blocos:
+		- cada bloco uma tabela;
+		- cabeçalho;
+		- diretório da tabela;
+		- row directory(creçe para baixo)(pra dizer os campos que tem dentro dos registros o que foi realmente armazenado);
+		- dados das linhas(creçe de baixo pra cima);
+		- estrutura dos registros:
+			- cabeçalho da linha;
+			- dados das colunas;
+			
+	- Quando um campo pode ser nulo, não pode ter um indice pra ele;
+	
+	
+===========================================================================================================================================
+
+Plano de consulta -> dai vai pro mecanismo de execução;
