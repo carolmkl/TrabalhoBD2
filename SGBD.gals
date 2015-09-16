@@ -17,7 +17,7 @@ digito: [0-9]
 id: {letra} ((_)?({letra}|{digito})+)*(_)?
 
 numero: {digito}+
-literal: \'[^\'\n\r]*\'
+literal: "'"[^"'"\n\r]*"'"
 
 //Palavrasreservadas
 CREATE = id:"CREATE"
@@ -40,7 +40,7 @@ ORDER = id:"ORDER"
 BY = id:"BY"
 DESC = id:"DESC"
 AS = id:"AS"
-PRIMERY = id:"PRIMERY"
+PRIMARY = id:"PRIMARY"
 FOREIGN = id:"FOREIGN"
 KEY = id:"KEY"
 REFERENCES = id:"REFERENCES"
@@ -127,10 +127,10 @@ null = id:"null"
 
 <CRIAR>              ::= CREATE <CRIAR2> ;
 
-<CRIAR2>             ::= DATABASE id | TABLE id "(" <ATRIBUTOS> <PRIMERY><TEMFOREIGN>")" | INDEX id  ON id "(" <LISTAIDS> ")";
-<PRIMERY>	    ::= PRIMERY KEY "("<LISTAIDS>")" | î;
-<TEMFOREIGN>	    ::= <FOREIGN> | î;
-<FOREIGN>	    ::= FOREIGN KEY "("id")" REFERENCES id "("id")" <TEMFOREIGN>| î;
+<CRIAR2>             ::= DATABASE id#1 | TABLE id#2 "(" <ATRIBUTOS> <PRIMERY><TEMFOREIGN>")" | INDEX id#3  ON id#4 "(" <LISTAIDS> ")";
+<PRIMERY>	    ::= PRIMARY KEY "("<LISTAIDS>")" | î;
+<TEMFOREIGN>	    ::= î | <FOREIGN>;
+<FOREIGN>	    ::= FOREIGN KEY "("id")" REFERENCES id "("id")" <TEMFOREIGN>;
 
 <ATRIBUTOS>         ::= <ATRIBUTO> <RATRIBUTOS>;
 
@@ -142,7 +142,7 @@ null = id:"null"
 
 <LISTAIDS>          ::= id <RLISTAIDS>;
 
-<RLISTAIDS>         ::= "," id <LISTAIDS> | î;
+<RLISTAIDS>         ::= "," id <RLISTAIDS> | î;
 
 <INCLUIR>           ::= INSERT INTO id  <COLUNAS> VALUES "(" <LISTAVALORES> ")" ;
 
