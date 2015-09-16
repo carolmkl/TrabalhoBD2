@@ -16,8 +16,8 @@ digito: [0-9]
 // identificadores
 id: {letra} ((_)?({letra}|{digito})+)*(_)?
 
-numero: {digito}*
-literal: \"[^\"]*\"
+numero: {digito}+
+literal: \'[^\'\n\r]*\'
 
 //Palavrasreservadas
 CREATE = id:"CREATE"
@@ -40,6 +40,14 @@ ORDER = id:"ORDER"
 BY = id:"BY"
 DESC = id:"DESC"
 AS = id:"AS"
+PRIMERY = id:"PRIMERY"
+FOREIGN = id:"FOREIGN"
+KEY = id:"KEY"
+REFERENCES = id:"REFERENCES"
+JOIN = id:"JOIN"
+INNER = id:"INNER"
+LEFT = id:"LEFT"
+RIGHT = id:"RIGHT"
 
 integer = id:"integer"
 varchar = id:"varchar"
@@ -73,7 +81,10 @@ null = id:"null"
 <COMANDO>
 <ACAO>
 <CRIAR>              
-<CRIAR2>             
+<CRIAR2>  
+<PRIMERY>   
+<FOREIGN>        
+<TEMFOREIGN>
 <ATRIBUTOS>         
 <ATRIBUTO>          
 <RATRIBUTOS>        
@@ -97,7 +108,8 @@ null = id:"null"
 <TABELA>            
 <CLAUSULA_WHERE>
 <CLAUSUALA_ORDER> 
-<DESC>   
+<DESC>
+<CLAUSULA_JOIN>   
 <CONDICOES>         
 <CONDICAO>          
 <CONDICAO2>
@@ -115,7 +127,10 @@ null = id:"null"
 
 <CRIAR>              ::= CREATE <CRIAR2> ;
 
-<CRIAR2>             ::= DATABASE id | TABLE id "(" <ATRIBUTOS> ")" | INDEX id  ON id "(" <LISTAIDS> ")";
+<CRIAR2>             ::= DATABASE id | TABLE id "(" <ATRIBUTOS> <PRIMERY><TEMFOREIGN>")" | INDEX id  ON id "(" <LISTAIDS> ")";
+<PRIMERY>	    ::= PRIMERY KEY "("<LISTAIDS>")" | î;
+<TEMFOREIGN>	    ::= <FOREIGN> | î;
+<FOREIGN>	    ::= FOREIGN KEY "("id")" REFERENCES id "("id")" <TEMFOREIGN>| î;
 
 <ATRIBUTOS>         ::= <ATRIBUTO> <RATRIBUTOS>;
 
@@ -139,7 +154,7 @@ null = id:"null"
 
 <RLISTAVALORES>     ::= "," <LISTAVALORES> | î;
 
-<SELECIONAR>        ::= SELECT <CAMPOS> FROM <TABELAS> <CLAUSULA_WHERE> <CLAUSUALA_ORDER>;
+<SELECIONAR>        ::= SELECT <CAMPOS> FROM <TABELAS> <CLAUSULA_JOIN> <CLAUSULA_WHERE> <CLAUSUALA_ORDER>;
 
 <CAMPOS>            ::= id "." <CAMPOS2>;
 
@@ -159,6 +174,7 @@ null = id:"null"
 <CLAUSULA_WHERE>    ::= WHERE <CONDICOES>| î;
 <CLAUSUALA_ORDER>   ::= ORDER BY <CAMPO><RCAMPOS> <DESC>| î;
 <DESC>		    ::= DESC | î;
+<CLAUSULA_JOIN>     ::= î | INNER JOIN id | LEFT JOIN id | RIGHT JOIN id;
 
 <CONDICOES>         ::= <CONDICAO> <RCONDICAO>;
 
