@@ -79,6 +79,7 @@ null = id:"null"
 :! "/*"[^/\*]*"*/"
 #NonTerminals
 <COMANDO>
+<RCOMANDO>
 <ACAO>
 <CRIAR>              
 <CRIAR2>  
@@ -121,68 +122,72 @@ null = id:"null"
 <DESCREVER>
 <SETAR_BANCO>
 #Grammar
-<COMANDO>          ::= <ACAO> ";";
+// aушa 0 executa e limpa as estruturas
+<COMANDO>          ::= <ACAO> #0";" <RACAO>;
+<RCOMANDO>	  ::= <COMANDO> | Ь;
 
 <ACAO>              ::= <CRIAR> | <INCLUIR> | <SELECIONAR> | <EXCLUIR> | <DESCREVER> | <SETAR_BANCO> ;
 
 <CRIAR>              ::= CREATE <CRIAR2> ;
 
 <CRIAR2>             ::= DATABASE id#1 | TABLE id#2 "(" <ATRIBUTOS> <PRIMERY><TEMFOREIGN>")" | INDEX id#3  ON id#4 "(" <LISTAIDS> ")";
-<PRIMERY>	    ::= PRIMARY KEY "("<LISTAIDS>")" | î;
-<TEMFOREIGN>	    ::= î | <FOREIGN>;
-<FOREIGN>	    ::= FOREIGN KEY "("id")" REFERENCES id "("id")" <TEMFOREIGN>;
+// esvaziar a lista de ids
+<PRIMERY>	    ::= PRIMARY KEY "("<LISTAIDS>")" #6| Ь;
+<TEMFOREIGN>	    ::= Ь | <FOREIGN>;
+<FOREIGN>	    ::= FOREIGN KEY "("id#7")" REFERENCES id#8 "("id#9")" <TEMFOREIGN>;
 
 <ATRIBUTOS>         ::= <ATRIBUTO> <RATRIBUTOS>;
 
-<ATRIBUTO>          ::= id <TIPO>  ;
+<ATRIBUTO>          ::= id#5 <TIPO>  ;
 
-<RATRIBUTOS>        ::= "," <ATRIBUTOS> | î;
+<RATRIBUTOS>        ::= "," <ATRIBUTOS> | Ь;
 
-<TIPO>              ::= integer | varchar "(" numero ")" | char "(" numero ")";
+// tirar quem foi o ultimo armazenado
+<TIPO>              ::= integer#10 | varchar "(" numero#11 ")" | char "(" numero#12 ")";
 
-<LISTAIDS>          ::= id <RLISTAIDS>;
+<LISTAIDS>          ::= id#5 <RLISTAIDS>;
 
-<RLISTAIDS>         ::= "," id <RLISTAIDS> | î;
+<RLISTAIDS>         ::= "," id#5 <RLISTAIDS> | Ь;
 
-<INCLUIR>           ::= INSERT INTO id  <COLUNAS> VALUES "(" <LISTAVALORES> ")" ;
+<INCLUIR>           ::= INSERT INTO id#5  <COLUNAS>#19 VALUES "(" <LISTAVALORES> ")";
 
-<COLUNAS>           ::= "(" <LISTAIDS> ")" | î;
+<COLUNAS>           ::= "(" <LISTAIDS> ")" | Ь;
 
-<LISTAVALORES>      ::= <VALOR> <RLISTAVALORES>;
+<LISTAVALORES>      ::= <VALOR>#20 <RLISTAVALORES>;
 
 <VALOR>             ::= numero | literal | null;
 
-<RLISTAVALORES>     ::= "," <LISTAVALORES> | î;
+<RLISTAVALORES>     ::= "," <LISTAVALORES> | Ь;
 
 <SELECIONAR>        ::= SELECT <CAMPOS> FROM <TABELAS> <CLAUSULA_JOIN> <CLAUSULA_WHERE> <CLAUSUALA_ORDER>;
 
-<CAMPOS>            ::= id "." <CAMPOS2>;
+<CAMPOS>            ::= id#5 "." <CAMPOS2>;
 
-<CAMPOS2>	   ::= id <AS> <RCAMPOS> | "*";
+<CAMPOS2>	   ::= id#21 <AS> <RCAMPOS> | "*"#23;
 
-<RCAMPOS>           ::= "," <CAMPO> <RCAMPOS> | î;
+<RCAMPOS>           ::= "," <CAMPO> <RCAMPOS> | Ь;
 
-<CAMPO>             ::= id"."id <AS>;
-<AS>		   ::= AS "`" id "`" | î;
+<CAMPO>             ::= id#5"."id#21 <AS>;
+<AS>		   ::= AS "`" id#22 "`" | Ь;
 
 <TABELAS>           ::= <TABELA> <RTABELAS>;
 
-<RTABELAS>          ::= "," <TABELAS> | î;
+<RTABELAS>          ::= "," <TABELAS> | Ь;
 
-<TABELA>            ::= id ;
+<TABELA>            ::= id#24 ;
 
-<CLAUSULA_WHERE>    ::= WHERE <CONDICOES>| î;
-<CLAUSUALA_ORDER>   ::= ORDER BY <CAMPO><RCAMPOS> <DESC>| î;
-<DESC>		    ::= DESC | î;
-<CLAUSULA_JOIN>     ::= î | INNER JOIN id | LEFT JOIN id | RIGHT JOIN id;
+<CLAUSULA_WHERE>    ::= WHERE <CONDICOES>| Ь;
+<CLAUSUALA_ORDER>   ::= ORDER BY <CAMPO><RCAMPOS>#28 <DESC>#29| Ь;
+<DESC>		    ::= DESC | Ь;
+<CLAUSULA_JOIN>     ::= Ь | INNER JOIN id#25 | LEFT JOIN id#26 | RIGHT JOIN id#27;
 
 <CONDICOES>         ::= <CONDICAO> <RCONDICAO>;
 
-<CONDICAO>          ::= <CAMPO2> <OPERADOR_REL> <CONDICAO2>;
+<CONDICAO>          ::= <CAMPO2> <OPERADOR_REL>#18 <CONDICAO2>;
 <CONDICAO2>	   ::= <CAMPO2> | <VALOR>;
-<CAMPO2>             ::= id"."id;
+<CAMPO2>             ::= id#5"."id#21;
 
-<RCONDICAO>         ::= <OPERADOR_LOG> <CONDICOES> |  î;
+<RCONDICAO>         ::= <OPERADOR_LOG>#17 <CONDICOES> |  Ь;
 
 <OPERADOR_REL>      ::= "=" | ">" | "<" | ">=" | "<=" | "<>";
 
@@ -190,8 +195,8 @@ null = id:"null"
 
 <EXCLUIR>	    ::= DROP <EXCLUIR2>;
 
-<EXCLUIR2>          ::= TABLE id | INDEX id; 
+<EXCLUIR2>          ::= TABLE id#13 | INDEX id#14; 
 
-<DESCREVER>         ::= DESCRIBE id; 
+<DESCREVER>         ::= DESCRIBE id#15; 
 
-<SETAR_BANCO>       ::= SET DATABASE id;
+<SETAR_BANCO>       ::= SET DATABASE id#16;
