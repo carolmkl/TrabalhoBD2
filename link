@@ -1,1 +1,16 @@
 http://gals.sourceforge.net/
+
+
+Certo coisas pensadas:
+metadados(classe) -> serializado(a classe com os list de metadados):
+  |-> nome da tabela
+  |-> tabela[](vetor):
+      |->nome do campo;
+      |->tipo;
+      |->tamanho;
+      |->restricao(primary,foreing);
+          |->onde e quem;
+          
+os arquivos = pasta principal, dentro dela:
+  cada database uma pasta, dentro dela:
+    arquivos de dados, index e metadados, referentes a ela;
