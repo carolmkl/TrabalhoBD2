@@ -1,0 +1,34 @@
+CREATE DATABASE base_ceps; 
+
+SET DATABASE base_ceps; 
+
+
+CREATE TABLE bairro 
+(
+  cd_bairro INTEGER,
+  nm_bairro VARCHAR(75),
+  sg_uf CHAR(2)
+);
+
+
+DROP TABLE bairro; 
+
+CREATE INDEX bairro_nome_idx ON bairro (nm_bairro);
+
+DROP INDEX bairro_nome_idx;
+
+INSERT INTO bairro (cd_bairro, nm_bairro, sg_uf) VALUES
+(1,'Victor Konder','SC');
+
+SELECT bairro.* 
+FROM bairro;
+
+SELECT nm_bairro as `Bairro`, sg_uf as `Uf`
+FROM bairro
+WHERE nm_bairro = 'Victor Konder' 
+AND sg_uf = 'SC'
+
+SELECT logradouro.nm_logradouro, bairro.nm_bairro 
+FROM logradouro, bairro
+WHERE logradouro.cd_bairro = bairro.cd_bairro
+AND bairro.nm_bairro = 'Victor Konder' ;
