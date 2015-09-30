@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BD2.Analizadores;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,22 @@ namespace BancoDeDadosPOD
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void btnExecuta_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Lexico lexico = new Lexico(txtComando.Text);
+                Sintatico sintatico = new Sintatico();
+                Semantico semantico = new Semantico();
+                sintatico.parse(lexico, semantico);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
     }
 }

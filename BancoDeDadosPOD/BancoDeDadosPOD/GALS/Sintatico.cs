@@ -14,6 +14,32 @@ namespace BD2.Analizadores
         private Lexico scanner;
         private Semantico semanticAnalyser;
 
+        private Lexico Scanner
+        {
+            get
+            {
+                return scanner;
+            }
+
+            set
+            {
+                scanner = value;
+            }
+        }
+
+        private Semantico SemanticAnalyser
+        {
+            get
+            {
+                return semanticAnalyser;
+            }
+
+            set
+            {
+                semanticAnalyser = value;
+            }
+        }
+
         private static bool isTerminal(int x)
         {
             return x < FIRST_NON_TERMINAL;
@@ -56,7 +82,7 @@ namespace BD2.Analizadores
                     else
                     {
                         previousToken = currentToken;
-                        currentToken = scanner.nextToken();
+                        currentToken = Scanner.nextToken();
                         return false;
                     }
                 }
@@ -74,7 +100,7 @@ namespace BD2.Analizadores
             }
             else // isSemanticAction(x)
             {
-                semanticAnalyser.executeAction(x - FIRST_SEMANTIC_ACTION, previousToken);
+                SemanticAnalyser.executeAction(x - FIRST_SEMANTIC_ACTION, previousToken);
                 return false;
             }
         }
@@ -98,8 +124,8 @@ namespace BD2.Analizadores
 
         public void parse(Lexico scanner, Semantico semanticAnalyser)
         {
-            this.scanner = scanner;
-            this.semanticAnalyser = semanticAnalyser;
+            this.Scanner = scanner;
+            this.SemanticAnalyser = semanticAnalyser;
 
             stack.Clear();
             stack.Push(DOLLAR);
