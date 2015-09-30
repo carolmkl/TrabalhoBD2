@@ -86,7 +86,7 @@ namespace BD2.Analizadores
             }
             else
             {
-                String lexeme = input.Substring(start, end);
+                String lexeme = input.Substring(start, end - start);
                 token = lookupToken(token, lexeme);
                 return new Token(token, lexeme, start, linha);
             }
