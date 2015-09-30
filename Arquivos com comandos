@@ -1,0 +1,50 @@
+// Corretos
+CREATE DATABASE base_ceps; 
+
+SET DATABASE base_ceps; 
+
+CREATE TABLE bairro (cd_bairro INTEGER,nm_bairro VARCHAR(75),
+sg_uf CHAR(2)
+PRIMARY KEY (cd_bairro)
+FOREIGN KEY (nm_bairro) REFERENCES bairro (nm_bairro));  
+
+DROP TABLE bairro; 
+
+CREATE INDEX bairro_nome_idx ON bairro(nm_bairro); 
+
+DROP INDEX bairro_nome_idx; 
+
+INSERT INTO bairro(cd_bairro, nm_bairro, sg_uf) VALUES (1, 'Victor Konder', 'SC'); 
+
+SELECT bairro.* FROM bairro ORDER BY bairro.nm_bairro up; 
+
+SELECT bairro.nm_bairro as `LALALA`, bairro.sg_uf FROM bairro WHERE bairro.nm_bairro = 'Victor Konder' AND bairro.sg_uf = 'SC'; 
+
+SELECT logradouro.nm_logradouro, bairro.nm_bairro FROM logradouro INNER JOIN bairro WHERE logradouro.cd_bairro = bairro.cd_bairro AND bairro.nm_bairro = 'Victor Konder';
+
+-- comentario de linhas
+/*comentario
+de 
+bloco
+*/
+
+SELECT logradouro.nm_logradouro, bairro.nm_bairro 
+FROM logradouro, bairro
+WHERE logradouro.cd_bairro = bairro.cd_bairro
+AND bairro.nm_bairro = 'Victor Konder';
+
+//Errados !!!!!!!!!!!!!!!!
+// não especifica a tabela
+SELECT nm_bairro as `LALALA`, sg_uf FROM bairro WHERE bairro.nm_bairro = 'Victor Konder' AND bairro.sg_uf = 'SC'; 
+
+// se ';' no final do comando
+SELECT logradouro.nm_logradouro, bairro.nm_bairro FROM logradouro INNER JOIN bairro WHERE logradouro.cd_bairro = bairro.cd_bairro AND bairro.nm_bairro = 'Victor Konder'
+
+// virgulas a mais
+CREATE TABLE bairro (cd_bairro INTEGER,nm_bairro VARCHAR(75),
+sg_uf CHAR(2),
+PRIMARY KEY (cd_bairro),
+FOREIGN KEY (nm_bairro) REFERENCES bairro (nm_bairro));  
+
+// não usou `` no AS
+SELECT bairro.nm_bairro as 'LALALA', bairro.sg_uf FROM bairro WHERE bairro.nm_bairro = 'Victor Konder' AND bairro.sg_uf = 'SC'; 
