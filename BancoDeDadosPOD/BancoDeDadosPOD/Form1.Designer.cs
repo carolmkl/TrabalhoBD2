@@ -31,7 +31,14 @@
             this.txtComando = new System.Windows.Forms.TextBox();
             this.btnExecuta = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.tabResultado = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.txtMensagens = new System.Windows.Forms.TextBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.tabResultado.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtComando
@@ -43,6 +50,7 @@
             this.txtComando.Name = "txtComando";
             this.txtComando.Size = new System.Drawing.Size(675, 164);
             this.txtComando.TabIndex = 0;
+            this.txtComando.Text = "select tabela.* from tabela;";
             // 
             // btnExecuta
             // 
@@ -57,23 +65,76 @@
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToOrderColumns = true;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(13, 212);
+            this.dataGridView1.Location = new System.Drawing.Point(6, 6);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(675, 230);
+            this.dataGridView1.Size = new System.Drawing.Size(658, 191);
             this.dataGridView1.TabIndex = 2;
+            // 
+            // tabResultado
+            // 
+            this.tabResultado.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabResultado.Controls.Add(this.tabPage1);
+            this.tabResultado.Controls.Add(this.tabPage2);
+            this.tabResultado.Location = new System.Drawing.Point(13, 213);
+            this.tabResultado.Name = "tabResultado";
+            this.tabResultado.SelectedIndex = 0;
+            this.tabResultado.Size = new System.Drawing.Size(675, 229);
+            this.tabResultado.TabIndex = 3;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.txtMensagens);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(667, 203);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Mensagens";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // txtMensagens
+            // 
+            this.txtMensagens.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMensagens.Location = new System.Drawing.Point(4, 4);
+            this.txtMensagens.Multiline = true;
+            this.txtMensagens.Name = "txtMensagens";
+            this.txtMensagens.Size = new System.Drawing.Size(660, 196);
+            this.txtMensagens.TabIndex = 0;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.dataGridView1);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(667, 203);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Resultado";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(700, 454);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.tabResultado);
             this.Controls.Add(this.btnExecuta);
             this.Controls.Add(this.txtComando);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.tabResultado.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -84,6 +145,10 @@
         private System.Windows.Forms.TextBox txtComando;
         private System.Windows.Forms.Button btnExecuta;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.TabControl tabResultado;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TextBox txtMensagens;
     }
 }
 
