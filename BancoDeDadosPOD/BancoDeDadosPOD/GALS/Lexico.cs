@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +10,9 @@ namespace BD2.Analizadores
     {
         private int position;
         private String input;
-        private String erro;
+        private int linha;
+        private int linhaInterna;
+        private char vNextChar;
 
         public Lexico()
         {
@@ -49,7 +51,8 @@ namespace BD2.Analizadores
             while (hasInput())
             {
                 lastState = state;
-                state = nextState(nextChar(), state);
+                vNextChar = nextChar();
+                state = nextState(vNextChar, state);
 
                 if (state < 0)
                     break;
@@ -62,16 +65,20 @@ namespace BD2.Analizadores
                         end = position;
                     }
                 }
+                if (vNextChar == '\n')
+                {
+                    linha++;
+                }
             }
             if (endState < 0 || (endState != state && tokenForState(lastState) == -2))
             {
-                erro = SCANNER_ERROR[lastState];
-                throw new LexicalError(erro, start);
+                throw new LexicalError(SCANNER_ERROR[lastState], linhaInterna);
             }
 
             position = end;
 
             int token = tokenForState(endState);
+            linhaInterna = linha;
 
             if (token == 0)
             {
@@ -81,7 +88,7 @@ namespace BD2.Analizadores
             {
                 String lexeme = input.Substring(start, end);
                 token = lookupToken(token, lexeme);
-                return new Token(token, lexeme, start);
+                return new Token(token, lexeme, start, linha);
             }
         }
 
