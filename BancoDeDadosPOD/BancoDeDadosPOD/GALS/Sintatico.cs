@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,37 +8,11 @@ namespace BD2.Analizadores
 {
     public class Sintatico : Constants
     {
-        private Stack<int> stack = new Stack<int>();
+        private Stack stack = new Stack();
         private Token currentToken;
         private Token previousToken;
         private Lexico scanner;
         private Semantico semanticAnalyser;
-
-        private Lexico Scanner
-        {
-            get
-            {
-                return scanner;
-            }
-
-            set
-            {
-                scanner = value;
-            }
-        }
-
-        private Semantico SemanticAnalyser
-        {
-            get
-            {
-                return semanticAnalyser;
-            }
-
-            set
-            {
-                semanticAnalyser = value;
-            }
-        }
 
         private static bool isTerminal(int x)
         {
@@ -66,7 +40,7 @@ namespace BD2.Analizadores
                 currentToken = new Token(DOLLAR, "$", pos);
             }
 
-            int x = stack.Pop();
+            int x = ((int)stack.Pop());
             int a = currentToken.getId();
 
             if (x == EPSILON)
@@ -82,7 +56,7 @@ namespace BD2.Analizadores
                     else
                     {
                         previousToken = currentToken;
-                        currentToken = Scanner.nextToken();
+                        currentToken = scanner.nextToken();
                         return false;
                     }
                 }
@@ -94,13 +68,18 @@ namespace BD2.Analizadores
             else if (isNonTerminal(x))
             {
                 if (pushProduction(x, a))
+                {
                     return false;
+                }
                 else
+                {
+                    Console.WriteLine(currentToken.getLexeme());
                     throw new SyntaticError(PARSER_ERROR[x], currentToken.getPosition());
+                }
             }
             else // isSemanticAction(x)
             {
-                SemanticAnalyser.executeAction(x - FIRST_SEMANTIC_ACTION, previousToken);
+                semanticAnalyser.executeAction(x - FIRST_SEMANTIC_ACTION, previousToken);
                 return false;
             }
         }
@@ -124,8 +103,8 @@ namespace BD2.Analizadores
 
         public void parse(Lexico scanner, Semantico semanticAnalyser)
         {
-            this.Scanner = scanner;
-            this.SemanticAnalyser = semanticAnalyser;
+            this.scanner = scanner;
+            this.semanticAnalyser = semanticAnalyser;
 
             stack.Clear();
             stack.Push(DOLLAR);
@@ -133,8 +112,7 @@ namespace BD2.Analizadores
 
             currentToken = scanner.nextToken();
 
-            while (!step())
-                ;
+            while (!step());
         }
     }
 }
