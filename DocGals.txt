@@ -40,7 +40,7 @@ Doc gals:
 
 #19: as colunas, tem que saber se tem ou não colunas(usar array separado);
 
-#20: pegar o valor que vier e armazenar, conferir se condiz com a ordem;
+#20: pegar o valor que vier e armazenar, conferir se condiz com a ordem(array separado?);
 
 #21: verifica se o campo existe na tabela, e adicionalo junto ao com o nome da tabela dela;
 
