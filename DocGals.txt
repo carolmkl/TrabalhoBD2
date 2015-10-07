@@ -1,0 +1,61 @@
+Doc gals:
+
+#0: executa o que tiver que fazer(criar metas, fazer consultas, inserções) e esvazia as estruturas importantes(arrays de variaveis...);
+
+#1: criar dataBase(verificar se já não tem) e criar uma pasta com o mesmo nome;
+
+#2: criar tabela(classe metadados, verificando se o mesmo já não existe) e adiciona no array de identificadores;
+
+#3: verifica se já não existe tal index(arquivo com esse nome?), adiciona ele no array de identificadores;
+
+#4: verifica se existe tabela, colocar ela no array de identificadores;
+
+#5: adicionar no array de identificadores;
+
+#6:
+
+#7:
+
+#8:
+
+#9:
+
+#10:
+
+#11:
+
+#12:
+
+#13: exclusão lógica, usar marcação de excluido no arquivo da tabela(ou apaga ela mesmo);
+
+#14: exclusão lógica, usar marcação de excluido no arquivo de index(ou apaga ela mesmo);
+
+#15: mostra o metadados da tabela;
+
+#16: usando uma variavel pra representar a pasta dentro da pasta principal(sgbd/poD...) pra dizer qual subpasta ele está localizado;
+
+#17: guarda isso em uma variavel pra saber a operação lógica(AND, OR, NOT);
+
+#18: guarda isso em uma variavel pra saber a operação relacional(>,<,==,<>);
+
+#19: as colunas, tem que saber se tem ou não colunas(usar array separado);
+
+#20: pegar o valor que vier e armazenar, conferir se condiz com a ordem;
+
+#21: verifica se o campo existe na tabela, e adicionalo junto ao com o nome da tabela dela;
+
+#22: operação as Pode ser uma par de campo e novo nome em um dictionary;
+
+#23: all(*), usar todos os campos dos metadados da tabela em questão;
+
+#24: do campo FROM verificar existencia e armazenar no array de identificadores ou em um array mais prático(isso pode dar dor de cabeça);
+
+#25: código do inner join ver se existe e armazenar nome e mudar uma variavel de controle(?) ;
+
+#26: código do left join ver se existe e armazenar nome e mudar uma variavel de controle(?)/ not implemented exception ;
+
+#27: código do right join ver se existe e armazenar nome e mudar uma variavel de controle(?)/ not implemented exception ;
+
+#28: ver se os campos existem, e fazer a ordenação;
+
+#29: inverter a ordenação;
