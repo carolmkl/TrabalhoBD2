@@ -46,23 +46,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analisadores\ListaDeSimbolos.cs" />
+    <Compile Include="SGDB\Metadados.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="GALS\AnalysisError.cs" />
-    <Compile Include="GALS\Constants.cs" />
-    <Compile Include="GALS\LexicalError.cs" />
-    <Compile Include="GALS\Lexico.cs" />
-    <Compile Include="GALS\ParserConstants.cs" />
-    <Compile Include="GALS\ScannerConstants.cs" />
-    <Compile Include="GALS\SemanticError.cs" />
-    <Compile Include="GALS\Semantico.cs" />
-    <Compile Include="GALS\Sintatico.cs" />
-    <Compile Include="GALS\SyntaticError.cs" />
-    <Compile Include="GALS\Token.cs" />
+    <Compile Include="Analisadores\AnalysisError.cs" />
+    <Compile Include="Analisadores\Constants.cs" />
+    <Compile Include="Analisadores\LexicalError.cs" />
+    <Compile Include="Analisadores\Lexico.cs" />
+    <Compile Include="Analisadores\ParserConstants.cs" />
+    <Compile Include="Analisadores\ScannerConstants.cs" />
+    <Compile Include="Analisadores\SemanticError.cs" />
+    <Compile Include="Analisadores\Semantico.cs" />
+    <Compile Include="Analisadores\Sintatico.cs" />
+    <Compile Include="Analisadores\SyntaticError.cs" />
+    <Compile Include="Analisadores\Token.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
