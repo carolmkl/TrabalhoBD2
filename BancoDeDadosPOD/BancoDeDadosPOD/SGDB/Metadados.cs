@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace BD2.Analizadores
 {
-    class DadosTablea
+    [Serializable]
+    public class DadosTablea
     {
         string nomeCampo;
         string tipo;
@@ -14,12 +15,12 @@ namespace BD2.Analizadores
         bool primary;
         string[] foreing;
 
-        DadosTablea()
+        public DadosTablea()
         {
             foreing = new string[2];
         }
 
-        DadosTablea(string nome, string tipo, int tamanho, bool primary, string[] foreing)
+        public DadosTablea(string nome, string tipo, int tamanho, bool primary, string[] foreing)
         {
             this.setNome(nome);
             this.setTipo(tipo);
@@ -28,70 +29,92 @@ namespace BD2.Analizadores
             this.foreing = foreing;
         }
 
-        string getNomeCampo()
+        public DadosTablea(string nome, string tipo, int tamanho)
+        {
+            this.setNome(nome);
+            this.setTipo(tipo);
+            this.setTamanho(tamanho);
+            this.primary = false;
+            this.foreing = new string[2];
+        }
+
+        public string getNomeCampo()
         {
             return nomeCampo;
         }
 
-        void setNome(string nomeCampo)
+        public void setNome(string nomeCampo)
         {
             this.nomeCampo = nomeCampo;
         }
-        string geTipo()
+        public string geTipo()
         {
             return tipo;
         }
 
-        void setTipo(string tipo)
+        public void setTipo(string tipo)
         {
             this.tipo = tipo;
         }
 
-        int getTamanho()
+        public int getTamanho()
         {
             return tamanho;
         }
 
-        void setTamanho(int tamanho)
+        public void setTamanho(int tamanho)
         {
             this.tamanho = tamanho;
         }
 
-        bool isPrimary()
+        public bool isPrimary()
         {
             return primary;
         }
 
-        void setPrimary(bool primary)
+        public void setPrimary(bool primary)
         {
             this.primary = primary;
         }
 
-        string[] getForeing()
+        public string[] getForeing()
         {
             return foreing;
         }
 
-        void setForeing(string[] foreing)
+        public void setForeing(string[] foreing)
         {
             this.foreing = foreing;
         }
 
-        bool isForeing()
+        public void setForeing(string table, string colum)
         {
-            return this.foreing[0] != null;
+            foreing[0] = table;
+            foreing[1] = colum;
+        }
+
+        public bool isForeing()
+        {
+            return String.IsNullOrEmpty(foreing[0]);
         }
     }
 
+    [Serializable]
     public class Metadados
     {
         private string nome;
-        private List<DadosTablea> dados;
+        //optei por dictonary pra facilitar a pesquisa
+        private Dictionary<string, DadosTablea> dados;
+
+        public Metadados()
+        {
+            dados = new Dictionary<string, DadosTablea>();
+        }
 
         public Metadados(String nome)
         {
             this.setNome(nome);
-            dados = new List<DadosTablea>();
+            dados = new Dictionary<string, DadosTablea>();
         }
 
         public string getNome()
@@ -102,6 +125,26 @@ namespace BD2.Analizadores
         public void setNome(string nome)
         {
             this.nome = nome;
+        }
+
+        public Dictionary<string, DadosTablea> getDados()
+        {
+            return dados;
+        }
+
+        public void addDados(DadosTablea dados)
+        {
+            this.dados[dados.getNomeCampo()] = dados;
+        }
+
+        public void addDados(string nome, string tipo, int tamanho, bool primary, string[] foreing)
+        {
+            dados[nome] = new DadosTablea(nome,tipo,tamanho,primary,foreing);
+        }
+
+        public void addDados(string nome, string tipo, int tamanho)
+        {
+            dados[nome] = new DadosTablea(nome, tipo, tamanho);
         }
     }
 }
