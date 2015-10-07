@@ -1,6 +1,6 @@
 Doc gals:
 
-#0: executa o que tiver que fazer(criar metas, fazer consultas, inserções) e esvazia as estruturas importantes(arrays de variaveis...);
+#0: executa o que tiver que fazer(criar metas, fazer consultas, inserções (gravar no arquivo por miudos)) e esvazia as estruturas importantes(arrays de variaveis...);
 
 #1: criar dataBase(verificar se já não tem) e criar uma pasta com o mesmo nome;
 
@@ -12,19 +12,19 @@ Doc gals:
 
 #5: adicionar no array de identificadores;
 
-#6:
+#6: if()else pra criar metadados, apagar array, marcar como primary, apagar array;
 
-#7:
+#7: ve se existe o campo, mada pro array;
 
-#8:
+#8: ve se existe a tablea, mada pro array;
 
-#9:
+#9: ve se existe o campo na tabela do 8, va atras do campo do 7 no metadados, coloca esses valores lá no array de campo do metadados, apagar array;
 
-#10:
+#10: colocar em array de tipos;
 
-#11:
+#11: colocar em array de tipos;
 
-#12:
+#12: colocar em array de tipos;
 
 #13: exclusão lógica, usar marcação de excluido no arquivo da tabela(ou apaga ela mesmo);
 
@@ -40,7 +40,7 @@ Doc gals:
 
 #19: as colunas, tem que saber se tem ou não colunas(usar array separado);
 
-#20: pegar o valor que vier e armazenar, conferir se condiz com a ordem(array separado?);
+#20: pegar o valor que vier e armazenar, conferir se condiz com a ordem(array separado);
 
 #21: verifica se o campo existe na tabela, e adicionalo junto ao com o nome da tabela dela;
 
