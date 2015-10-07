@@ -10,16 +10,21 @@ namespace BD2.Analizadores
     public class Semantico : Constants
     {
         private List<string> identificadores;
+        private Dictionary<string,string> clausulaAs;
         private Metadados metadados;// aqui é por hora, pode ser mudado para uma list por causa dos select, ou não
         private bool sexta;
         // acho bom saber o que vai ser executado na ação 0 por isso dessa variavel, precisamos definir códigos pra ela
         private int operacao;
+        private  GerenciadorMemoria memoria;
 
         public Semantico()
         {
             identificadores = new List<string>();
+            clausulaAs = new Dictionary<string, string>();
             metadados = new Metadados();
             sexta = true;
+            memoria = new GerenciadorMemoria();
+            operacao = 0;
         }
 
         public void executeAction(int action, Token token) 
@@ -27,10 +32,12 @@ namespace BD2.Analizadores
             switch (action)
             {
                 case 0:
+                    // ações referentes a execuções
                     identificadores.Clear();
+                    clausulaAs.Clear();
                     metadados = new Metadados();
                     sexta = true;
-                    throw new SGDBException("Ação "+ action + " não implementada.");
+                    operacao = 0;
                     break;
                 case 1:
                     throw new SGDBException("Ação " + action + " não implementada.");
@@ -40,10 +47,7 @@ namespace BD2.Analizadores
                     //{
                      //   throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " já existe",  token.getPosition());
                     //}
-                    //else
-                    //{
-                        metadados.setNome(token.getLexeme().ToLower());
-                    //}
+                    metadados.setNome(token.getLexeme().ToLower());
 
                     break;
                 case 3:
@@ -66,28 +70,22 @@ namespace BD2.Analizadores
                     {
                         foreach (string id in identificadores)
                         {
-                            if (metadados.getDados().ContainsKey(id))
-                            {
-                                metadados.getDados()[id].setPrimary(true);
-                            }
-                            else
+                            if (!metadados.getDados().ContainsKey(id))
                             {
                                 throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
                             }
+                            metadados.getDados()[id].setPrimary(true);
                         }
                         identificadores.Clear();
                     }
                     break;
 
                 case 7:
-                    if (metadados.getDados().ContainsKey(token.getLexeme()))
+                    if (!metadados.getDados().ContainsKey(token.getLexeme()))
                     {
-                        identificadores.Add(token.getLexeme());
+                        throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
                     }
-                    else
-                    {
-                        throw new SemanticError("Campo " + token.getLexeme() + " não existe",token.getLinha());
-                    }
+                    identificadores.Add(token.getLexeme());
                     break;
                 case 8:
                     // verifica se tabela existe
@@ -118,9 +116,11 @@ namespace BD2.Analizadores
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 15:
+                    //memoria.show(token.getLexeme());
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 16:
+                    // memoria.algo(token.getLexeme());
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 17:
@@ -133,10 +133,15 @@ namespace BD2.Analizadores
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 20:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    //esboço
+                    if (!metadados.getDados().ContainsKey(token.getLexeme()))
+                    {
+                        throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
+                    }
+                    identificadores[identificadores.Count()] = identificadores.Last() + "." + token.getLexeme().ToLower();
                     break;
                 case 21:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    clausulaAs[identificadores.Last()] = token.getLexeme();
                     break;
                 case 22:
                     throw new SGDBException("Ação " + action + " não implementada.");
