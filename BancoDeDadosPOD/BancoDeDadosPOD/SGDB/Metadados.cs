@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BD2.Analizadores
+namespace BancoDeDadosPOD.SGDB
 {
     [Serializable]
     public class DadosTablea
@@ -145,6 +145,18 @@ namespace BD2.Analizadores
         public void addDados(string nome, string tipo, int tamanho)
         {
             dados[nome] = new DadosTablea(nome, tipo, tamanho);
+        }
+
+        public string toString()
+        {
+            string descricao = nome + "\n";
+            descricao += "Campo | Tipo | Tamanho | Primary |Foreing \n";
+            foreach (KeyValuePair<string, DadosTablea> item in dados)
+            {
+                DadosTablea d = item.Value;
+                descricao += d.getNomeCampo() +"|"+ d.geTipo() +"|"+ d.getTamanho() +"|"+ d.isPrimary() +"|"+ (d.isForeing()? d.getForeing()[0]+"(" +d.getForeing()[1]+")":"-") +"|"+ "\n";
+            }
+            return descricao;
         }
     }
 }
