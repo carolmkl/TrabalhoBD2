@@ -91,6 +91,17 @@ namespace BancoDeDadosPOD.SGDB
             }
         }
 
+        public bool excluirIndex(string nome)
+        {
+            return false;
+        }
+
+        public bool excluirTable(string nome)
+        {
+            // proteção de foreing key
+            return false;
+        }
+
         // Esses dois tão feitos, se funcionam é outra história
         public bool salvarMetadados(Metadados meta)
         {

@@ -10,6 +10,7 @@ namespace BD2.Analizadores
     public class Semantico : Constants
     {
         private List<string> identificadores;
+        private List<ValoresCampos> valoresColunas;
         private Dictionary<string,string> clausulaAs;
         private Metadados metadados;// aqui é por hora, pode ser mudado para uma list por causa dos select, ou não
         // referente a ação semantica numero 6
@@ -22,6 +23,7 @@ namespace BD2.Analizadores
         {
             identificadores = new List<string>();
             clausulaAs = new Dictionary<string, string>();
+            valoresColunas = new List<ValoresCampos>();
             metadados = new Metadados();
             sexta = true;
             memoria = new GerenciadorMemoria();
@@ -46,7 +48,6 @@ namespace BD2.Analizadores
                         throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " já existe",  token.getPosition());
                     }
                     metadados.setNome(token.getLexeme().ToLower());
-
                     break;
                 case 3:
                     throw new SGDBException("Ação " + action + " não implementada.");
@@ -60,8 +61,12 @@ namespace BD2.Analizadores
                 case 6:
                     if (sexta)
                     {
-                        // adiciona o dado no meta;
+                        for (int i = 0; i < identificadores.Count(); i++)
+                        {
+                            metadados.addDados(new DadosTablea(identificadores[i], valoresColunas[i].getTipo(), valoresColunas[i].getTamanho()));
+                        }
                         identificadores.Clear();
+                        valoresColunas.Clear();
                         sexta = false;
                     }
                     else
@@ -106,15 +111,25 @@ namespace BD2.Analizadores
                     break;
                 case 10:
                     // decidir tamanho
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    valoresColunas.Add(new ValoresCampos("INTEGER", 4));
                     break;
                 case 11:
                     //decidir tamanho
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    if (Convert.ToInt32(token.getLexeme()) > 255 || Convert.ToInt32(token.getLexeme()) < 1)
+                    {
+                        acaoZero();
+                        throw new SemanticError("Tamanho do campo " + identificadores.Last() + " inválido", token.getLinha());
+                    }
+                    valoresColunas.Add(new ValoresCampos("VARCHAR", Convert.ToInt32(token.getLexeme())));
                     break;
                 case 12:
                     //decidir tamanho
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    if (Convert.ToInt32(token.getLexeme()) > 255 || Convert.ToInt32(token.getLexeme()) < 1)
+                    {
+                        acaoZero();
+                        throw new SemanticError("Tamanho do campo " + identificadores.Last() +" inválido", token.getLinha());
+                    }
+                    valoresColunas.Add(new ValoresCampos("VARCHAR", Convert.ToInt32(token.getLexeme())));
                     break;
                 case 13:
                     throw new SGDBException("Ação " + action + " não implementada.");
@@ -179,6 +194,7 @@ namespace BD2.Analizadores
         {
             identificadores.Clear();
             clausulaAs.Clear();
+            valoresColunas.Clear();
             metadados = new Metadados();
             sexta = true;
             operacao = 0;
