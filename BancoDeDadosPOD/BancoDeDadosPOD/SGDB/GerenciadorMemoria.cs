@@ -18,18 +18,35 @@ namespace BancoDeDadosPOD.SGDB
         // caminho pra uma das subpastas do banco, os database
         private string subPastaPath;
 
+        private static GerenciadorMemoria singleton;
+
         // Construtores
 
-        public GerenciadorMemoria()
-        {}
+        private GerenciadorMemoria()
+        {
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +"\\ bdPod"))
+            {
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ bdPod");
+            }
+            setDiretorioPath(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ bdPod");
+        }
 
-        public GerenciadorMemoria(string diretorioPath)
+        private GerenciadorMemoria(string diretorioPath)
         { setDiretorioPath(diretorioPath); }
 
-        public GerenciadorMemoria(string diretorioPath, string subPastaPath)
+        private GerenciadorMemoria(string diretorioPath, string subPastaPath)
         {
             setDiretorioPath(diretorioPath);
             setSubPastaPath(subPastaPath);
+        }
+
+        public static GerenciadorMemoria getInstance()
+        {
+            if (singleton == null)
+            {
+                singleton = new GerenciadorMemoria();
+            }
+            return singleton;
         }
 
         // Métodos
@@ -46,7 +63,7 @@ namespace BancoDeDadosPOD.SGDB
 
         public void setSubPastaPath(string subPastaPath)
         {
-            if (!Directory.Exists(diretorioPath+"\\"+subPastaPath))
+            if (subPastaPath != null && !Directory.Exists(diretorioPath+"\\"+subPastaPath))
             {
                 throw new SGDBException("Datadase " + subPastaPath + " não existe");
             }
@@ -80,10 +97,7 @@ namespace BancoDeDadosPOD.SGDB
             // tentar verificar se existe a tabela
             try
             {
-                if (File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab"))
-                { return true;}
-                else
-                { return false;}
+                return File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab");
             }
             catch
             {

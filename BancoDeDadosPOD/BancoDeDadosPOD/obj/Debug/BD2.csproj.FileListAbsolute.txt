@@ -1,1 +1,9 @@
 C:\Users\Ultrabook\Documents\GitHub\TrabalhoBD2\BancoDeDadosPOD\BancoDeDadosPOD\bin\Debug\BancoDeDadosPOD.exe.config
+C:\Users\Ultrabook\Documents\GitHub\TrabalhoBD2\BancoDeDadosPOD\BancoDeDadosPOD\obj\Debug\BD2.csprojResolveAssemblyReference.cache
+C:\Users\Ultrabook\Documents\GitHub\TrabalhoBD2\BancoDeDadosPOD\BancoDeDadosPOD\obj\Debug\BancoDeDadosPOD.Form1.resources
+C:\Users\Ultrabook\Documents\GitHub\TrabalhoBD2\BancoDeDadosPOD\BancoDeDadosPOD\obj\Debug\BancoDeDadosPOD.Properties.Resources.resources
+C:\Users\Ultrabook\Documents\GitHub\TrabalhoBD2\BancoDeDadosPOD\BancoDeDadosPOD\obj\Debug\BD2.csproj.GenerateResource.Cache
+C:\Users\Ultrabook\Documents\GitHub\TrabalhoBD2\BancoDeDadosPOD\BancoDeDadosPOD\bin\Debug\BancoDeDadosPOD.exe
+C:\Users\Ultrabook\Documents\GitHub\TrabalhoBD2\BancoDeDadosPOD\BancoDeDadosPOD\bin\Debug\BancoDeDadosPOD.pdb
+C:\Users\Ultrabook\Documents\GitHub\TrabalhoBD2\BancoDeDadosPOD\BancoDeDadosPOD\obj\Debug\BancoDeDadosPOD.exe
+C:\Users\Ultrabook\Documents\GitHub\TrabalhoBD2\BancoDeDadosPOD\BancoDeDadosPOD\obj\Debug\BancoDeDadosPOD.pdb

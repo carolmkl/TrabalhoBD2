@@ -72,6 +72,7 @@ namespace BD2.Analizadores
             }
             if (endState < 0 || (endState != state && tokenForState(lastState) == -2))
             {
+                Console.WriteLine(input.Substring(start, position - start));
                 throw new LexicalError(SCANNER_ERROR[lastState], linhaInterna);
             }
 

@@ -26,7 +26,7 @@ namespace BD2.Analizadores
             valoresColunas = new List<ValoresCampos>();
             metadados = new Metadados();
             sexta = true;
-            memoria = new GerenciadorMemoria();
+            memoria = GerenciadorMemoria.getInstance();
             operacao = 0;
         }
 
@@ -39,7 +39,7 @@ namespace BD2.Analizadores
                     acaoZero();
                     break;
                 case 1:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    memoria.createDatabase(token.getLexeme().ToLower());
                     break;
                 case 2:
                     if (memoria.existeTabela(token.getLexeme().ToLower()))
@@ -109,12 +109,13 @@ namespace BD2.Analizadores
                     metadados.getDados()[identificadores[0]].setForeing(identificadores[1], token.getLexeme().ToLower());
                     identificadores.Clear();
                     break;
+
                 case 10:
                     // decidir tamanho
                     valoresColunas.Add(new ValoresCampos("INTEGER", 4));
                     break;
+
                 case 11:
-                    //decidir tamanho
                     if (Convert.ToInt32(token.getLexeme()) > 255 || Convert.ToInt32(token.getLexeme()) < 1)
                     {
                         acaoZero();
@@ -122,8 +123,8 @@ namespace BD2.Analizadores
                     }
                     valoresColunas.Add(new ValoresCampos("VARCHAR", Convert.ToInt32(token.getLexeme())));
                     break;
+
                 case 12:
-                    //decidir tamanho
                     if (Convert.ToInt32(token.getLexeme()) > 255 || Convert.ToInt32(token.getLexeme()) < 1)
                     {
                         acaoZero();
