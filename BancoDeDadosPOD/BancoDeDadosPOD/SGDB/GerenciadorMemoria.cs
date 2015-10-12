@@ -122,7 +122,7 @@ namespace BancoDeDadosPOD.SGDB
             try
             {
                 IFormatter formatter = new BinaryFormatter();
-                Stream stream = new FileStream(meta.getNome()+".meta", FileMode.Create, FileAccess.Write, FileShare.None);
+                Stream stream = new FileStream(diretorioPath + "\\" + subPastaPath + "\\"+ meta.getNome()+".meta", FileMode.Create, FileAccess.Write, FileShare.None);
                 formatter.Serialize(stream, meta);
                 stream.Close();
                 return true;
@@ -138,7 +138,7 @@ namespace BancoDeDadosPOD.SGDB
             try
             {
                 IFormatter formatter = new BinaryFormatter();
-                Stream stream = new FileStream(nome+".meta", FileMode.Open, FileAccess.Read, FileShare.Read);
+                Stream stream = new FileStream(diretorioPath + "\\" + subPastaPath + "\\"+nome +".meta", FileMode.Open, FileAccess.Read, FileShare.Read);
                 Metadados meta = (Metadados)formatter.Deserialize(stream);
                 stream.Close();
                 return meta;

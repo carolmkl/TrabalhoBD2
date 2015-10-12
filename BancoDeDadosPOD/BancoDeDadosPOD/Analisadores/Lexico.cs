@@ -16,11 +16,15 @@ namespace BD2.Analizadores
 
         public Lexico()
         {
+            linha = 1;
+            linhaInterna = 1;
             setInput("");
         }
 
         public Lexico(String input)
         {
+            linha = 1;
+            linhaInterna = 1;
             setInput(input);
         }
 
@@ -67,12 +71,12 @@ namespace BD2.Analizadores
                 }
                 if (vNextChar == '\n')
                 {
+                    Console.WriteLine("Barra n");
                     linha++;
                 }
             }
-            if (endState < 0 || (endState != state && tokenForState(lastState) == -2))
+            if ( endState < 0 || (endState != state && tokenForState(lastState) == -2))
             {
-                Console.WriteLine(input.Substring(start, position - start));
                 throw new LexicalError(SCANNER_ERROR[lastState], linhaInterna);
             }
 
@@ -150,7 +154,7 @@ namespace BD2.Analizadores
             }
             else
             {
-                return Convert.ToChar(-1);
+                return unchecked((char)-1);
             }
         }
     }

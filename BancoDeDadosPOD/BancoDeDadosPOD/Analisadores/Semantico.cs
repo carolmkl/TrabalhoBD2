@@ -35,7 +35,7 @@ namespace BD2.Analizadores
             switch (action)
             {
                 case 0:
-                    // ações referentes a execuções
+                    execucaoComandoReal();
                     acaoZero();
                     break;
                 case 1:
@@ -47,6 +47,7 @@ namespace BD2.Analizadores
                         acaoZero();
                         throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " já existe",  token.getPosition());
                     }
+                    operacao = 1;
                     metadados.setNome(token.getLexeme().ToLower());
                     break;
                 case 3:
@@ -189,6 +190,23 @@ namespace BD2.Analizadores
                     break;
             }
             Console.WriteLine("Ação #" + action + ", Token: " + token);
+        }
+
+        private void execucaoComandoReal()
+        {
+            switch (operacao)
+            {
+                case 0:
+                    break;
+                case 1:
+                    memoria.salvarMetadados(metadados);
+                    break;
+
+                default:
+                    throw new SGDBException("Ação Real" + operacao + " não implementada.");
+                    break;
+            }
+            
         }
 
         private void acaoZero()
