@@ -234,8 +234,11 @@ namespace BD2.Analizadores
                 case 26:
                     throw new SGDBException("Ação " + action + " não suportada.");
                     break;
-                case 28:
+                case 27:
                     throw new SGDBException("Ação " + action + " não suportada.");
+                    break;
+                case 28:
+                    throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 29:
                     throw new SGDBException("Ação " + action + " não implementada.");

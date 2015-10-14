@@ -68,8 +68,12 @@
     <Compile Include="Analisadores\Token.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SGDB\Select\Operacao.cs" />
+    <Compile Include="SGDB\Select\OperadorRel.cs" />
+    <Compile Include="SGDB\Select\Select.cs" />
+    <Compile Include="SGDB\Select\Where.cs" />
     <Compile Include="SGDB\SGDBException.cs" />
-    <Compile Include="SGDB\Tabelas.cs" />
+    <Compile Include="SGDB\Tabela.cs" />
     <Compile Include="SGDB\ValoresCampos.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
