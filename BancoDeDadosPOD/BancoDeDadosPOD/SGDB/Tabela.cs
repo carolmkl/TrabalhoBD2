@@ -83,7 +83,7 @@ namespace BancoDeDadosPOD.SGDB
 
         public void clearRegistros()
         {
-            this.registros = new List<string[]>;
+            this.registros = new List<string[]>();
         }
 
         public void addRegistro(string[] reg)
@@ -109,8 +109,30 @@ namespace BancoDeDadosPOD.SGDB
         public void addApelido(string campo, string apelido)
         {
             if (!campos.Contains(campo))
-                throw new SGDBException("tabela não contém o campo '" + campo + "' para aplicar o apelido '" + apelido + "'");
+                throw new SGDBException("Tabela não contém o campo '" + campo + "' para aplicar o apelido '" + apelido + "'");
             apelidos.Add(campo, apelido);
+        }
+
+
+        public override string ToString()
+        {
+            string retorno = "| ";
+            foreach (string item in campos)
+            {
+                retorno += item + " | ";
+            }
+            retorno += "\n";
+            foreach (string[] item in registros)
+            {
+                retorno += "| ";
+                foreach (string reg in item)
+                {
+                    retorno += reg + " | ";
+                }
+                retorno += "\n";
+            }
+
+            return retorno;
         }
 
 

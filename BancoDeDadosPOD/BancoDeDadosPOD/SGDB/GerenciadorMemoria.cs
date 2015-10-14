@@ -142,7 +142,7 @@ namespace BancoDeDadosPOD.SGDB
 
 
                 File.Delete(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".meta");
-                File.Delete(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab");
+                File.Delete(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".dat");
             }
             else
             {
@@ -172,9 +172,9 @@ namespace BancoDeDadosPOD.SGDB
         // ja cria a tabela pra não ter que criar durante a inserção
         private void criarTabela(string nome)
         {
-            if (!File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab"))
+            if (!File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".dat"))
             {
-                File.Create(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab");
+                File.Create(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".dat");
             }
         }
 
@@ -190,7 +190,7 @@ namespace BancoDeDadosPOD.SGDB
             }
             catch
             {
-                throw new SGDBException("Banco Corrompido!\nSalve tudo em um backup(não implementado),\nreintale o banco e recupere-o(não implementado)");
+                throw new SGDBException("Tabela não existe");
             }
         }
 

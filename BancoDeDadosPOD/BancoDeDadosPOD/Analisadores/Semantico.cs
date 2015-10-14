@@ -6,9 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BD2.Analizadores
-{
+{ 
+
     public class Semantico : Constants
     {
+        private enum acao: int { Nada=0, CriarTabela, InserirDados, Select };
         private List<string> identificadores;
         private List<ValoresCampos> valoresColunas;
         private Dictionary<string,string> clausulaAs;
@@ -31,12 +33,8 @@ namespace BD2.Analizadores
             identificadores = new List<string>();
             clausulaAs = new Dictionary<string, string>();
             valoresColunas = new List<ValoresCampos>();
-            metadados = new Metadados();
-            sexta = true;
-            allColunas = true;
-            contColunas = 0;
+            acaoZero();
             memoria = GerenciadorMemoria.getInstance();
-            operacao = 0;
         }
 
         public void executeAction(int action, Token token) 
@@ -54,10 +52,9 @@ namespace BD2.Analizadores
                 case 2:
                     if (memoria.existeTabela(token.getLexeme().ToLower()))
                     {
-                        acaoZero();
                         throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " já existe",  token.getPosition());
                     }
-                    operacao = 1;
+                    operacao = (int) acao.CriarTabela;
                     metadados.setNome(token.getLexeme().ToLower());
                     break;
                 case 3:
@@ -86,7 +83,6 @@ namespace BD2.Analizadores
                         {
                             if (!metadados.getDados().ContainsKey(id))
                             {
-                                acaoZero();
                                 throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
                             }
                             metadados.getDados()[id].setPrimary(true);
@@ -98,7 +94,6 @@ namespace BD2.Analizadores
                 case 7:
                     if (!metadados.getDados().ContainsKey(token.getLexeme()))
                     {
-                        acaoZero();
                         throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
                     }
                     identificadores.Add(token.getLexeme());
@@ -106,7 +101,6 @@ namespace BD2.Analizadores
                 case 8:
                     if (!memoria.existeTabela(token.getLexeme().ToLower()))
                     {
-                        acaoZero();
                         throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " não existe", token.getPosition());
                     }
                     identificadores.Add(token.getLexeme().ToLower());
@@ -114,7 +108,6 @@ namespace BD2.Analizadores
                 case 9:
                     if (!memoria.recuperarMetadados(identificadores[1]).getDados().ContainsKey(token.getLexeme().ToLower()))
                     {
-                        acaoZero();
                         throw new SemanticError("Campo " + token.getLexeme().ToLower() + " na tabela " + identificadores[1] + "não existe", token.getPosition());
                     }
                     metadados.getDados()[identificadores[0]].setForeing(identificadores[1], token.getLexeme().ToLower());
@@ -135,7 +128,6 @@ namespace BD2.Analizadores
                 case 11:
                     if (Convert.ToInt32(token.getLexeme()) > 255 || Convert.ToInt32(token.getLexeme()) < 1)
                     {
-                        acaoZero();
                         throw new SemanticError("Tamanho do campo " + identificadores.Last() + " inválido", token.getLinha());
                     }
                     valoresColunas.Add(new ValoresCampos("VARCHAR", Convert.ToInt32(token.getLexeme())));
@@ -144,7 +136,6 @@ namespace BD2.Analizadores
                 case 12:
                     if (Convert.ToInt32(token.getLexeme()) > 255 || Convert.ToInt32(token.getLexeme()) < 1)
                     {
-                        acaoZero();
                         throw new SemanticError("Tamanho do campo " + identificadores.Last() +" inválido", token.getLinha());
                     }
                     valoresColunas.Add(new ValoresCampos("CHAR", Convert.ToInt32(token.getLexeme())));
@@ -172,36 +163,42 @@ namespace BD2.Analizadores
                     break;
                 case 19:
                     // 2 é o insert
-                    operacao = 2;
+                    operacao = (int)acao.InserirDados;
+                    metadados = memoria.recuperarMetadados(identificadores[0]);
                     if (identificadores.Count() > 1)
                     {
                         allColunas = false;
                         contColunas = identificadores.Count() - 1;
+
+                        for (int i = 1; i < identificadores.Count(); i++)
+                        {
+                            if (!metadados.getDados().ContainsKey(identificadores[i]))
+                            {
+                                throw new SemanticError("Campo " + identificadores[i] + "naõ existe na tabela " + identificadores[0], token.getLinha());
+                            }
+                        }
                     }
                     break;
                 case 20:
-                    index = identificadores.Count();
                     if (!allColunas)
                     {
-                        index =  1 - contColunas;
-
-                        metadados = memoria.recuperarMetadados(identificadores[0]);
-                        if (index > contColunas)
-                        {
-                            throw new SemanticError("Mais valores do que campos", token.getLinha());
-                        }
-                    }
-                    else
-                    {
-                        index = identificadores.Count() - 1;
-                        metadados = memoria.recuperarMetadados(identificadores[0]);
-                        if (index > metadados.getNomesColunas().Count())
+                        index = identificadores.Count() - 1 - contColunas;
+                        if (index >= contColunas)
                         {
                             throw new SemanticError("Mais valores do que campos", token.getLinha());
                         }
                         
                     }
-                    if (metadados.getDados()[metadados.getNomesColunas()[index]].geTipo().Equals(ListaDeSimbolos.getInstance().classeToken(token.getId())) || ListaDeSimbolos.getInstance().classeToken(token.getId()).Equals("null"))
+                    else
+                    {
+                        index = identificadores.Count() - 1;
+                        if (index >= metadados.getNomesColunas().Count())
+                        {
+                            throw new SemanticError("Mais valores do que campos", token.getLinha());
+                        }
+                        
+                    }
+                    if (ListaDeSimbolos.getInstance().classeToken(token.getId()).Contains(metadados.getDados()[metadados.getNomesColunas()[index]].geTipo()) || ListaDeSimbolos.getInstance().classeToken(token.getId()).Equals("null"))
                     {
                         identificadores.Add(token.getLexeme());
                     }
@@ -214,7 +211,6 @@ namespace BD2.Analizadores
                     //esboço
                     if (!metadados.getDados().ContainsKey(token.getLexeme()))
                     {
-                        acaoZero();
                         throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
                     }
                     identificadores[identificadores.Count()] = identificadores.Last() + "." + token.getLexeme().ToLower();
@@ -249,16 +245,52 @@ namespace BD2.Analizadores
 
         private void execucaoComandoReal()
         {
+            string id;
             switch (operacao)
             {
-                case 0:
+                case (int) acao.Nada:
                     break;
-                case 1:
+                case (int)acao.CriarTabela:
                     memoria.salvarMetadados(metadados);
                     break;
 
-                case 2:
-                    memoria.salvarMetadados(metadados);
+                case (int)acao.InserirDados:
+                    Tabela t = new Tabela();
+                    id = identificadores[0];
+                    identificadores.RemoveAt(0);
+                    // validação de existencia de campo
+                    if (allColunas)
+                    {
+                        t.Campos = metadados.getNomesColunas().ToArray();
+                        t.addRegistro(identificadores.ToArray());
+                    }
+                    else
+                    {
+                        bool nacho = true;
+                        string[] dados = new string[metadados.getNomesColunas().Count()];
+                        for (int i = 0, k = contColunas; i < dados.Length; i++)
+                        {
+                            nacho = true;
+                            for (int j = 0; j < contColunas && nacho; j++)
+                            {
+                                if (metadados.getNomesColunas()[i].Equals(identificadores[j]))
+                                {
+                                    dados[i] = identificadores[k];
+                                    k++;
+                                    nacho = false;
+                                }
+                            }
+                            if (!nacho)
+                            {
+                                dados[i] = "null";
+                            }
+                        }
+                        t.Campos = metadados.getNomesColunas().ToArray();
+                        t.addRegistro(dados);
+                    }
+                    Console.WriteLine("TO STRING DA TABELA");
+                    Console.WriteLine(t.ToString());
+                    //memoria.salvarMetadados(metadados);
                     break;
 
                 default:
