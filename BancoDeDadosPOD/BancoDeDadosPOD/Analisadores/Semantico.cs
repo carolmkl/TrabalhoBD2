@@ -66,7 +66,7 @@ namespace BD2.Analizadores
                     {
                         for (int i = 0; i < identificadores.Count(); i++)
                         {
-                            metadados.addDados(new DadosTablea(identificadores[i], valoresColunas[i].getTipo(), valoresColunas[i].getTamanho()));
+                            metadados.addDados(new DadosTabela(identificadores[i], valoresColunas[i].getTipo(), valoresColunas[i].getTamanho()));
                         }
                         identificadores.Clear();
                         valoresColunas.Clear();

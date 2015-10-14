@@ -114,7 +114,7 @@ namespace BancoDeDadosPOD.SGDB
         {
             Metadados meta = singleton.recuperarMetadados(nome);
             bool pode = true;
-            foreach(KeyValuePair<string, DadosTablea> dt in meta.getDados())
+            foreach(KeyValuePair<string, DadosTabela> dt in meta.getDados())
             {
                 if (dt.Value.isRForeing())
                 {
@@ -131,7 +131,7 @@ namespace BancoDeDadosPOD.SGDB
             {
                 Metadados metaExcluir, metaAux;
                 metaExcluir = recuperarMetadados(nome);
-                foreach (KeyValuePair<string, DadosTablea> dt in metaExcluir.getDados())
+                foreach (KeyValuePair<string, DadosTabela> dt in metaExcluir.getDados())
                 {
                     if (dt.Value.isForeing())
                     {

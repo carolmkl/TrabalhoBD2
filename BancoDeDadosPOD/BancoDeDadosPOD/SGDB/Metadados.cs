@@ -123,17 +123,17 @@ namespace BancoDeDadosPOD.SGDB
     {
         private string nome;
         //optei por dictonary pra facilitar a pesquisa
-        private Dictionary<string, DadosTablea> dados;
+        private Dictionary<string, DadosTabela> dados;
 
         public Metadados()
         {
-            dados = new Dictionary<string, DadosTablea>();
+            dados = new Dictionary<string, DadosTabela>();
         }
 
         public Metadados(String nome)
         {
             this.setNome(nome);
-            dados = new Dictionary<string, DadosTablea>();
+            dados = new Dictionary<string, DadosTabela>();
         }
 
         public string getNome()
@@ -146,33 +146,33 @@ namespace BancoDeDadosPOD.SGDB
             this.nome = nome;
         }
 
-        public Dictionary<string, DadosTablea> getDados()
+        public Dictionary<string, DadosTabela> getDados()
         {
             return dados;
         }
 
-        public void addDados(DadosTablea dados)
+        public void addDados(DadosTabela dados)
         {
             this.dados[dados.getNomeCampo()] = dados;
         }
 
         public void addDados(string nome, string tipo, int tamanho, bool primary, string[] foreing)
         {
-            dados[nome] = new DadosTablea(nome,tipo,tamanho,primary,foreing);
+            dados[nome] = new DadosTabela(nome,tipo,tamanho,primary,foreing);
         }
 
         public void addDados(string nome, string tipo, int tamanho)
         {
-            dados[nome] = new DadosTablea(nome, tipo, tamanho);
+            dados[nome] = new DadosTabela(nome, tipo, tamanho);
         }
 
         public string toString()
         {
             string descricao = nome + "\n";
             descricao += "Campo | Tipo | Tamanho | Primary |Foreing \n";
-            foreach (KeyValuePair<string, DadosTablea> item in dados)
+            foreach (KeyValuePair<string, DadosTabela> item in dados)
             {
-                DadosTablea d = item.Value;
+                DadosTabela d = item.Value;
                 descricao += d.getNomeCampo() +"|"+ d.geTipo() +"|"+ d.getTamanho() +"|"+ d.isPrimary() +"|"+ (d.isForeing()? d.getForeing()[0]+"(" +d.getForeing()[1]+")":"-") +"|"+ "\n";
             }
             return descricao;
