@@ -8,10 +8,10 @@ namespace BancoDeDadosPOD.SGDB.Select
 {
     class Where
     {
-        private List<List<Operacao>> listaFiltro; //A lista mais externa contém os agrupamentos de OU
-        private List<Operacao> listaJoin;
+        private List<List<Filtro>> listaFiltro; //A lista mais externa contém os agrupamentos de OU
+        private List<Filtro> listaJoin;
 
-        internal List<List<Operacao>> ListaFiltro
+        internal List<List<Filtro>> ListaFiltro
         {
             get
             {
@@ -24,7 +24,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             }
         }
 
-        internal List<Operacao> ListaJoin
+        internal List<Filtro> ListaJoin
         {
             get
             {
