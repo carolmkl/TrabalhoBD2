@@ -114,12 +114,11 @@ namespace BancoDeDadosPOD.SGDB
         {
             Metadados meta = singleton.recuperarMetadados(nome);
             bool pode = true;
-            foreach(KeyValuePair<string, DadosTabela> dt in meta.getDados())
+            for(int i=0; i<meta.getNomesColunas().Count && pode; i++)
             {
-                if (dt.Value.isRForeing())
+                if (meta.getDados()[meta.getNomesColunas()[i]].isRForeing())
                 {
                     pode = false;
-                    break;
                 }
             }
             return pode;
@@ -173,7 +172,10 @@ namespace BancoDeDadosPOD.SGDB
         // ja cria a tabela pra não ter que criar durante a inserção
         private void criarTabela(string nome)
         {
-            File.Create(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab");
+            if (!File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab"))
+            {
+                File.Create(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab");
+            }
         }
 
         public Metadados recuperarMetadados(string nome)

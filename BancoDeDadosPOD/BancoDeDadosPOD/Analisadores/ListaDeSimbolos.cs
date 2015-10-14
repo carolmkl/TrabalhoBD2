@@ -22,15 +22,20 @@ namespace BD2.Analizadores
             return singleton;
         }
 
+        public static void clear()
+        {
+            singleton = null;
+        }
+
         public String classeToken(int id)
         {
             switch (id)
             {
                 case 2: return "identificador";
 
-                case 3: return "constante numerica";
+                case 3: return "INTEGER";
 
-                case 4: return "constante literal";
+                case 4: return "VARCHAR";
 
                 case 5:
                 case 6:
@@ -62,8 +67,8 @@ namespace BD2.Analizadores
                 case 32:
                 case 33:
                 case 34:
-                case 35:
-                case 36: return "palavra reservada";
+                case 35: return "palavra reservada";
+                case 36: return "null";
 
                 case 37:
                 case 38:

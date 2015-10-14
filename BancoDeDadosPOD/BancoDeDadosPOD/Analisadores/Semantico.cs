@@ -17,6 +17,11 @@ namespace BD2.Analizadores
         // referente a ação semantica numero 6
         private bool sexta;
 
+        // referente ao fato de usar todas as colunas ou não;
+        private bool allColunas;
+        // saber quantas colunas são pra ser adicionadas
+        private int contColunas;
+
         // acho bom saber o que vai ser executado na ação 0 por isso dessa variavel, precisamos definir códigos pra ela
         private int operacao;
         private  GerenciadorMemoria memoria;
@@ -28,12 +33,15 @@ namespace BD2.Analizadores
             valoresColunas = new List<ValoresCampos>();
             metadados = new Metadados();
             sexta = true;
+            allColunas = true;
+            contColunas = 0;
             memoria = GerenciadorMemoria.getInstance();
             operacao = 0;
         }
 
         public void executeAction(int action, Token token) 
         {
+            int index;
             switch (action)
             {
                 case 0:
@@ -139,7 +147,7 @@ namespace BD2.Analizadores
                         acaoZero();
                         throw new SemanticError("Tamanho do campo " + identificadores.Last() +" inválido", token.getLinha());
                     }
-                    valoresColunas.Add(new ValoresCampos("VARCHAR", Convert.ToInt32(token.getLexeme())));
+                    valoresColunas.Add(new ValoresCampos("CHAR", Convert.ToInt32(token.getLexeme())));
                     break;
                 case 13:
                     //Exclusão com verificação de foreing e exclusão das referencias
@@ -163,9 +171,46 @@ namespace BD2.Analizadores
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 19:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    // 2 é o insert
+                    operacao = 2;
+                    if (identificadores.Count() > 1)
+                    {
+                        allColunas = false;
+                        contColunas = identificadores.Count() - 1;
+                    }
                     break;
                 case 20:
+                    index = identificadores.Count();
+                    if (!allColunas)
+                    {
+                        index =  1 - contColunas;
+
+                        metadados = memoria.recuperarMetadados(identificadores[0]);
+                        if (index > contColunas)
+                        {
+                            throw new SemanticError("Mais valores do que campos", token.getLinha());
+                        }
+                    }
+                    else
+                    {
+                        index = identificadores.Count() - 1;
+                        metadados = memoria.recuperarMetadados(identificadores[0]);
+                        if (index > metadados.getNomesColunas().Count())
+                        {
+                            throw new SemanticError("Mais valores do que campos", token.getLinha());
+                        }
+                        
+                    }
+                    if (metadados.getDados()[metadados.getNomesColunas()[index]].geTipo().Equals(ListaDeSimbolos.getInstance().classeToken(token.getId())) || ListaDeSimbolos.getInstance().classeToken(token.getId()).Equals("null"))
+                    {
+                        identificadores.Add(token.getLexeme());
+                    }
+                    else
+                    {
+                        throw new SemanticError("Dado " + token.getLexeme() + "tem tipo incompativel com o campo " + metadados.getDados()[metadados.getNomesColunas()[index]].geTipo(), token.getLinha());
+                    }
+                    break;
+                case 21:
                     //esboço
                     if (!metadados.getDados().ContainsKey(token.getLexeme()))
                     {
@@ -174,11 +219,8 @@ namespace BD2.Analizadores
                     }
                     identificadores[identificadores.Count()] = identificadores.Last() + "." + token.getLexeme().ToLower();
                     break;
-                case 21:
-                    clausulaAs[identificadores.Last()] = token.getLexeme();
-                    break;
                 case 22:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    clausulaAs[identificadores.Last()] = token.getLexeme();
                     break;
                 case 23:
                     throw new SGDBException("Ação " + action + " não implementada.");
@@ -212,6 +254,10 @@ namespace BD2.Analizadores
                     memoria.salvarMetadados(metadados);
                     break;
 
+                case 2:
+                    memoria.salvarMetadados(metadados);
+                    break;
+
                 default:
                     throw new SGDBException("Ação Real" + operacao + " não implementada.");
                     break;
@@ -226,6 +272,8 @@ namespace BD2.Analizadores
             valoresColunas.Clear();
             metadados = new Metadados();
             sexta = true;
+            allColunas = true;
+            contColunas = 0;
             operacao = 0;
         }
     }

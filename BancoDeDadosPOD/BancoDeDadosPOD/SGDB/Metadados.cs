@@ -124,10 +124,13 @@ namespace BancoDeDadosPOD.SGDB
         private string nome;
         //optei por dictonary pra facilitar a pesquisa
         private Dictionary<string, DadosTabela> dados;
+        private List<string> nomesColunas;
 
         public Metadados()
         {
             dados = new Dictionary<string, DadosTabela>();
+            nomesColunas = new List<string>();
+
         }
 
         public Metadados(String nome)
@@ -153,20 +156,33 @@ namespace BancoDeDadosPOD.SGDB
 
         public void addDados(DadosTabela dados)
         {
+            addNomeColuna(dados.getNomeCampo());
             this.dados[dados.getNomeCampo()] = dados;
         }
 
         public void addDados(string nome, string tipo, int tamanho, bool primary, string[] foreing)
         {
+            addNomeColuna(nome);
             dados[nome] = new DadosTabela(nome,tipo,tamanho,primary,foreing);
         }
 
         public void addDados(string nome, string tipo, int tamanho)
         {
+            addNomeColuna(nome);
             dados[nome] = new DadosTabela(nome, tipo, tamanho);
         }
 
-        public string toString()
+        private void addNomeColuna(string nome)
+        {
+            this.nomesColunas.Add(nome);
+        }
+
+        public List<string> getNomesColunas() {
+            return nomesColunas;
+        }
+
+
+        public override string ToString()
         {
             string descricao = nome + "\n";
             descricao += "Campo | Tipo | Tamanho | Primary |Foreing \n";
