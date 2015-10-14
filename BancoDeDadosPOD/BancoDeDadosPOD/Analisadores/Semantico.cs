@@ -111,7 +111,7 @@ namespace BD2.Analizadores
                     }
                     metadados.getDados()[identificadores[0]].setForeing(identificadores[1], token.getLexeme().ToLower());
 
-                    // so pra salvar a alteração
+                    // so pra salvar a alteração de mais uma chave estrangeira
                     Metadados aux = memoria.recuperarMetadados(identificadores[1]);
                     aux.getDados()[identificadores[1]].addForeing();
                     memoria.salvarMetadados(aux);

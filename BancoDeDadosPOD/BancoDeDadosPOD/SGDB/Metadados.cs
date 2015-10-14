@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BancoDeDadosPOD.SGDB
 {
     [Serializable]
-    public class DadosTablea
+    public class DadosTabela
     {
         string nomeCampo;
         string tipo;
@@ -16,13 +16,13 @@ namespace BancoDeDadosPOD.SGDB
         int contForeing;
         string[] foreing;
 
-        public DadosTablea()
+        public DadosTabela()
         {
             foreing = new string[2];
             this.contForeing = 0;
         }
 
-        public DadosTablea(string nome, string tipo, int tamanho, bool primary, string[] foreing)
+        public DadosTabela(string nome, string tipo, int tamanho, bool primary, string[] foreing)
         {
             this.setNome(nome);
             this.setTipo(tipo);
@@ -32,7 +32,7 @@ namespace BancoDeDadosPOD.SGDB
             this.contForeing = 0;
         }
 
-        public DadosTablea(string nome, string tipo, int tamanho)
+        public DadosTabela(string nome, string tipo, int tamanho)
         {
             this.setNome(nome);
             this.setTipo(tipo);
