@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BancoDeDadosPOD.SGDB
 {
     [Serializable]
-    public class DadosTabela
+    public class DadosTablea
     {
         string nomeCampo;
         string tipo;
@@ -15,12 +15,12 @@ namespace BancoDeDadosPOD.SGDB
         bool primary;
         string[] foreing;
 
-        public DadosTabela()
+        public DadosTablea()
         {
             foreing = new string[2];
         }
 
-        public DadosTabela(string nome, string tipo, int tamanho, bool primary, string[] foreing)
+        public DadosTablea(string nome, string tipo, int tamanho, bool primary, string[] foreing)
         {
             this.setNome(nome);
             this.setTipo(tipo);
@@ -29,7 +29,7 @@ namespace BancoDeDadosPOD.SGDB
             this.foreing = foreing;
         }
 
-        public DadosTabela(string nome, string tipo, int tamanho)
+        public DadosTablea(string nome, string tipo, int tamanho)
         {
             this.setNome(nome);
             this.setTipo(tipo);
@@ -104,17 +104,17 @@ namespace BancoDeDadosPOD.SGDB
     {
         private string nome;
         //optei por dictonary pra facilitar a pesquisa
-        private Dictionary<string, DadosTabela> dados;
+        private Dictionary<string, DadosTablea> dados;
 
         public Metadados()
         {
-            dados = new Dictionary<string, DadosTabela>();
+            dados = new Dictionary<string, DadosTablea>();
         }
 
         public Metadados(String nome)
         {
             this.setNome(nome);
-            dados = new Dictionary<string, DadosTabela>();
+            dados = new Dictionary<string, DadosTablea>();
         }
 
         public string getNome()
@@ -127,33 +127,33 @@ namespace BancoDeDadosPOD.SGDB
             this.nome = nome;
         }
 
-        public Dictionary<string, DadosTabela> getDados()
+        public Dictionary<string, DadosTablea> getDados()
         {
             return dados;
         }
 
-        public void addDados(DadosTabela dados)
+        public void addDados(DadosTablea dados)
         {
             this.dados[dados.getNomeCampo()] = dados;
         }
 
         public void addDados(string nome, string tipo, int tamanho, bool primary, string[] foreing)
         {
-            dados[nome] = new DadosTabela(nome,tipo,tamanho,primary,foreing);
+            dados[nome] = new DadosTablea(nome,tipo,tamanho,primary,foreing);
         }
 
         public void addDados(string nome, string tipo, int tamanho)
         {
-            dados[nome] = new DadosTabela(nome, tipo, tamanho);
+            dados[nome] = new DadosTablea(nome, tipo, tamanho);
         }
 
         public string toString()
         {
             string descricao = nome + "\n";
             descricao += "Campo | Tipo | Tamanho | Primary |Foreing \n";
-            foreach (KeyValuePair<string, DadosTabela> item in dados)
+            foreach (KeyValuePair<string, DadosTablea> item in dados)
             {
-                DadosTabela d = item.Value;
+                DadosTablea d = item.Value;
                 descricao += d.getNomeCampo() +"|"+ d.geTipo() +"|"+ d.getTamanho() +"|"+ d.isPrimary() +"|"+ (d.isForeing()? d.getForeing()[0]+"(" +d.getForeing()[1]+")":"-") +"|"+ "\n";
             }
             return descricao;
