@@ -174,7 +174,7 @@ namespace BD2.Analizadores
                         {
                             if (!metadados.getDados().ContainsKey(identificadores[i]))
                             {
-                                throw new SemanticError("Campo " + identificadores[i] + "naõ existe na tabela " + identificadores[0], token.getLinha());
+                                throw new SemanticError("Campo " + identificadores[i] + "não existe na tabela " + identificadores[0], token.getLinha());
                             }
                         }
                     }
@@ -187,7 +187,7 @@ namespace BD2.Analizadores
                         {
                             throw new SemanticError("Mais valores do que campos", token.getLinha());
                         }
-                        
+                        Console.WriteLine(index);
                     }
                     else
                     {
@@ -280,7 +280,7 @@ namespace BD2.Analizadores
                                     nacho = false;
                                 }
                             }
-                            if (!nacho)
+                            if (nacho)
                             {
                                 dados[i] = "null";
                             }

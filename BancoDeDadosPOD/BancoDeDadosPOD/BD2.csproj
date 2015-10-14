@@ -68,7 +68,7 @@
     <Compile Include="Analisadores\Token.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SGDB\Select\Operacao.cs" />
+    <Compile Include="SGDB\Select\Filtro.cs" />
     <Compile Include="SGDB\Select\OperadorRel.cs" />
     <Compile Include="SGDB\Select\Select.cs" />
     <Compile Include="SGDB\Select\Where.cs" />
