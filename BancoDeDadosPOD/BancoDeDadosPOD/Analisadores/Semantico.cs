@@ -13,8 +13,10 @@ namespace BD2.Analizadores
         private List<ValoresCampos> valoresColunas;
         private Dictionary<string,string> clausulaAs;
         private Metadados metadados;// aqui é por hora, pode ser mudado para uma list por causa dos select, ou não
+
         // referente a ação semantica numero 6
         private bool sexta;
+
         // acho bom saber o que vai ser executado na ação 0 por isso dessa variavel, precisamos definir códigos pra ela
         private int operacao;
         private  GerenciadorMemoria memoria;
@@ -108,6 +110,12 @@ namespace BD2.Analizadores
                         throw new SemanticError("Campo " + token.getLexeme().ToLower() + " na tabela " + identificadores[1] + "não existe", token.getPosition());
                     }
                     metadados.getDados()[identificadores[0]].setForeing(identificadores[1], token.getLexeme().ToLower());
+
+                    // so pra salvar a alteração
+                    Metadados aux = memoria.recuperarMetadados(identificadores[1]);
+                    aux.getDados()[identificadores[1]].addForeing();
+                    memoria.salvarMetadados(aux);
+
                     identificadores.Clear();
                     break;
 
@@ -134,9 +142,11 @@ namespace BD2.Analizadores
                     valoresColunas.Add(new ValoresCampos("VARCHAR", Convert.ToInt32(token.getLexeme())));
                     break;
                 case 13:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    //Exclusão com verificação de foreing e exclusão das referencias
+                    memoria.excluirTable(token.getLexeme().ToLower());
                     break;
                 case 14:
+                    //Exclusão de index
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 15:

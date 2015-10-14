@@ -110,7 +110,7 @@ namespace BancoDeDadosPOD.SGDB
             return false;
         }
 
-        public bool excluirTable(string nome)
+        private bool podeExcluirTable(string nome)
         {
             Metadados meta = singleton.recuperarMetadados(nome);
             bool pode = true;
@@ -122,14 +122,34 @@ namespace BancoDeDadosPOD.SGDB
                     break;
                 }
             }
+            return pode;
+        }
 
-            if (pode)
+        public void excluirTable(string nome)
+        {
+            if (podeExcluirTable(nome))
             {
+                Metadados metaExcluir, metaAux;
+                metaExcluir = recuperarMetadados(nome);
+                foreach (KeyValuePair<string, DadosTablea> dt in metaExcluir.getDados())
+                {
+                    if (dt.Value.isForeing())
+                    {
+                        metaAux = recuperarMetadados(dt.Value.getForeing()[0]);
+                        metaAux.getDados()[dt.Value.getForeing()[1]].minusForeing();
+                        salvarMetadados(metaAux);
+                    }
+                }
+
+
                 File.Delete(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".meta");
                 File.Delete(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab");
             }
+            else
+            {
+                throw new SGDBException("Tabela contém campos usados pra foreing keys");
+            }
 
-            return pode;
         }
 
         // Esses dois tão feitos, se funcionam é outra história
