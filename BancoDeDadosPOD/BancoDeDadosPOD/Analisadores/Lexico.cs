@@ -71,7 +71,6 @@ namespace BD2.Analizadores
                 }
                 if (vNextChar == '\n')
                 {
-                    Console.WriteLine("Barra n");
                     linha++;
                 }
             }

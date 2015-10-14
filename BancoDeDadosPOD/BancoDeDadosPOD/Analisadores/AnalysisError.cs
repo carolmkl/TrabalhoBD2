@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BD2
+namespace BD2.Analizadores
 {
     public class AnalysisError : Exception
     {
@@ -25,9 +25,9 @@ namespace BD2
             return position;
         }
 
-        public string toString()
+        public override string ToString()
         {
-            return base.ToString() + ", @ " + position;
+            return base.Message + " na linha " + position;
         }
     }
 

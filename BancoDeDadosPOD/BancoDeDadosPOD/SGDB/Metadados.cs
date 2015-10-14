@@ -13,11 +13,13 @@ namespace BancoDeDadosPOD.SGDB
         string tipo;
         int tamanho;
         bool primary;
+        int contForeing;
         string[] foreing;
 
         public DadosTablea()
         {
             foreing = new string[2];
+            this.contForeing = 0;
         }
 
         public DadosTablea(string nome, string tipo, int tamanho, bool primary, string[] foreing)
@@ -27,6 +29,7 @@ namespace BancoDeDadosPOD.SGDB
             this.setTamanho(tamanho);
             this.primary = primary;
             this.foreing = foreing;
+            this.contForeing = 0;
         }
 
         public DadosTablea(string nome, string tipo, int tamanho)
@@ -36,6 +39,7 @@ namespace BancoDeDadosPOD.SGDB
             this.setTamanho(tamanho);
             this.primary = false;
             this.foreing = new string[2];
+            this.contForeing = 0;
         }
 
         public string getNomeCampo()
@@ -96,6 +100,21 @@ namespace BancoDeDadosPOD.SGDB
         public bool isForeing()
         {
             return String.IsNullOrEmpty(foreing[0]);
+        }
+
+        public bool isRForeing()
+        {
+            return contForeing>0;
+        }
+
+        public void addForeing()
+        {
+            contForeing++;
+        }
+
+        public void minusForeing()
+        {
+            contForeing--;
         }
     }
 

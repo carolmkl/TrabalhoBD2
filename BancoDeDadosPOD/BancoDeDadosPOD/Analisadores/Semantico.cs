@@ -102,7 +102,7 @@ namespace BD2.Analizadores
                     identificadores.Add(token.getLexeme().ToLower());
                     break;
                 case 9:
-                    if (!memoria.recuperarMetadados(token.getLexeme().ToLower()).getDados().ContainsKey(token.getLexeme().ToLower()))
+                    if (!memoria.recuperarMetadados(identificadores[1]).getDados().ContainsKey(token.getLexeme().ToLower()))
                     {
                         acaoZero();
                         throw new SemanticError("Campo " + token.getLexeme().ToLower() + " na tabela " + identificadores[1] + "não existe", token.getPosition());

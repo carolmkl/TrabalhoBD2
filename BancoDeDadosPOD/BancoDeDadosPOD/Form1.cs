@@ -50,7 +50,7 @@ namespace BancoDeDadosPOD
             catch (Exception ex)
             {
                 addMensagem("#ERROR: " + ex.ToString());
-                Console.WriteLine(ex.StackTrace);
+                //Console.WriteLine(ex.StackTrace);
             }
         }
 

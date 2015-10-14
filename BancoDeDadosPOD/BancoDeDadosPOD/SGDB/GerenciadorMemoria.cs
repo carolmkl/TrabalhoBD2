@@ -97,7 +97,7 @@ namespace BancoDeDadosPOD.SGDB
             // tentar verificar se existe a tabela
             try
             {
-                return File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab");
+                return File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".meta");
             }
             catch
             {
@@ -112,8 +112,24 @@ namespace BancoDeDadosPOD.SGDB
 
         public bool excluirTable(string nome)
         {
-            // proteção de foreing key
-            return false;
+            Metadados meta = singleton.recuperarMetadados(nome);
+            bool pode = true;
+            foreach(KeyValuePair<string, DadosTablea> dt in meta.getDados())
+            {
+                if (dt.Value.isRForeing())
+                {
+                    pode = false;
+                    break;
+                }
+            }
+
+            if (pode)
+            {
+                File.Delete(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".meta");
+                File.Delete(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab");
+            }
+
+            return pode;
         }
 
         // Esses dois tão feitos, se funcionam é outra história
@@ -125,12 +141,19 @@ namespace BancoDeDadosPOD.SGDB
                 Stream stream = new FileStream(diretorioPath + "\\" + subPastaPath + "\\"+ meta.getNome()+".meta", FileMode.Create, FileAccess.Write, FileShare.None);
                 formatter.Serialize(stream, meta);
                 stream.Close();
+                criarTabela(meta.getNome());
                 return true;
             }
             catch
             {
                 return false;
             }
+        }
+
+        // ja cria a tabela pra não ter que criar durante a inserção
+        private void criarTabela(string nome)
+        {
+            File.Create(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".tab");
         }
 
         public Metadados recuperarMetadados(string nome)

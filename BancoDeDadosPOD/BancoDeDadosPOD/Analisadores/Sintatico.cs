@@ -62,7 +62,7 @@ namespace BD2.Analizadores
                 }
                 else
                 {
-                    throw new SyntaticError(PARSER_ERROR[x], currentToken.getPosition());
+                    throw new SyntaticError(PARSER_ERROR[x], currentToken.getLinha());
                 }
             }
             else if (isNonTerminal(x))
@@ -73,8 +73,8 @@ namespace BD2.Analizadores
                 }
                 else
                 {
-                    Console.WriteLine(currentToken.getLexeme());
-                    throw new SyntaticError(PARSER_ERROR[x], currentToken.getPosition());
+                    //Console.WriteLine(currentToken.getLexeme());
+                    throw new SyntaticError(PARSER_ERROR[x], currentToken.getLinha());
                 }
             }
             else // isSemanticAction(x)
