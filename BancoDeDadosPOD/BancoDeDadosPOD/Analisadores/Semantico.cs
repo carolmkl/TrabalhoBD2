@@ -187,7 +187,6 @@ namespace BD2.Analizadores
                         {
                             throw new SemanticError("Mais valores do que campos", token.getLinha());
                         }
-                        Console.WriteLine(index);
                     }
                     else
                     {
@@ -200,25 +199,37 @@ namespace BD2.Analizadores
                     }
                     if (ListaDeSimbolos.getInstance().classeToken(token.getId()).Contains(metadados.getDados()[metadados.getNomesColunas()[index]].geTipo()) || ListaDeSimbolos.getInstance().classeToken(token.getId()).Equals("null"))
                     {
-                        identificadores.Add(token.getLexeme());
+                        // tipo tá correto
+                        // validação de tamanho
+                        if (ListaDeSimbolos.getInstance().classeToken(token.getId()).Equals("null"))
+                        {
+                            identificadores.Add(token.getLexeme());
+                        }
+                        else
+                        {
+
+                        }
+                        
                     }
                     else
                     {
-                        throw new SemanticError("Dado " + token.getLexeme() + "tem tipo incompativel com o campo " + metadados.getDados()[metadados.getNomesColunas()[index]].geTipo(), token.getLinha());
+                        throw new SemanticError("Dado " + token.getLexeme() + " tem tipo incompativel com o campo " + metadados.getDados()[metadados.getNomesColunas()[index]] + " de tipo " + metadados.getDados()[metadados.getNomesColunas()[index]].geTipo(), token.getLinha());
                     }
                     break;
                 case 21:
                     //esboço
+                    operacao = (int)acao.Select;
                     if (!metadados.getDados().ContainsKey(token.getLexeme()))
                     {
                         throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
                     }
-                    identificadores[identificadores.Count()] = identificadores.Last() + "." + token.getLexeme().ToLower();
+                    identificadores[identificadores.Count()-1] = identificadores.Last() + "." + token.getLexeme().ToLower();
                     break;
                 case 22:
                     clausulaAs[identificadores.Last()] = token.getLexeme();
                     break;
                 case 23:
+                    operacao = (int)acao.Select;
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 24:
@@ -268,15 +279,14 @@ namespace BD2.Analizadores
                     {
                         bool nacho = true;
                         string[] dados = new string[metadados.getNomesColunas().Count()];
-                        for (int i = 0, k = contColunas; i < dados.Length; i++)
+                        for (int i = 0; i < dados.Length; i++)
                         {
                             nacho = true;
                             for (int j = 0; j < contColunas && nacho; j++)
                             {
                                 if (metadados.getNomesColunas()[i].Equals(identificadores[j]))
                                 {
-                                    dados[i] = identificadores[k];
-                                    k++;
+                                    dados[i] = identificadores[j+contColunas];
                                     nacho = false;
                                 }
                             }
@@ -290,6 +300,9 @@ namespace BD2.Analizadores
                     }
                     Console.WriteLine("TO STRING DA TABELA");
                     Console.WriteLine(t.ToString());
+                    // fazer validação do tamanho do campo e tipo de dados
+
+
                     //memoria.salvarMetadados(metadados);
                     break;
 
