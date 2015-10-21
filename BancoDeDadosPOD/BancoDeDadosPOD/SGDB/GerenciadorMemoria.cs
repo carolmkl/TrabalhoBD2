@@ -109,7 +109,7 @@ namespace BancoDeDadosPOD.SGDB
         public bool existeIndex(string nome)
         {
             // se ainda ta na pasta principal;
-            if (subPastaPath == null)
+            if (pastaDatabase == null)
             {
                 throw new SGDBException("Database não selecionado");
             }
@@ -117,7 +117,7 @@ namespace BancoDeDadosPOD.SGDB
             // tentar verificar se existe o arquivo de indice
             try
             {
-                return File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".idx");
+                return File.Exists(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".idx");
             }
             catch
             {
