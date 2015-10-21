@@ -27,7 +27,7 @@ namespace BD2.Analizadores
         private int contColunas;
 
         // acho bom saber o que vai ser executado na ação 0 por isso dessa variavel, precisamos definir códigos pra ela
-        private int operacao;
+        private acao operacao;
         private  GerenciadorMemoria memoria;
 
         public Semantico()
@@ -56,7 +56,7 @@ namespace BD2.Analizadores
                     {
                         throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " já existe",  token.getPosition());
                     }
-                    operacao = (int) acao.CriarTabela;
+                    operacao =  acao.CriarTabela;
                     metadados.setNome(token.getLexeme().ToLower());
                     break;
                 case 3:
@@ -64,7 +64,7 @@ namespace BD2.Analizadores
                     {
                         throw new SemanticError("Index " + token.getLexeme().ToLower() + " já existe", token.getPosition());
                     }
-                    operacao = (int)acao.CriarIndex;
+                    operacao = acao.CriarIndex;
                     identificadores.Add(token.getLexeme().ToLower());
                     break;
                 case 4:
@@ -175,7 +175,7 @@ namespace BD2.Analizadores
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 19:
-                    operacao = (int)acao.InserirDados;
+                    operacao = acao.InserirDados;
                     metadados = memoria.recuperarMetadados(identificadores[0]);
                     if (identificadores.Count() > 1)
                     {
@@ -252,7 +252,7 @@ namespace BD2.Analizadores
                     break;
                 case 21:
                     select = Select.singleton();
-                    operacao = (int)acao.Select;
+                    operacao = acao.Select;
                     if (!metadados.getDados().ContainsKey(token.getLexeme()))
                     {
                         throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
@@ -267,7 +267,7 @@ namespace BD2.Analizadores
                     break;
                 case 23:
                     select = Select.singleton();
-                    operacao = (int)acao.Select;
+                    operacao = acao.Select;
                     string tabela = identificadores.Last();
                     identificadores.RemoveAt(identificadores.Count() - 1);
                     select.addTabela(tabela);
@@ -302,14 +302,14 @@ namespace BD2.Analizadores
             string id;
             switch (operacao)
             {
-                case (int) acao.Nada:
+                case acao.Nada:
                     //throw new SGDBException("Que ação é essa? Favor incluir um comando válido.");
                     break;
-                case (int)acao.CriarTabela:
+                case acao.CriarTabela:
                     memoria.salvarMetadados(metadados);
                     break;
 
-                case (int)acao.InserirDados:
+                case acao.InserirDados:
                     Tabela t = new Tabela();
                     id = identificadores[0];
                     identificadores.RemoveAt(0);
@@ -348,9 +348,9 @@ namespace BD2.Analizadores
 
                     //inserir dados no arquivo
                     break;
-                case (int)acao.Select:
+                case acao.Select:
                     break;
-                case (int)acao.CriarIndex:
+                case acao.CriarIndex:
                     id = identificadores[0];
                     identificadores.RemoveAt(0);
                     foreach (string item in identificadores)
