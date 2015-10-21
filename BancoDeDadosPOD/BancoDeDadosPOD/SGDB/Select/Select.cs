@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BD2.Analizadores;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,6 @@ namespace BancoDeDadosPOD.SGDB.Select
         {
             tabelas = new List<string>();
             retorno = new Dictionary<string, string>();
-            filtro = new Where();
             ordem = new Dictionary<string, bool>();
         }
 
@@ -39,7 +39,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         {
             tabelas = new List<string>();
             retorno = new Dictionary<string, string>();
-            filtro = new Where();
+            Filtro = null;
             ordem = new Dictionary<string, bool>();
         }
 
@@ -49,22 +49,38 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// <param name="tabela"></param>
         public void addTabela(string tabela)
         {
-            if (!tabelas.Contains(tabela))
+            if (!tabelas.Exists(c => c.Equals(tabela)))
             {
                 tabelas.Add(tabela);
             }
         }
 
         /// <summary>
+        /// Verifica se as tabelas solicitadas nos campos constam na cláusula from.
+        /// Se alguma tabela não foi declarada lança um SemanticError
+        /// A tabela pode ser declarada mas não utilizada, pois pode ser usada no Where
+        /// </summary>
+        /// <param name="tblVerifica"></param>
+        public void verificaTabelas(List<string> tblVerifica)
+        {
+            foreach (string s in tabelas)
+            {
+                if (!tblVerifica.Exists(c => c.Equals(s))) throw new SemanticError("Tabela " + s + " não declarada na cláusula FROM");
+            }
+            foreach (string s in tblVerifica)
+            {
+                addTabela(s);
+            }
+        }
+
+        /// <summary>
         /// Insere mais um campo de retorno. Não remove duplicados.
+        /// Não trata o campo *
         /// </summary>
         /// <param name="retorno"></param>
         public void addRetorno(string retorno)
         {
-            if (retorno.Equals("*"))
-            {
-                //TODO: retornar todas as colunas da tabela pelo metadados
-            }
+            if (retorno.Equals("*")) throw new SGDBException("método Select.addRetorno não trata o *");
             this.retorno.Add(retorno,retorno);
         }
 
@@ -76,6 +92,19 @@ namespace BancoDeDadosPOD.SGDB.Select
         {
             string key = retorno.ElementAt(retorno.Count - 1).Key;
             retorno[key] = apelido;
+        }
+
+        public Where Filtro
+        {
+            get
+            {
+                return filtro;
+            }
+
+            set
+            {
+                filtro = value;
+            }
         }
 
     }

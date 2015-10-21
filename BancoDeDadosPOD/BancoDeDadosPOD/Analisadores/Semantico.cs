@@ -14,9 +14,18 @@ namespace BD2.Analizadores
         private enum acao: int { Nada=0, CriarTabela, InserirDados, Select, CriarIndex };
         private List<string> identificadores;
         private List<ValoresCampos> valoresColunas;
-        private Dictionary<string,string> clausulaAs;
+        private Dictionary<string,string> clausulaAs; //Carol: Sendo a cláusula AS usada apenas no select, é necessário este Dictionary?
         private Metadados metadados;// aqui é por hora, pode ser mudado para uma list por causa dos select, ou não
+       
+        /// <summary>
+        /// Objeto utilizado para armazenar os dados do SELECT
+        /// </summary>
         private Select select;
+
+        /// <summary>
+        /// Armazena os tokens de tabelas solicitados para comparar com os campos do SELECT
+        /// </summary>
+        private List<string> fromTabelas;
 
         // referente a ação semantica numero 6
         private bool sexta;
@@ -37,6 +46,7 @@ namespace BD2.Analizadores
             valoresColunas = new List<ValoresCampos>();
             acaoZero();
             memoria = GerenciadorMemoria.getInstance();
+            fromTabelas = new List<string>();
         }
 
         public void executeAction(int action, Token token) 
@@ -172,6 +182,11 @@ namespace BD2.Analizadores
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 18:
+                    // Operador Relacional da cláusula Where do SELECT
+                    if(select.Filtro == null)
+                    {
+
+                    }
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 19:
@@ -251,26 +266,37 @@ namespace BD2.Analizadores
                     }
                     break;
                 case 21:
+                    // tabela.campo --> Nome da coluna solicitada no SELECT
+                    // Caso ainda não tenha sido definido, define a ação SELECT
                     select = Select.singleton();
                     operacao = acao.Select;
-                    if (!metadados.getDados().ContainsKey(token.getLexeme()))
+                    // verifica a existencia do campo
+                    if (!memoria.recuperarMetadados(identificadores.Last()).getNomesColunas().Exists(s => s.Equals(token.getLexeme()))  
                     {
-                        throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
+                        throw new SemanticError("Campo " + identificadores.Last()+ "." + token.getLexeme() + " não existe", token.getLinha());
                     }
+                    // Adiciona o campo de retorno do SELECT
                     select.addTabela(identificadores.Last());
                     identificadores[identificadores.Count()-1] = identificadores.Last() + "." + token.getLexeme().ToLower();
                     select.addRetorno(identificadores.Last());
+                    //Carol: Tem necessidade de incluir o token no identificadores, sendo que existe o objeto Select?
                     break;
                 case 22:
+                    //token do apelido da cláusula AS. O SELECT adiciona o apelido no último campo adicionado.
                     clausulaAs[identificadores.Last()] = token.getLexeme(); //Carol: esta linha é necessária?
                     select.addApelidoUltimo(token.getLexeme());
                     break;
                 case 23:
+                    //tabela.* --> selecão de todos os campos de uma tabela
+                    //Caso ainda não tenha sido definido, define a ação SELECT
                     select = Select.singleton();
                     operacao = acao.Select;
+                    //busca a tabela armazenada na última ação semântica
                     string tabela = identificadores.Last();
                     identificadores.RemoveAt(identificadores.Count() - 1);
+                    //inclui a tabela no objeto SELECT
                     select.addTabela(tabela);
+                    //busca as colunas da tabela para incluir no retorno
                     foreach(String col in memoria.recuperarMetadados(tabela).getNomesColunas())
                     {
                         string coluna = tabela + "." + col;
@@ -279,14 +305,16 @@ namespace BD2.Analizadores
                     }
                     break;
                 case 24:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    // FROM tabelas
+                    // inclui as tabelas numa lista a parte para validar depois com a classe select.
+                    fromTabelas.Add(token.getLexeme());
                     break;
                 case 25:
-                    throw new SGDBException("Ação INNER JOIN não suportada.");
+                    throw new SemanticError("Ação INNER JOIN não suportada.");
                 case 26:
-                    throw new SGDBException("Ação LEFT JOIN não suportada.");
+                    throw new SemanticError("Ação LEFT JOIN não suportada.");
                 case 27:
-                    throw new SGDBException("Ação RIGHT JOIN não suportada.");
+                    throw new SemanticError("Ação RIGHT JOIN não suportada.");
                 case 28:
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
@@ -374,6 +402,7 @@ namespace BD2.Analizadores
         {
             identificadores.Clear();
             clausulaAs.Clear();
+            fromTabelas.Clear();
             valoresColunas.Clear();
             metadados = new Metadados();
             sexta = true;
