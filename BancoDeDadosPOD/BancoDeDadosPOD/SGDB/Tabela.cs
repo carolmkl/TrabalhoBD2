@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BancoDeDadosPOD.SGDB
 {
-    class Tabela
+    public class Tabela
     {
         string[] campos;
         Dictionary<string, string> apelidos;

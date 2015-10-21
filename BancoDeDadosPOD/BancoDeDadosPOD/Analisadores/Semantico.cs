@@ -302,10 +302,10 @@ namespace BD2.Analizadores
                     Tabela t = new Tabela();
                     id = identificadores[0];
                     identificadores.RemoveAt(0);
-                    // validação de existencia de campo
+
+                    t.Campos = metadados.getNomesColunas().ToArray();
                     if (allColunas)
                     {
-                        t.Campos = metadados.getNomesColunas().ToArray();
                         t.addRegistro(identificadores.ToArray());
                     }
                     else
@@ -328,7 +328,6 @@ namespace BD2.Analizadores
                                 dados[i] = "null";
                             }
                         }
-                        t.Campos = metadados.getNomesColunas().ToArray();
                         t.addRegistro(dados);
                     }
                     Console.WriteLine("TO STRING DA TABELA");
