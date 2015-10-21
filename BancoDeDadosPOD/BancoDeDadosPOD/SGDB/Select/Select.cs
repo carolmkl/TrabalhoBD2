@@ -8,8 +8,8 @@ namespace BancoDeDadosPOD.SGDB.Select
 {
     class Select
     {
-        string[] tabelas;
-        string[] retorno;
+        List<string> tabelas;
+        List<string> retorno;
         Where filtro;
         Dictionary<string, bool> ordem;
     }
