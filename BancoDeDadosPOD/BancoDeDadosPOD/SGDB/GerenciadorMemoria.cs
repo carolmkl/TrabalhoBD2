@@ -14,17 +14,17 @@ namespace BancoDeDadosPOD.SGDB
     {
         // caminho para o diretório onde fica todos os dados do banco de dados
         private string diretorioPath;
-
         // caminho pra uma das subpastas do banco, os database
-        private string subPastaPath;
+        private string pastaDatabase;
+        // Metadados da Database selecionada
+        private Dictionary<string, Metadados> metadados;
 
         private static GerenciadorMemoria singleton;
-
         // Construtores
 
         private GerenciadorMemoria()
         {
-            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +"\\ bdPod"))
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ bdPod"))
             {
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ bdPod");
             }
@@ -37,7 +37,7 @@ namespace BancoDeDadosPOD.SGDB
         private GerenciadorMemoria(string diretorioPath, string subPastaPath)
         {
             setDiretorioPath(diretorioPath);
-            setSubPastaPath(subPastaPath);
+            setDatabase(subPastaPath);
         }
 
         public static GerenciadorMemoria getInstance()
@@ -61,35 +61,36 @@ namespace BancoDeDadosPOD.SGDB
             return diretorioPath;
         }
 
-        public void setSubPastaPath(string subPastaPath)
+        public void setDatabase(string subPastaPath)
         {
-            if (subPastaPath != null && !Directory.Exists(diretorioPath+"\\"+subPastaPath))
+            if (subPastaPath != null && !Directory.Exists(diretorioPath + "\\" + subPastaPath))
             {
                 throw new SGDBException("Datadase " + subPastaPath + " não existe");
             }
-            this.subPastaPath = subPastaPath;
+            this.pastaDatabase = subPastaPath;
+            metadados = recuperarMetadados();
         }
 
-        public string getSubPastaPath()
+        public string getDatabase()
         {
-            return subPastaPath;
+            return pastaDatabase;
         }
 
         // Cria a base de dados já set a coloca como database atual
         public void createDatabase(string name)
         {
-            if (Directory.Exists(diretorioPath+"\\"+name))
+            if (Directory.Exists(diretorioPath + "\\" + name))
             {
                 throw new SGDBException("Database já existe");
             }
             Directory.CreateDirectory(diretorioPath + "\\" + name);
-            subPastaPath = name;
+            pastaDatabase = name;
         }
 
         public bool existeTabela(string nome)
         {
             // se ainda ta na pasta principal;
-            if (subPastaPath == null)
+            if (pastaDatabase == null)
             {
                 throw new SGDBException("Database não selecionado");
             }
@@ -97,7 +98,7 @@ namespace BancoDeDadosPOD.SGDB
             // tentar verificar se existe a tabela
             try
             {
-                return File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".meta");
+                return File.Exists(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".meta");
             }
             catch
             {
@@ -108,7 +109,7 @@ namespace BancoDeDadosPOD.SGDB
         public bool existeIndex(string nome)
         {
             // se ainda ta na pasta principal;
-            if (subPastaPath == null)
+            if (pastaDatabase == null)
             {
                 throw new SGDBException("Database não selecionado");
             }
@@ -116,7 +117,7 @@ namespace BancoDeDadosPOD.SGDB
             // tentar verificar se existe o arquivo de indice
             try
             {
-                return File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".idx");
+                return File.Exists(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".idx");
             }
             catch
             {
@@ -133,7 +134,7 @@ namespace BancoDeDadosPOD.SGDB
         {
             Metadados meta = singleton.recuperarMetadados(nome);
             bool pode = true;
-            for(int i=0; i<meta.getNomesColunas().Count && pode; i++)
+            for (int i = 0; i < meta.getNomesColunas().Count && pode; i++)
             {
                 if (meta.getDados()[meta.getNomesColunas()[i]].isRForeing())
                 {
@@ -160,8 +161,8 @@ namespace BancoDeDadosPOD.SGDB
                 }
 
 
-                File.Delete(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".meta");
-                File.Delete(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".dat");
+                File.Delete(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".meta");
+                File.Delete(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".dat");
             }
             else
             {
@@ -176,7 +177,7 @@ namespace BancoDeDadosPOD.SGDB
             try
             {
                 IFormatter formatter = new BinaryFormatter();
-                Stream stream = new FileStream(diretorioPath + "\\" + subPastaPath + "\\"+ meta.getNome()+".meta", FileMode.Create, FileAccess.Write, FileShare.None);
+                Stream stream = new FileStream(diretorioPath + "\\" + pastaDatabase + "\\" + meta.getNome() + ".meta", FileMode.Create, FileAccess.Write, FileShare.None);
                 formatter.Serialize(stream, meta);
                 stream.Close();
                 criarTabela(meta.getNome());
@@ -191,27 +192,42 @@ namespace BancoDeDadosPOD.SGDB
         // ja cria a tabela pra não ter que criar durante a inserção
         private void criarTabela(string nome)
         {
-            if (!File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".dat"))
+            if (!File.Exists(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".dat"))
             {
-                File.Create(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".dat");
+                File.Create(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".dat");
             }
         }
 
         public Metadados recuperarMetadados(string nome)
         {
+            if (metadados[nome] == null) throw new SGDBException("Tabela não existe");
+            return metadados[nome];
+        }
+
+        public Dictionary<string, Metadados> recuperarMetadados()
+        {
             try
             {
                 IFormatter formatter = new BinaryFormatter();
-                Stream stream = new FileStream(diretorioPath + "\\" + subPastaPath + "\\"+nome +".meta", FileMode.Open, FileAccess.Read, FileShare.Read);
-                Metadados meta = (Metadados)formatter.Deserialize(stream);
-                stream.Close();
-                return meta;
+                string[] arquivos = Directory.GetFiles(diretorioPath + "\\" + pastaDatabase + "\\");
+                Dictionary<string, Metadados> dados = new Dictionary<string, Metadados>();
+                foreach (string arquivo in arquivos)
+                {
+                    if (arquivo.EndsWith(".meta"))
+                    {
+                        Stream stream = new FileStream(arquivo, FileMode.Open, FileAccess.Read, FileShare.Read);
+                        Metadados meta = (Metadados)formatter.Deserialize(stream);
+                        stream.Close();
+                    }
+                }
+                return dados;
             }
             catch
             {
                 throw new SGDBException("Tabela não existe");
             }
         }
+
 
     }
 }
