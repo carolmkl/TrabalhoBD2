@@ -220,29 +220,36 @@ namespace BD2.Analizadores
                     {
                         throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
                     }
+                    select.addTabela(identificadores.Last());
                     identificadores[identificadores.Count()-1] = identificadores.Last() + "." + token.getLexeme().ToLower();
-                    
+                    select.addRetorno(identificadores.Last());
                     break;
                 case 22:
-                    clausulaAs[identificadores.Last()] = token.getLexeme();
+                    clausulaAs[identificadores.Last()] = token.getLexeme(); //Carol: esta linha é necessária?
+                    select.addApelidoUltimo(token.getLexeme());
                     break;
                 case 23:
                     select = Select.singleton();
                     operacao = (int)acao.Select;
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    string tabela = identificadores.Last();
+                    identificadores.RemoveAt(identificadores.Count() - 1);
+                    select.addTabela(tabela);
+                    foreach(String col in memoria.recuperarMetadados(tabela).getNomesColunas())
+                    {
+                        string coluna = tabela + "." + col;
+                        identificadores.Add(coluna); //Carol: estou inserindo no identificadores também porque ainda não sei se isto será usado em outro momento
+                        select.addRetorno(coluna);
+                    }
                     break;
                 case 24:
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 25:
-                    throw new SGDBException("Ação " + action + " não implementada.");
-                    break;
+                    throw new SGDBException("Ação INNER JOIN não suportada.");
                 case 26:
-                    throw new SGDBException("Ação " + action + " não suportada.");
-                    break;
+                    throw new SGDBException("Ação LEFT JOIN não suportada.");
                 case 27:
-                    throw new SGDBException("Ação " + action + " não suportada.");
-                    break;
+                    throw new SGDBException("Ação RIGHT JOIN não suportada.");
                 case 28:
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
@@ -304,7 +311,8 @@ namespace BD2.Analizadores
 
                     //inserir dados no arquivo
                     break;
-
+                case (int)acao.Select:
+                    break;
                 default:
                     throw new SGDBException("Ação Real" + operacao + " não implementada.");
                     break;
