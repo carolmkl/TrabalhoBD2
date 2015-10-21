@@ -106,6 +106,25 @@ namespace BancoDeDadosPOD.SGDB
             }
         }
 
+        public bool existeIndex(string nome)
+        {
+            // se ainda ta na pasta principal;
+            if (subPastaPath == null)
+            {
+                throw new SGDBException("Database não selecionado");
+            }
+
+            // tentar verificar se existe o arquivo de indice
+            try
+            {
+                return File.Exists(diretorioPath + "\\" + subPastaPath + "\\" + nome + ".idx");
+            }
+            catch
+            {
+                throw new SGDBException("Problemas ao executar a consulta");
+            }
+        }
+
         public bool excluirIndex(string nome)
         {
             return false;

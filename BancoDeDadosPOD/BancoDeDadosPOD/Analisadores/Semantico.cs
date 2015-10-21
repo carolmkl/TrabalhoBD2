@@ -11,7 +11,7 @@ namespace BD2.Analizadores
 
     public class Semantico : Constants
     {
-        private enum acao: int { Nada=0, CriarTabela, InserirDados, Select };
+        private enum acao: int { Nada=0, CriarTabela, InserirDados, Select, CriarIndex };
         private List<string> identificadores;
         private List<ValoresCampos> valoresColunas;
         private Dictionary<string,string> clausulaAs;
@@ -60,10 +60,21 @@ namespace BD2.Analizadores
                     metadados.setNome(token.getLexeme().ToLower());
                     break;
                 case 3:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    if (memoria.existeIndex(token.getLexeme().ToLower()))
+                    {
+                        throw new SemanticError("Index " + token.getLexeme().ToLower() + " já existe", token.getPosition());
+                    }
+                    operacao = (int)acao.CriarIndex;
+                    identificadores.Add(token.getLexeme().ToLower());
                     break;
                 case 4:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    if (!memoria.existeTabela(token.getLexeme().ToLower()))
+                    {
+                        throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " não existe", token.getPosition());
+                    }
+                    // Como é so saber o metadados, e ele tem o nome da tabela, não precisa ficar colocando a mesma no array
+                    // de identificadores
+                    metadados = GerenciadorMemoria.getInstance().recuperarMetadados(token.getLexeme().ToLower());
                     break;
                 case 5:
                     identificadores.Add(token.getLexeme().ToLower());
@@ -206,7 +217,33 @@ namespace BD2.Analizadores
                         {
                             identificadores.Add(token.getLexeme());
                         }
-                                                
+                        else
+                        {
+
+                            if (token.getId() == 3)// Integer
+                            {
+                                if (Convert.ToUInt32(token.getLexeme()) <= UInt32.MaxValue)
+                                {
+                                    identificadores.Add(token.getLexeme());
+                                }
+                                else
+                                {
+                                    throw new SemanticError("Dado " + token.getLexeme() + " de tamanho incompativel" , token.getLinha());
+                                }
+                                
+                            } else
+                            {
+                                if ((token.getLexeme().Length - 2) <= metadados.getDados()[metadados.getNomesColunas()[index]].getTamanho())
+                                {
+                                    identificadores.Add(token.getLexeme());
+                                }
+                                else
+                                {
+                                    throw new SemanticError("Dado " + token.getLexeme() + " de tamanho incompativel(" + metadados.getDados()[metadados.getNomesColunas()[index]].getTamanho() + ")", token.getLinha());
+                                }
+                            }
+                        }
+                        
                     }
                     else
                     {
@@ -312,6 +349,19 @@ namespace BD2.Analizadores
                     //inserir dados no arquivo
                     break;
                 case (int)acao.Select:
+                    break;
+                case (int)acao.CriarIndex:
+                    id = identificadores[0];
+                    identificadores.RemoveAt(0);
+                    foreach (string item in identificadores)
+                    {
+                        if (!metadados.getDados().ContainsKey(item))
+                        {
+                            new SemanticError("A coluna " + item + "não existe na tabela " + metadados.getNome());
+                        }
+                    }
+
+                    // Criar o index
                     break;
                 default:
                     throw new SGDBException("Ação Real" + operacao + " não implementada.");
