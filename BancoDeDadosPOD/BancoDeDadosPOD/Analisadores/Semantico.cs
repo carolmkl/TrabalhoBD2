@@ -1,4 +1,5 @@
 using BancoDeDadosPOD.SGDB;
+using BancoDeDadosPOD.SGDB.Select;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace BD2.Analizadores
         private List<ValoresCampos> valoresColunas;
         private Dictionary<string,string> clausulaAs;
         private Metadados metadados;// aqui é por hora, pode ser mudado para uma list por causa dos select, ou não
+        private Select select;
 
         // referente a ação semantica numero 6
         private bool sexta;
@@ -153,7 +155,7 @@ namespace BD2.Analizadores
                     memoria.recuperarMetadados(token.getLexeme().ToLower()).ToString();
                     break;
                 case 16:
-                    memoria.setSubPastaPath(token.getLexeme().ToLower());
+                    memoria.setDatabase(token.getLexeme().ToLower());
                     break;
                 case 17:
                     throw new SGDBException("Ação " + action + " não implementada.");
@@ -162,7 +164,6 @@ namespace BD2.Analizadores
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 19:
-                    // 2 é o insert
                     operacao = (int)acao.InserirDados;
                     metadados = memoria.recuperarMetadados(identificadores[0]);
                     if (identificadores.Count() > 1)
@@ -205,11 +206,7 @@ namespace BD2.Analizadores
                         {
                             identificadores.Add(token.getLexeme());
                         }
-                        else
-                        {
-
-                        }
-                        
+                                                
                     }
                     else
                     {
@@ -217,18 +214,20 @@ namespace BD2.Analizadores
                     }
                     break;
                 case 21:
-                    //esboço
+                    select = Select.singleton();
                     operacao = (int)acao.Select;
                     if (!metadados.getDados().ContainsKey(token.getLexeme()))
                     {
                         throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
                     }
                     identificadores[identificadores.Count()-1] = identificadores.Last() + "." + token.getLexeme().ToLower();
+                    
                     break;
                 case 22:
                     clausulaAs[identificadores.Last()] = token.getLexeme();
                     break;
                 case 23:
+                    select = Select.singleton();
                     operacao = (int)acao.Select;
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
@@ -260,6 +259,7 @@ namespace BD2.Analizadores
             switch (operacao)
             {
                 case (int) acao.Nada:
+                    //throw new SGDBException("Que ação é essa? Favor incluir um comando válido.");
                     break;
                 case (int)acao.CriarTabela:
                     memoria.salvarMetadados(metadados);
@@ -300,10 +300,9 @@ namespace BD2.Analizadores
                     }
                     Console.WriteLine("TO STRING DA TABELA");
                     Console.WriteLine(t.ToString());
-                    // fazer validação do tamanho do campo e tipo de dados
 
 
-                    //memoria.salvarMetadados(metadados);
+                    //inserir dados no arquivo
                     break;
 
                 default:
