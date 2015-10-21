@@ -27,6 +27,11 @@ namespace BD2.Analizadores
         /// </summary>
         private List<string> fromTabelas;
 
+        /// <summary>
+        /// indica se já acabou os joins
+        /// </summary>
+        private bool acabouJoin = false;
+
         // referente a ação semantica numero 6
         private bool sexta;
 
