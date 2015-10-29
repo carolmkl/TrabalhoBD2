@@ -276,7 +276,7 @@ namespace BD2.Analizadores
                     select = Select.singleton();
                     operacao = acao.Select;
                     // verifica a existencia do campo
-                    if (!memoria.recuperarMetadados(identificadores.Last()).getNomesColunas().Exists(s => s.Equals(token.getLexeme()))  
+                    if (!memoria.recuperarMetadados(identificadores.Last()).getNomesColunas().Exists(s => s.Equals(token.getLexeme())))  
                     {
                         throw new SemanticError("Campo " + identificadores.Last()+ "." + token.getLexeme() + " não existe", token.getLinha());
                     }
@@ -324,6 +324,9 @@ namespace BD2.Analizadores
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 29:
+                    throw new SGDBException("Ação " + action + " não implementada.");
+                    break;
+                case 30:
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
             }
