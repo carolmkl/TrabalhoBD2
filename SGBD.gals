@@ -7,7 +7,7 @@ ParserName = Sintatico
 SemanticName = Semantico
 ScannerCaseSensitive = false
 ScannerTable = Full
-Input = String
+Input = Stream
 Parser = LL
 #RegularDefinitions
 letra: [a-z A-Z]
@@ -159,7 +159,7 @@ null = id:"null"
 
 <RLISTAVALORES>     ::= "," <LISTAVALORES> | î;
 
-<SELECIONAR>        ::= SELECT <CAMPOS> FROM <TABELAS> <CLAUSULA_JOIN> <CLAUSULA_WHERE> <CLAUSUALA_ORDER>;
+<SELECIONAR>        ::= SELECT <CAMPOS> FROM#31 <TABELAS> <CLAUSULA_JOIN>#32 <CLAUSULA_WHERE>#33 <CLAUSUALA_ORDER>;
 
 <CAMPOS>            ::= id#5 "." <CAMPOS2>;
 
