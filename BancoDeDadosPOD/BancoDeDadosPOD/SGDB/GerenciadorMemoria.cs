@@ -17,7 +17,7 @@ namespace BancoDeDadosPOD.SGDB
         // caminho pra uma das subpastas do banco, os database
         private string pastaDatabase;
         // Metadados da Database selecionada
-        private Dictionary<string, Metadados> metadados;
+        private Dictionary<string, Metadados> metadados; //nome tabela, metadados da tabela
 
         private static GerenciadorMemoria singleton;
         // Construtores
@@ -217,6 +217,9 @@ namespace BancoDeDadosPOD.SGDB
                     {
                         Stream stream = new FileStream(arquivo, FileMode.Open, FileAccess.Read, FileShare.Read);
                         Metadados meta = (Metadados)formatter.Deserialize(stream);
+                        string tabela = new FileInfo(arquivo).Name;
+                        tabela = tabela.Remove(tabela.IndexOf('.'));
+                        dados.Add(tabela, meta);
                         stream.Close();
                     }
                 }
