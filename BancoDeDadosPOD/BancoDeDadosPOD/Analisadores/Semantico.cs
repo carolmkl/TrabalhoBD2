@@ -489,6 +489,7 @@ namespace BD2.Analizadores
                     // memoria.salvar(metadados)
                     break;
                 case acao.Select:
+
                     break;
                 case acao.CriarIndex:
                     id = identificadores[0];

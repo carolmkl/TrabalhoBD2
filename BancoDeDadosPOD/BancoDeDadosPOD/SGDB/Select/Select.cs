@@ -139,5 +139,53 @@ namespace BancoDeDadosPOD.SGDB.Select
             }
         }
 
+        public override string ToString()
+        {
+            StringBuilder estrutura = new StringBuilder();
+            estrutura.AppendLine("ESTRUTURA SELECT:");
+
+            estrutura.Append("CAMPOS: ");
+            foreach(string key in retorno.Keys)
+            {
+                estrutura.Append(key + " AS " + retorno[key] + ", ");
+            }
+            estrutura.Remove(estrutura.Length - 2, 2);
+            estrutura.AppendLine();
+
+
+            estrutura.Append("FROM: ");
+            foreach (string t in tabelas)
+            {
+                estrutura.Append(t + ", ");
+            }
+            estrutura.Remove(estrutura.Length - 2, 2);
+            estrutura.AppendLine();
+
+
+            estrutura.Append("JOIN: ");
+            estrutura.AppendLine("Falta incluir");
+            estrutura.AppendLine();
+
+
+            estrutura.Append("WHERE: ");
+            estrutura.AppendLine("Falta incluir");
+            estrutura.AppendLine();
+
+
+            estrutura.Append("ORDER BY: ");
+            bool asc = true; 
+            foreach (string o in ordem.Keys)
+            {
+                estrutura.Append(o + ", ");
+                asc = ordem[o];
+            }
+            estrutura.Remove(estrutura.Length - 2, 2);
+            if (!asc) estrutura.AppendLine(" DESC");
+            estrutura.AppendLine();
+
+
+            return estrutura.ToString();
+        }
+
     }
 }
