@@ -166,7 +166,7 @@ namespace BancoDeDadosPOD.SGDB
             }
             else
             {
-                throw new SGDBException("TabelaSelect contém campos usados pra foreing keys");
+                throw new SGDBException("Tabela contém campos usados pra foreing keys");
             }
 
         }
@@ -200,7 +200,7 @@ namespace BancoDeDadosPOD.SGDB
 
         public Metadados recuperarMetadados(string nome)
         {
-            if (!metadados.ContainsKey(nome)) throw new SGDBException("TabelaSelect não existe");
+            if (!metadados.ContainsKey(nome)) throw new SGDBException("Tabela não existe");
             return metadados[nome];
         }
 
@@ -227,7 +227,7 @@ namespace BancoDeDadosPOD.SGDB
             }
             catch
             {
-                throw new SGDBException("TabelaSelect não existe");
+                throw new SGDBException("Tabela não existe");
             }
         }
 

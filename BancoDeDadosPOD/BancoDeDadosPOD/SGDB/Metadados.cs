@@ -99,7 +99,7 @@ namespace BancoDeDadosPOD.SGDB
 
         public bool isForeing()
         {
-            return String.IsNullOrEmpty(foreing[0]);
+            return !String.IsNullOrEmpty(foreing[0]);
         }
 
         public bool isRForeing()
