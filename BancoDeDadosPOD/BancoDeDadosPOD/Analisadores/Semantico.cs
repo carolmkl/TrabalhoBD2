@@ -422,6 +422,13 @@ namespace BD2.Analizadores
                     else select.Where.addFiltroAND(ultimoFiltro);
                     ultimoFiltro = null;
                     break;
+
+                case 31:
+                    break;
+                case 32:
+                    break;
+                case 33:
+                    break;
                 default:
                     throw new SGDBException("Ação " + action + " não implementada.");
             }
