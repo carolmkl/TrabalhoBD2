@@ -200,7 +200,7 @@ namespace BancoDeDadosPOD.SGDB
 
         public Metadados recuperarMetadados(string nome)
         {
-            if (metadados[nome] == null) throw new SGDBException("TabelaSelect não existe");
+            if (!metadados.ContainsKey(nome)) throw new SGDBException("TabelaSelect não existe");
             return metadados[nome];
         }
 
