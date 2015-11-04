@@ -12,8 +12,8 @@ namespace BancoDeDadosPOD.SGDB.Select
         static Select select;
 
         List<string> tabelas;
-        Dictionary<string,string> retorno; //campo,apelido
-        Where filtro;
+        Dictionary<string, string> retorno; //campo,apelido
+        Where where;
         Dictionary<string, bool> ordem;
 
         private Select()
@@ -25,7 +25,7 @@ namespace BancoDeDadosPOD.SGDB.Select
 
         public static Select singleton()
         {
-            if(select == null)
+            if (select == null)
             {
                 select = new Select();
             }
@@ -39,8 +39,28 @@ namespace BancoDeDadosPOD.SGDB.Select
         {
             tabelas = new List<string>();
             retorno = new Dictionary<string, string>();
-            Filtro = null;
+            Where = null;
             ordem = new Dictionary<string, bool>();
+        }
+
+        /// <summary>
+        /// adiciona um campo para ordenação crescente. valida a existencia deste.
+        /// </summary>
+        /// <param name="campo"></param>
+        public void addOrderBy(string campo)
+        {
+            if (!retorno.Keys.Contains(campo)) throw new SemanticError("Campo " + campo + ", do ORDER BY, não consta como retorno.");
+            ordem.Add(campo, true);
+        }
+
+        /// <summary>
+        /// define a ordenação de todos os campos para decrescente
+        /// </summary>
+        public void orderDesc()
+        {
+            foreach(string k in ordem.Keys){
+                ordem[k] = false;
+            }
         }
 
         /// <summary>
@@ -81,7 +101,19 @@ namespace BancoDeDadosPOD.SGDB.Select
         public void addRetorno(string retorno)
         {
             if (retorno.Equals("*")) throw new SGDBException("método Select.addRetorno não trata o *");
-            this.retorno.Add(retorno,retorno);
+            this.retorno.Add(retorno, retorno);
+        }
+
+        /// <summary>
+        /// Caso o campo incluído como retorno seja uma condicao, é possível removê-lo da lista para adicionar ao Filtro
+        /// </summary>
+        /// <returns> retorna o valor que foi removido</returns>
+        public string removeUltimoRetorno()
+        {
+            string key = retorno.ElementAt(retorno.Count - 1).Key;
+            string removed = retorno[key];
+            retorno.Remove(key);
+            return removed;
         }
 
         /// <summary>
@@ -94,16 +126,16 @@ namespace BancoDeDadosPOD.SGDB.Select
             retorno[key] = apelido;
         }
 
-        public Where Filtro
+        public Where Where
         {
             get
             {
-                return filtro;
+                return where;
             }
 
             set
             {
-                filtro = value;
+                where = value;
             }
         }
 

@@ -7,16 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BD2.Analizadores
-{ 
+{
 
     public class Semantico : Constants
     {
-        private enum acao: int { Nada=0, CriarTabela, InserirDados, Select, CriarIndex };
+        private enum acao : int { Nada = 0, CriarTabela, InserirDados, Select, CriarIndex };
         private List<string> identificadores;
         private List<ValoresCampos> valoresColunas;
-        private Dictionary<string,string> clausulaAs; //Carol: Sendo a cláusula AS usada apenas no select, é necessário este Dictionary?
+        //private Dictionary<string, string> clausulaAs; //Carol: Sendo a cláusula AS usada apenas no select, é necessário este Dictionary?
         private Metadados metadados;// aqui é por hora, pode ser mudado para uma list por causa dos select, ou não
-       
+
         /// <summary>
         /// Objeto utilizado para armazenar os dados do SELECT
         /// </summary>
@@ -32,6 +32,11 @@ namespace BD2.Analizadores
         /// </summary>
         private bool acabouJoin = false;
 
+        /// <summary>
+        /// armazena o último filtro que está sendo analisado pelas ações semanticas
+        /// </summary>
+        private Filtro ultimoFiltro;
+
         // referente a ação semantica numero 6
         private bool sexta;
 
@@ -42,12 +47,12 @@ namespace BD2.Analizadores
 
         // acho bom saber o que vai ser executado na ação 0 por isso dessa variavel, precisamos definir códigos pra ela
         private acao operacao;
-        private  GerenciadorMemoria memoria;
+        private GerenciadorMemoria memoria;
 
         public Semantico()
         {
             identificadores = new List<string>();
-            clausulaAs = new Dictionary<string, string>();
+            //clausulaAs = new Dictionary<string, string>();
             valoresColunas = new List<ValoresCampos>();
             fromTabelas = new List<string>();
 
@@ -55,7 +60,7 @@ namespace BD2.Analizadores
             memoria = GerenciadorMemoria.getInstance();
         }
 
-        public void executeAction(int action, Token token) 
+        public void executeAction(int action, Token token)
         {
             int index;
             switch (action)
@@ -70,9 +75,9 @@ namespace BD2.Analizadores
                 case 2:
                     if (memoria.existeTabela(token.getLexeme().ToLower()))
                     {
-                        throw new SemanticError("TabelaSelect " + token.getLexeme().ToLower() + " já existe",  token.getPosition());
+                        throw new SemanticError("TabelaSelect " + token.getLexeme().ToLower() + " já existe", token.getPosition());
                     }
-                    operacao =  acao.CriarTabela;
+                    operacao = acao.CriarTabela;
                     metadados.setNome(token.getLexeme().ToLower());
                     break;
                 case 3:
@@ -167,7 +172,7 @@ namespace BD2.Analizadores
                 case 12:
                     if (Convert.ToInt32(token.getLexeme()) > 255 || Convert.ToInt32(token.getLexeme()) < 1)
                     {
-                        throw new SemanticError("Tamanho do campo " + identificadores.Last() +" inválido", token.getLinha());
+                        throw new SemanticError("Tamanho do campo " + identificadores.Last() + " inválido", token.getLinha());
                     }
                     valoresColunas.Add(new ValoresCampos("CHAR", Convert.ToInt32(token.getLexeme())));
                     break;
@@ -187,15 +192,46 @@ namespace BD2.Analizadores
                     memoria.setDatabase(token.getLexeme().ToLower());
                     break;
                 case 17:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    if (ultimoFiltro != null)
+                        throw new SGDBException("Falha na operação semântica 17. O Filtro deveria estar nulo.");
+                    ultimoFiltro = new Filtro();
+                    if (token.getId() == 16) ultimoFiltro.IsAND = true;
+                    else if (token.getId() == 17) ultimoFiltro.IsOR = true;
                     break;
                 case 18:
                     // Operador Relacional da cláusula Where do SELECT
-                    if(select.Filtro == null)
+                    select.Where = select.Where == null ? new Where() : select.Where;
+                    ultimoFiltro = ultimoFiltro == null ? new Filtro() : ultimoFiltro;
+                    //Joga o campo para o LValue, caso tenha sido incluído como retorno do select. Acontece no primeiro filtro.
+                    ultimoFiltro.LValue = ultimoFiltro.LValue == null? select.removeUltimoRetorno(): ultimoFiltro.LValue;
+                    switch (token.getId())
                     {
-
+                        case 37:
+                            ultimoFiltro.Op = OperadorRel.Igual;
+                            break;
+                        case 38:
+                            ultimoFiltro.Op = OperadorRel.MaiorQue;
+                            acabouJoin = true;
+                            break;
+                        case 39:
+                            ultimoFiltro.Op = OperadorRel.MenorQue;
+                            acabouJoin = true;
+                            break;
+                        case 40:
+                            ultimoFiltro.Op = OperadorRel.MaiorIgualA;
+                            acabouJoin = true;
+                            break;
+                        case 41:
+                            ultimoFiltro.Op = OperadorRel.MenorIgualA;
+                            acabouJoin = true;
+                            break;
+                        case 42:
+                            ultimoFiltro.Op = OperadorRel.Diferente;
+                            acabouJoin = true;
+                            break;
+                        default:
+                            break;
                     }
-                    throw new SGDBException("Ação " + action + " não implementada.");
                     break;
                 case 19:
                     operacao = acao.InserirDados;
@@ -230,7 +266,7 @@ namespace BD2.Analizadores
                         {
                             throw new SemanticError("Mais valores do que campos", token.getLinha());
                         }
-                        
+
                     }
                     if (ListaDeSimbolos.getInstance().classeToken(token.getId()).Contains(metadados.getDados()[metadados.getNomesColunas()[index]].geTipo()) || ListaDeSimbolos.getInstance().classeToken(token.getId()).Equals("null"))
                     {
@@ -251,10 +287,11 @@ namespace BD2.Analizadores
                                 }
                                 else
                                 {
-                                    throw new SemanticError("Dado " + token.getLexeme() + " de tamanho incompativel" , token.getLinha());
+                                    throw new SemanticError("Dado " + token.getLexeme() + " de tamanho incompativel", token.getLinha());
                                 }
-                                
-                            } else
+
+                            }
+                            else
                             {
                                 if ((token.getLexeme().Length - 2) <= metadados.getDados()[metadados.getNomesColunas()[index]].getTamanho())
                                 {
@@ -266,7 +303,7 @@ namespace BD2.Analizadores
                                 }
                             }
                         }
-                        
+
                     }
                     else
                     {
@@ -279,19 +316,65 @@ namespace BD2.Analizadores
                     select = Select.singleton();
                     operacao = acao.Select;
                     // verifica a existencia do campo
-                    if (!memoria.recuperarMetadados(identificadores.Last()).getNomesColunas().Exists(s => s.Equals(token.getLexeme())))  
+                    if (!memoria.recuperarMetadados(identificadores.Last()).getNomesColunas().Exists(s => s.Equals(token.getLexeme())))
                     {
-                        throw new SemanticError("Campo " + identificadores.Last()+ "." + token.getLexeme() + " não existe", token.getLinha());
+                        throw new SemanticError("Campo " + identificadores.Last() + "." + token.getLexeme() + " não existe", token.getLinha());
                     }
-                    // Adiciona o campo de retorno do SELECT
-                    select.addTabela(identificadores.Last());
-                    identificadores[identificadores.Count()-1] = identificadores.Last() + "." + token.getLexeme().ToLower();
-                    select.addRetorno(identificadores.Last());
-                    //Carol: Tem necessidade de incluir o token no identificadores, sendo que existe o objeto Select?
+                    if (select.Where == null)
+                    {
+                        // Neste caso está no inicio do select (talvez no where, mas é resolvido depois)
+                        // Adiciona o campo de retorno do SELECT
+                        select.addTabela(identificadores.Last());
+                        string ret = identificadores.Last() + "." + token.getLexeme().ToLower();
+                        //identificadores[identificadores.Count() - 1] = ret;
+                        identificadores.Remove(identificadores.Last());
+                        select.addRetorno(ret);
+                        //Carol: Tem necessidade de incluir o token no identificadores, sendo que existe o objeto Select?
+                    }
+                    else if (ultimoFiltro == null)
+                    {
+                        //Neste caso deve estar no order by
+
+                        string campo = identificadores.Last() + "." + token.getLexeme().ToLower();
+                        select.addOrderBy(campo);
+                        identificadores.Remove(identificadores.Last());
+                    }
+                    else
+                    {
+                        //Neste caso deve estar na cláusula where
+                        if (ultimoFiltro.LValue == null)
+                        {
+                            //se ainda não foi atribuído LValue, então deve estar no lado esquerdo da operação.
+                            ultimoFiltro.LValue = identificadores.Last() + "." + token.getLexeme().ToLower();
+                            identificadores.Remove(identificadores.Last());
+                        }
+                        else
+                        {
+
+                            if (acabouJoin)
+                            {
+                                throw new SemanticError("Os primeiros filtros devem ser de JOIN. Cláusula JOIN já finalizada.", token.getLinha());
+                            }
+                            if (ultimoFiltro.IsOR)
+                            {
+                                throw new SemanticError("JOIN deve utilizar AND", token.getLinha());
+                            }
+                            ultimoFiltro.RValue = identificadores.Last() + "." + token.getLexeme();
+                            identificadores.Remove(identificadores.Last());
+                            ultimoFiltro.IsAND = true;
+                            select.Where.addJoin(ultimoFiltro);
+                            ultimoFiltro = null;
+                        }
+                    }
                     break;
                 case 22:
                     //token do apelido da cláusula AS. O SELECT adiciona o apelido no último campo adicionado.
-                    clausulaAs[identificadores.Last()] = token.getLexeme(); //Carol: esta linha é necessária?
+                    //clausulaAs[identificadores.Last()] = token.getLexeme(); //Carol: esta linha é necessária?
+                    if(select.Where != null)
+                    {
+                        //se já passou pelo where, provavelmente está no ORDER BY
+                        throw new SemanticError("Não existe AS pra ORDER BY!", token.getLinha());
+                    }
                     select.addApelidoUltimo(token.getLexeme());
                     break;
                 case 23:
@@ -305,7 +388,7 @@ namespace BD2.Analizadores
                     //inclui a tabela no objeto SELECT
                     select.addTabela(tabela);
                     //busca as colunas da tabela para incluir no retorno
-                    foreach(String col in memoria.recuperarMetadados(tabela).getNomesColunas())
+                    foreach (String col in memoria.recuperarMetadados(tabela).getNomesColunas())
                     {
                         string coluna = tabela + "." + col;
                         identificadores.Add(coluna); //Carol: estou inserindo no identificadores também porque ainda não sei se isto será usado em outro momento
@@ -318,20 +401,29 @@ namespace BD2.Analizadores
                     fromTabelas.Add(token.getLexeme());
                     break;
                 case 25:
-                    throw new SemanticError("Ação INNER JOIN não suportada.");
+                    throw new SemanticError("Ação INNER JOIN não suportada neste formato. Insira um filtro no Where.");
                 case 26:
                     throw new SemanticError("Ação LEFT JOIN não suportada.");
                 case 27:
                     throw new SemanticError("Ação RIGHT JOIN não suportada.");
                 case 28:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    //final do ORDER BY. Verificar se os campos constam no retorno.
+                    //Não necessário, pois é verificado ao inserir cada campo, na ação 21.
                     break;
                 case 29:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    //Define a ordenação dos campos como descrecente
+                    select.orderDesc();
                     break;
                 case 30:
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    acabouJoin = true;
+                    ultimoFiltro.RValue = token.getLexeme();
+                    //ultimoFiltro.IsOR? select.Where:break;
+                    if (ultimoFiltro.IsOR) select.Where.addFiltroOR(ultimoFiltro);
+                    else select.Where.addFiltroAND(ultimoFiltro);
+                    ultimoFiltro = null;
                     break;
+                default:
+                    throw new SGDBException("Ação " + action + " não implementada.");
             }
             Console.WriteLine("Ação #" + action + ", Token: " + token);
         }
@@ -370,7 +462,7 @@ namespace BD2.Analizadores
                             {
                                 if (metadados.getNomesColunas()[i].Equals(identificadores[j]))
                                 {
-                                    dados[i] = identificadores[j+contColunas];
+                                    dados[i] = identificadores[j + contColunas];
                                     nacho = false;
                                 }
                             }
@@ -411,7 +503,6 @@ namespace BD2.Analizadores
                     break;
                 default:
                     throw new SGDBException("Ação Real" + operacao + " não implementada.");
-                    break;
             }
             Console.WriteLine(metadados.StringIndices());
         }
@@ -419,7 +510,7 @@ namespace BD2.Analizadores
         private void acaoZero()
         {
             identificadores.Clear();
-            clausulaAs.Clear();
+            //clausulaAs.Clear();
             fromTabelas.Clear();
             valoresColunas.Clear();
             metadados = new Metadados();
