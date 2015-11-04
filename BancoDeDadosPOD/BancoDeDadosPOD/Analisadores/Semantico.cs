@@ -342,6 +342,7 @@ namespace BD2.Analizadores
                     //throw new SGDBException("Que ação é essa? Favor incluir um comando válido.");
                     break;
                 case acao.CriarTabela:
+                    // metadados.criarIndiciePrimary()
                     memoria.salvarMetadados(metadados);
                     break;
 
@@ -382,6 +383,8 @@ namespace BD2.Analizadores
 
 
                     //inserir dados no arquivo
+                    //metadados.addIncice(t, posi);
+                    // memoria.salvar(metadados)
                     break;
                 case acao.Select:
                     break;
@@ -395,8 +398,13 @@ namespace BD2.Analizadores
                             new SemanticError("A coluna " + item + "não existe na tabela " + metadados.getNome());
                         }
                     }
-
+                    if (metadados.getIndexes().ContainsKey(id))
+                    {
+                        new SemanticError("O indice " + id + "já existe na tabela " + metadados.getNome());
+                    }
                     // Criar o index
+                    //metadados.criarIndex()
+                    //memoria.salvar(metadados)
                     break;
                 default:
                     throw new SGDBException("Ação Real" + operacao + " não implementada.");

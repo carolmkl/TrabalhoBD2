@@ -121,6 +121,7 @@ namespace BancoDeDadosPOD.SGDB
     [Serializable]
     public class Index
     {
+        // nomes das colunas das tabelas
         private string[] nomesCampos;
         private Dictionary<string[], List<int>> indices;
 
@@ -156,15 +157,11 @@ namespace BancoDeDadosPOD.SGDB
 
         public void addIndice(string[] chave, int posi)
         {
-            if (indices.ContainsKey(chave))
-            {
-                indices[chave].Add(posi);
-            }
-            else
+            if (!indices.ContainsKey(chave))
             {
                 indices[chave] = new List<int>();
-                indices[chave].Add(posi);
             }
+            indices[chave].Add(posi);
         }
 
     }
@@ -235,6 +232,11 @@ namespace BancoDeDadosPOD.SGDB
             return nomesColunas;
         }
 
+        public Dictionary<string, Index> getIndexes()
+        {
+            return tabelaIndices;
+        }
+
         public void addIndice(Tabela tabela, int lastPosi)
         {
             Index indice;
@@ -249,6 +251,46 @@ namespace BancoDeDadosPOD.SGDB
                 }
                 indice.addIndice(dado.ToArray(), lastPosi);        
             }
+        }
+
+        public void criarIndiciePrimary()
+        {
+            List<string> campos = new List<string>();
+            foreach (string item in nomesColunas)
+            {
+                if (dados[item].isPrimary())
+                {
+                    campos.Add(item);
+                }
+            }
+
+            if(campos.Count != 0)
+            {
+                Index index = new Index(campos.ToArray());
+                tabelaIndices["primary" + nome] = index;
+            }
+
+        }
+
+        public void criarIndice(string nome, string[] campos)
+        {
+            Index index = new Index(campos);
+            List<string> dado;
+            Tabela tabela = new Tabela();
+            int[] posis = null;
+            int j = 0;
+            // recuperar tudo com posicao
+            dado = new List<string>();
+            foreach (string[] item in tabela.Registros)
+            {
+                for (int i = 0; i < campos.Count(); i++)
+                {
+                    dado.Add(item[nomesColunas.IndexOf(campos[i])]);
+                }
+                index.addIndice(dado.ToArray(), posis[j]);
+                j++;
+            }
+            tabelaIndices[nome] = index;
         }
 
         public override string ToString()
