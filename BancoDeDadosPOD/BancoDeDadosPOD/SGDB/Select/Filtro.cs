@@ -11,6 +11,8 @@ namespace BancoDeDadosPOD.SGDB.Select
         private string lValue;
         private OperadorRel op;
         private string rValue;
+        private bool isAND;
+        private bool isOR;
 
         /// <summary>
         /// Valor utilizado do lado esquerdo da operação
@@ -57,6 +59,38 @@ namespace BancoDeDadosPOD.SGDB.Select
             set
             {
                 op = value;
+            }
+        }
+
+        /// <summary>
+        /// necessário na hora de armazenar o filtro, mas nao na hora de ler
+        /// </summary>
+        public bool IsAND
+        {
+            get
+            {
+                return isAND;
+            }
+
+            set
+            {
+                isAND = value;
+            }
+        }
+
+        /// <summary>
+        /// necessário na hora de armazenar o filtro, mas nao na hora de ler
+        /// </summary>
+        public bool IsOR
+        {
+            get
+            {
+                return isOR;
+            }
+
+            set
+            {
+                isOR = value;
             }
         }
     }

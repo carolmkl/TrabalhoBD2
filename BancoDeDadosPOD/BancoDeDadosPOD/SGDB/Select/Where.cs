@@ -20,17 +20,26 @@ namespace BancoDeDadosPOD.SGDB.Select
 
         public void addJoin(Filtro join)
         {
-
+            listaJoin.Add(join);
         }
 
-        public void addFiltroOR()
+        public void addFiltroOR(Filtro filtro)
         {
-
+            //cria um novo bloco de consulta para agrupar o OU
+            listaFiltro.Add(new List<Filtro>());
+            //insere o filtro no último bloco criado
+            listaFiltro[listaFiltro.Count - 1].Add(filtro);
         }
 
-        public void addFiltroAND()
+        public void addFiltroAND(Filtro filtro)
         {
-
+            if(listaFiltro.Count == 0)
+            {
+                //caso nao exista nenhum bloco de consulta, cria
+                listaFiltro.Add(new List<Filtro>());
+            }
+            //insere o filtro no último bloco criado
+            listaFiltro[listaFiltro.Count - 1].Add(filtro);
         }
 
         internal List<List<Filtro>> ListaFiltro
