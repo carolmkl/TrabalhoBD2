@@ -332,6 +332,15 @@ namespace BD2.Analizadores
                 case 30:
                     throw new SGDBException("Ação " + action + " não implementada.");
                     break;
+                case 31:
+                    throw new SGDBException("Ação " + action + " não implementada.");
+                    break;
+                case 32:
+                    throw new SGDBException("Ação " + action + " não implementada.");
+                    break;
+                case 33:
+                    throw new SGDBException("Ação " + action + " não implementada.");
+                    break;
             }
             Console.WriteLine("Ação #" + action + ", Token: " + token);
         }
