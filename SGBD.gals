@@ -130,7 +130,7 @@ null = id:"null"
 
 <CRIAR>              ::= CREATE <CRIAR2> ;
 
-<CRIAR2>             ::= DATABASE id#1 | TABLE id#2 "(" <ATRIBUTOS> <PRIMERY><TEMFOREIGN>")" | INDEX id#3  ON id#4 "(" <LISTAIDS> ")";
+<CRIAR2>             ::= DATABASE id#1 | TABLE id#2 "(" <ATRIBUTOS>#6 <PRIMERY><TEMFOREIGN>")" | INDEX id#3  ON id#4 "(" <LISTAIDS> ")";
 // esvaziar a lista de ids
 <PRIMERY>	    ::= PRIMARY KEY "("<LISTAIDS>")" #6| î;
 <TEMFOREIGN>	    ::= î | <FOREIGN>;

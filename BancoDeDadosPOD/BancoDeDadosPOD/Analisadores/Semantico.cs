@@ -98,6 +98,8 @@ namespace BD2.Analizadores
                 case 6:
                     if (sexta)
                     {
+                        Console.WriteLine(identificadores.Count);
+                        Console.WriteLine(valoresColunas.Count);
                         for (int i = 0; i < identificadores.Count(); i++)
                         {
                             metadados.addDados(new DadosTabela(identificadores[i], valoresColunas[i].getTipo(), valoresColunas[i].getTamanho()));
