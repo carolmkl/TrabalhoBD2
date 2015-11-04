@@ -65,7 +65,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         {
             foreach (string s in tabelas)
             {
-                if (!tblVerifica.Exists(c => c.Equals(s))) throw new SemanticError("Tabela " + s + " não declarada na cláusula FROM");
+                if (!tblVerifica.Exists(c => c.Equals(s))) throw new SemanticError("TabelaSelect " + s + " não declarada na cláusula FROM");
             }
             foreach (string s in tblVerifica)
             {

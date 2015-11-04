@@ -69,7 +69,7 @@ namespace BD2.Analizadores
                 case 2:
                     if (memoria.existeTabela(token.getLexeme().ToLower()))
                     {
-                        throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " já existe",  token.getPosition());
+                        throw new SemanticError("TabelaSelect " + token.getLexeme().ToLower() + " já existe",  token.getPosition());
                     }
                     operacao =  acao.CriarTabela;
                     metadados.setNome(token.getLexeme().ToLower());
@@ -85,7 +85,7 @@ namespace BD2.Analizadores
                 case 4:
                     if (!memoria.existeTabela(token.getLexeme().ToLower()))
                     {
-                        throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " não existe", token.getPosition());
+                        throw new SemanticError("TabelaSelect " + token.getLexeme().ToLower() + " não existe", token.getPosition());
                     }
                     // Como é so saber o metadados, e ele tem o nome da tabela, não precisa ficar colocando a mesma no array
                     // de identificadores
@@ -129,7 +129,7 @@ namespace BD2.Analizadores
                 case 8:
                     if (!memoria.existeTabela(token.getLexeme().ToLower()))
                     {
-                        throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " não existe", token.getPosition());
+                        throw new SemanticError("TabelaSelect " + token.getLexeme().ToLower() + " não existe", token.getPosition());
                     }
                     identificadores.Add(token.getLexeme().ToLower());
                     break;
@@ -347,7 +347,7 @@ namespace BD2.Analizadores
                     break;
 
                 case acao.InserirDados:
-                    Tabela t = new Tabela();
+                    TabelaSelect t = new TabelaSelect();
                     id = identificadores[0];
                     identificadores.RemoveAt(0);
 

@@ -237,7 +237,7 @@ namespace BancoDeDadosPOD.SGDB
             return tabelaIndices;
         }
 
-        public void addIndice(Tabela tabela, int lastPosi)
+        public void addIndice(TabelaSelect tabela, int lastPosi)
         {
             Index indice;
             List<string> dado;
@@ -276,7 +276,7 @@ namespace BancoDeDadosPOD.SGDB
         {
             Index index = new Index(campos);
             List<string> dado;
-            Tabela tabela = new Tabela();
+            TabelaSelect tabela = new TabelaSelect();
             int[] posis = null;
             int j = 0;
             // recuperar tudo com posicao
@@ -303,6 +303,33 @@ namespace BancoDeDadosPOD.SGDB
                 descricao += d.getNomeCampo() +"|"+ d.geTipo() +"|"+ d.getTamanho() +"|"+ d.isPrimary() +"|"+ (d.isForeing()? d.getForeing()[0]+"(" +d.getForeing()[1]+")":"-") +"|"+ "\n";
             }
             return descricao;
+        }
+
+        public string StringIndices()
+        {
+            string desc = "";
+            foreach (KeyValuePair<string, Index> item in tabelaIndices)
+            {
+                desc += item.Key + "\n\t";
+                foreach (string i in item.Value.getNomesCampos())
+                {
+                    desc += i + "\t";
+                }
+                desc += "\n\t";
+                foreach (KeyValuePair<string[], List<int>> j in item.Value.getIndices())
+                {
+                    foreach (string i in j.Key)
+                    {
+                        desc += i + "\t";
+                    }
+                    desc += "\n";
+                    foreach (int i in j.Value)
+                    {
+                        desc += i + "\t";
+                    }
+                }
+            }
+            return desc;
         }
     }
 }
