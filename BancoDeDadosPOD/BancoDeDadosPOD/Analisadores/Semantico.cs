@@ -49,9 +49,10 @@ namespace BD2.Analizadores
             identificadores = new List<string>();
             clausulaAs = new Dictionary<string, string>();
             valoresColunas = new List<ValoresCampos>();
+            fromTabelas = new List<string>();
+
             acaoZero();
             memoria = GerenciadorMemoria.getInstance();
-            fromTabelas = new List<string>();
         }
 
         public void executeAction(int action, Token token) 
@@ -342,7 +343,7 @@ namespace BD2.Analizadores
                     //throw new SGDBException("Que ação é essa? Favor incluir um comando válido.");
                     break;
                 case acao.CriarTabela:
-                    // metadados.criarIndiciePrimary()
+                    metadados.criarIndiciePrimary();
                     memoria.salvarMetadados(metadados);
                     break;
 
@@ -410,7 +411,7 @@ namespace BD2.Analizadores
                     throw new SGDBException("Ação Real" + operacao + " não implementada.");
                     break;
             }
-            
+            Console.WriteLine(metadados.StringIndices());
         }
 
         private void acaoZero()

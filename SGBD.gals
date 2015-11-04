@@ -73,9 +73,9 @@ null = id:"null"
 
 // Ignorados
 
-:![\s\n\t]
+:![\s\n\t\r]
 // comentario de linha
-:! "-""-"[^\n]*
+:! "-""-"[^\n\r]*
 :! "/*"[^/\*]*"*/"
 #NonTerminals
 <COMANDO>
