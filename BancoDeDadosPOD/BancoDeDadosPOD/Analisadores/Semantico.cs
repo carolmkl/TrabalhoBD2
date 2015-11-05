@@ -182,7 +182,14 @@ namespace BD2.Analizadores
                     break;
                 case 14:
                     //Exclusão de index
-                    throw new SGDBException("Ação " + action + " não implementada.");
+                    if (metadados.getIndexes().ContainsKey(token.getLexeme().ToLower()))
+                    {
+                        // fazer pesquisa;
+                    }
+                    else
+                    {
+                        throw new SemanticError("Index " + token.getLexeme().ToLower() + "não existe", token.getLinha());
+                    }
                     break;
                 case 15:
                     // Fazer o resto em relação a isso
@@ -506,6 +513,7 @@ namespace BD2.Analizadores
                         new SemanticError("O indice " + id + "já existe na tabela " + metadados.getNome());
                     }
                     // Criar o index
+                    // Garantir nome unico de index
                     //metadados.criarIndex()
                     //memoria.salvar(metadados)
                     break;
