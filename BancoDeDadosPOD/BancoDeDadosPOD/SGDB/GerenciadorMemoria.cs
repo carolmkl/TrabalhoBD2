@@ -237,6 +237,11 @@ namespace BancoDeDadosPOD.SGDB
             }
         }
 
+        public void atualizar()
+        {
+            metadados = recuperarMetadados();
+        }
+
 
     }
 }
