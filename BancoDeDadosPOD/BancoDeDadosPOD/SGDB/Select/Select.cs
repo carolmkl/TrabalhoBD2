@@ -58,7 +58,8 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// </summary>
         public void orderDesc()
         {
-            foreach(string k in ordem.Keys){
+            foreach (string k in ordem.Keys)
+            {
                 ordem[k] = false;
             }
         }
@@ -145,7 +146,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             estrutura.AppendLine("ESTRUTURA SELECT:");
 
             estrutura.Append("CAMPOS: ");
-            foreach(string key in retorno.Keys)
+            foreach (string key in retorno.Keys)
             {
                 estrutura.Append(key + " AS " + retorno[key] + ", ");
             }
@@ -163,26 +164,60 @@ namespace BancoDeDadosPOD.SGDB.Select
 
 
             estrutura.Append("JOIN: ");
-            estrutura.AppendLine("Falta incluir");
+            if (where != null)
+            {
+                foreach (Filtro f in where.ListaJoin)
+                {
+                    estrutura.Append(f.LValue + f.Op + f.RValue + ", ");
+                }
+                estrutura.Remove(estrutura.Length - 2, 2);
+            }
+            else
+            {
+                estrutura.AppendLine("Não tem.");
+            }
             estrutura.AppendLine();
 
 
             estrutura.Append("WHERE: ");
-            estrutura.AppendLine("Falta incluir");
+            if(where != null)
+            {
+                foreach(List<Filtro> lista in where.ListaFiltro)
+                {
+                    estrutura.Append("(");
+                    foreach(Filtro f in lista)
+                    {
+                        estrutura.AppendLine(f.LValue + f.Op + f.RValue + " AND ");
+                    }
+                    estrutura.Remove(estrutura.Length - 4, 4);
+                    estrutura.Append(") OR ");
+                }
+                estrutura.Remove(estrutura.Length - 3, 3);
+            }
+            else
+            {
+                estrutura.AppendLine("Não tem.");
+            }
             estrutura.AppendLine();
 
 
             estrutura.Append("ORDER BY: ");
-            bool asc = true; 
-            foreach (string o in ordem.Keys)
-            {
-                estrutura.Append(o + ", ");
-                asc = ordem[o];
-            }
-            estrutura.Remove(estrutura.Length - 2, 2);
-            if (!asc) estrutura.AppendLine(" DESC");
-            estrutura.AppendLine();
 
+            if (ordem.Keys.Count > 0)
+            {
+                bool asc = true;
+                foreach (string o in ordem.Keys)
+                {
+                    estrutura.Append(o + ", ");
+                    asc = ordem[o];
+                }
+                estrutura.Remove(estrutura.Length - 2, 2);
+                if (!asc) estrutura.AppendLine(" DESC");
+            }
+            else
+            {
+                estrutura.AppendLine("Não tem.");
+            }
 
             return estrutura.ToString();
         }

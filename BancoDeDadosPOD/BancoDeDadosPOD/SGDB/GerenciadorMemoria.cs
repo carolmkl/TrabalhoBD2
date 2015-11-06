@@ -84,7 +84,7 @@ namespace BancoDeDadosPOD.SGDB
                 throw new SGDBException("Database já existe");
             }
             Directory.CreateDirectory(diretorioPath + "\\" + name);
-            pastaDatabase = name;
+            setDatabase(name);
         }
 
         public bool existeTabela(string nome)
@@ -172,6 +172,11 @@ namespace BancoDeDadosPOD.SGDB
         }
 
         // Esses dois tão feitos, se funcionam é outra história
+        /// <summary>
+        /// Utilizado quando cria uma tabela.
+        /// </summary>
+        /// <param name="meta"></param>
+        /// <returns></returns>
         public bool salvarMetadados(Metadados meta)
         {
             try
@@ -181,6 +186,7 @@ namespace BancoDeDadosPOD.SGDB
                 formatter.Serialize(stream, meta);
                 stream.Close();
                 criarTabela(meta.getNome());
+                metadados.Add(meta.getNome(), meta);
                 return true;
             }
             catch
