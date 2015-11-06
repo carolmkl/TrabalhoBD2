@@ -474,6 +474,7 @@ namespace BD2.Analizadores
                 case acao.CriarTabela:
                     metadados.criarIndiciePrimary();
                     memoria.salvarMetadados(metadados);
+                    memoria.recuperarMetadados();
                     break;
 
                 case acao.InserirDados:
