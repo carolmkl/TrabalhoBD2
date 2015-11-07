@@ -115,18 +115,31 @@ namespace BancoDeDadosPOD.SGDB
             }
 
             // tentar verificar se existe o arquivo de indice
-            try
-            {
-                return File.Exists(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".idx");
-            }
-            catch
-            {
-                throw new SGDBException("Problemas ao executar a consulta");
-            }
+                Metadados m;
+                foreach (KeyValuePair<string, Metadados> item in metadados)
+                {
+                    m = item.Value;
+                    if (m.getIndexes().ContainsKey(nome))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
         }
 
         public bool excluirIndex(string nome)
         {
+            Metadados m;
+            foreach (KeyValuePair<string, Metadados> item in metadados)
+            {
+                m = item.Value;
+                if (m.getIndexes().ContainsKey(nome))
+                {
+                    m.getIndexes().Remove(nome);
+                    return true;
+                }
+            }
             return false;
         }
 
@@ -195,6 +208,14 @@ namespace BancoDeDadosPOD.SGDB
             }
         }
 
+        public void salvarMetadados()
+        {
+            foreach (KeyValuePair<string, Metadados> item in metadados)
+            {
+                salvarMetadados(item.Value);
+            }
+        }
+
         // ja cria a tabela pra não ter que criar durante a inserção
         private void criarTabela(string nome)
         {
@@ -241,7 +262,6 @@ namespace BancoDeDadosPOD.SGDB
         {
             metadados = recuperarMetadados();
         }
-
 
     }
 }

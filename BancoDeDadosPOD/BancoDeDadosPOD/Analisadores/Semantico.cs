@@ -12,7 +12,7 @@ namespace BD2.Analizadores
 
     public class Semantico : Constants
     {
-        private enum acao : int { Nada = 0, CriarTabela, InserirDados, Select, CriarIndex };
+        private enum acao : int { Nada = 0, CriarTabela, InserirDados, Select, CriarIndex, ExcluirIndex };
         private List<string> identificadores;
         private List<ValoresCampos> valoresColunas;
         //private Dictionary<string, string> clausulaAs; //Carol: Sendo a cláusula AS usada apenas no select, é necessário este Dictionary?
@@ -110,7 +110,7 @@ namespace BD2.Analizadores
                 case 4:
                     if (!memoria.existeTabela(token.getLexeme().ToLower()))
                     {
-                        throw new SemanticError("TabelaSelect " + token.getLexeme().ToLower() + " não existe", token.getPosition());
+                        throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " não existe", token.getPosition());
                     }
                     // Como é so saber o metadados, e ele tem o nome da tabela, não precisa ficar colocando a mesma no array
                     // de identificadores
@@ -156,7 +156,7 @@ namespace BD2.Analizadores
                 case 8:
                     if (!memoria.existeTabela(token.getLexeme().ToLower()))
                     {
-                        throw new SemanticError("TabelaSelect " + token.getLexeme().ToLower() + " não existe", token.getPosition());
+                        throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " não existe", token.getPosition());
                     }
                     identificadores.Add(token.getLexeme().ToLower());
                     break;
@@ -201,9 +201,10 @@ namespace BD2.Analizadores
                     break;
                 case 14:
                     //Exclusão de index
-                    if (metadados.getIndexes().ContainsKey(token.getLexeme().ToLower()))
+                    if (memoria.existeIndex(token.getLexeme().ToLower()))
                     {
-                        // fazer pesquisa;
+                        identificadores.Add(token.getLexeme().ToLower());
+                        operacao = acao.ExcluirIndex;   
                     }
                     else
                     {
@@ -538,6 +539,12 @@ namespace BD2.Analizadores
                     // Garantir nome unico de index
                     //metadados.criarIndex()
                     //memoria.salvar(metadados)
+                    break;
+
+                case acao.ExcluirIndex:
+                    memoria.excluirIndex(identificadores[0]);
+                    memoria.salvarMetadados();
+                    memoria.atualizar();
                     break;
                 default:
                     throw new SGDBException("Ação Real" + operacao + " não implementada.");
