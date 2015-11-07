@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BancoDeDadosPOD;
+using BancoDeDadosPOD.SGDB.Dados;
 
 namespace BD2.Analizadores
 {
@@ -490,12 +491,12 @@ namespace BD2.Analizadores
                     identificadores.RemoveAt(0);
                     TabelaDado t = new TabelaDado(id, memoria.getDiretorioPath());
 
-                    /*t.Campos = metadados.getNomesColunas().ToArray();
+                    Registro r = new Registro(-1);
                     if (allColunas)
                     {
                         t.addRegistro(identificadores.ToArray());
                     }
-                    else
+                    /*else
                     {
                         bool nacho = true;
                         string[] dados = new string[metadados.getNomesColunas().Count()];

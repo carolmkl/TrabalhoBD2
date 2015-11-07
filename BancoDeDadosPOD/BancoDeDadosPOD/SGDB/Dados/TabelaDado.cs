@@ -34,6 +34,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         private long posicao;
         public List<Dado> dados;
 
+        // id -1 vai pro final do arquivo(inserção)
         public Registro(long id)
         {
             this.posicao = id;
@@ -55,11 +56,20 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public bool isValido { get; internal set; }
         public dynamic valor { get; internal set; }
 
+
         public Dado(string nome, byte tamanho, long posicao, bool isValido, dynamic valor)
         {
             this.nome = nome;
             this.tamanho = tamanho;
             this.posicao = posicao;
+            this.isValido = isValido;
+            this.valor = valor;
+        }
+
+        public Dado(string nome, byte tamanho, bool isValido, dynamic valor)
+        {
+            this.nome = nome;
+            this.tamanho = tamanho;
             this.isValido = isValido;
             this.valor = valor;
         }
