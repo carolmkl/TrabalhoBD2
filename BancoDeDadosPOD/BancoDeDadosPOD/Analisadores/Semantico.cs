@@ -485,11 +485,12 @@ namespace BD2.Analizadores
                     break;
 
                 case acao.InserirDados:
-                    TabelaSelect t = new TabelaSelect();
+                    
                     id = identificadores[0];
                     identificadores.RemoveAt(0);
+                    TabelaDado t = new TabelaDado(id, memoria.getDiretorioPath());
 
-                    t.Campos = metadados.getNomesColunas().ToArray();
+                    /*t.Campos = metadados.getNomesColunas().ToArray();
                     if (allColunas)
                     {
                         t.addRegistro(identificadores.ToArray());
@@ -518,7 +519,7 @@ namespace BD2.Analizadores
                     }
                     Console.WriteLine("TO STRING DA TABELA");
                     Console.WriteLine(t.ToString());
-
+                    */
 
                     //inserir dados no arquivo
                     //metadados.addIncice(t, posi);

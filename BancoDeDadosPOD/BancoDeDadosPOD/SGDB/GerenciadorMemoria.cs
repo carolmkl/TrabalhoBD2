@@ -73,6 +73,11 @@ namespace BancoDeDadosPOD.SGDB
             return pastaDatabase;
         }
 
+        public string getPath()
+        {
+            return diretorioPath + "\\" + pastaDatabase;
+        }
+
         // Cria a base de dados já set a coloca como database atual
         public void createDatabase(string name)
         {
