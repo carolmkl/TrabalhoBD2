@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BancoDeDadosPOD.SGDB
+namespace BancoDeDadosPOD.SGDB.Dados
 {
     class TabelaDado
     {
@@ -28,6 +28,7 @@ namespace BancoDeDadosPOD.SGDB
         }
     }
 
+    // classes sealed nao podem serem herdadas
     internal sealed class Registro
     {
         private long posicao;
@@ -45,6 +46,7 @@ namespace BancoDeDadosPOD.SGDB
         }
     }
 
+    // classes sealed nao podem serem herdadas
     internal sealed class Dado
     {
         public string nome;
@@ -71,6 +73,16 @@ namespace BancoDeDadosPOD.SGDB
         public void setNulo()
         {
             this.isValido = false;
+        }
+
+        public string getValorStr()
+        {
+            return this.valor;
+        }
+
+        public int getValorInt()
+        {
+            return this.valor;
         }
     }
 }
