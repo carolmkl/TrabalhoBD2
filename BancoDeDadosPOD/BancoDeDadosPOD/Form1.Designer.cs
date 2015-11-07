@@ -50,7 +50,8 @@
             this.txtComando.Name = "txtComando";
             this.txtComando.Size = new System.Drawing.Size(675, 164);
             this.txtComando.TabIndex = 0;
-            this.txtComando.Text = "select tabela.* from tabela;";
+            this.txtComando.Text = "create database teste;\r\nset database teste;\r\ncreate table tabela (campo1 integer," +
+    " campo2 varchar(10));\r\nselect tabela.* from tabela;";
             // 
             // btnExecuta
             // 

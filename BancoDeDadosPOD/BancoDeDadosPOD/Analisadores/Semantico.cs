@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BancoDeDadosPOD;
 
 namespace BD2.Analizadores
 {
 
     public class Semantico : Constants
     {
-        private enum acao : int { Nada = 0, CriarTabela, InserirDados, Select, CriarIndex };
+        private enum acao : int { Nada = 0, CriarTabela, InserirDados, Select, CriarIndex, ExcluirIndex };
         private List<string> identificadores;
         private List<ValoresCampos> valoresColunas;
         //private Dictionary<string, string> clausulaAs; //Carol: Sendo a cláusula AS usada apenas no select, é necessário este Dictionary?
@@ -48,6 +49,7 @@ namespace BD2.Analizadores
         // acho bom saber o que vai ser executado na ação 0 por isso dessa variavel, precisamos definir códigos pra ela
         private acao operacao;
         private GerenciadorMemoria memoria;
+        private Form1 form1;
 
         public Semantico()
         {
@@ -60,9 +62,25 @@ namespace BD2.Analizadores
             memoria = GerenciadorMemoria.getInstance();
         }
 
+        public Semantico(Form1 form1)
+        {
+            this.form1 = form1;
+            identificadores = new List<string>();
+            //clausulaAs = new Dictionary<string, string>();
+            valoresColunas = new List<ValoresCampos>();
+            fromTabelas = new List<string>();
+
+            acaoZero();
+            memoria = GerenciadorMemoria.getInstance();
+        }
+
         public void executeAction(int action, Token token)
         {
             int index;
+            if((action != 16 && action !=1) && memoria.getDatabase() == null)
+            {
+                throw new SGDBException("utilize o comando SET DATABASE...");
+            }
             switch (action)
             {
                 case 0:
@@ -71,11 +89,12 @@ namespace BD2.Analizadores
                     break;
                 case 1:
                     memoria.createDatabase(token.getLexeme().ToLower());
+                    form1.Text = memoria.getDatabase();
                     break;
                 case 2:
                     if (memoria.existeTabela(token.getLexeme().ToLower()))
                     {
-                        throw new SemanticError("TabelaSelect " + token.getLexeme().ToLower() + " já existe", token.getPosition());
+                        throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " já existe", token.getLinha());
                     }
                     operacao = acao.CriarTabela;
                     metadados.setNome(token.getLexeme().ToLower());
@@ -83,7 +102,7 @@ namespace BD2.Analizadores
                 case 3:
                     if (memoria.existeIndex(token.getLexeme().ToLower()))
                     {
-                        throw new SemanticError("Index " + token.getLexeme().ToLower() + " já existe", token.getPosition());
+                        throw new SemanticError("Index " + token.getLexeme().ToLower() + " já existe", token.getLinha());
                     }
                     operacao = acao.CriarIndex;
                     identificadores.Add(token.getLexeme().ToLower());
@@ -91,7 +110,7 @@ namespace BD2.Analizadores
                 case 4:
                     if (!memoria.existeTabela(token.getLexeme().ToLower()))
                     {
-                        throw new SemanticError("TabelaSelect " + token.getLexeme().ToLower() + " não existe", token.getPosition());
+                        throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " não existe", token.getPosition());
                     }
                     // Como é so saber o metadados, e ele tem o nome da tabela, não precisa ficar colocando a mesma no array
                     // de identificadores
@@ -137,7 +156,7 @@ namespace BD2.Analizadores
                 case 8:
                     if (!memoria.existeTabela(token.getLexeme().ToLower()))
                     {
-                        throw new SemanticError("TabelaSelect " + token.getLexeme().ToLower() + " não existe", token.getPosition());
+                        throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " não existe", token.getPosition());
                     }
                     identificadores.Add(token.getLexeme().ToLower());
                     break;
@@ -182,9 +201,10 @@ namespace BD2.Analizadores
                     break;
                 case 14:
                     //Exclusão de index
-                    if (metadados.getIndexes().ContainsKey(token.getLexeme().ToLower()))
+                    if (memoria.existeIndex(token.getLexeme().ToLower()))
                     {
-                        // fazer pesquisa;
+                        identificadores.Add(token.getLexeme().ToLower());
+                        operacao = acao.ExcluirIndex;   
                     }
                     else
                     {
@@ -197,6 +217,7 @@ namespace BD2.Analizadores
                     break;
                 case 16:
                     memoria.setDatabase(token.getLexeme().ToLower());
+                    form1.Text = memoria.getDatabase();
                     break;
                 case 17:
                     if (ultimoFiltro != null)
@@ -395,6 +416,7 @@ namespace BD2.Analizadores
                     //inclui a tabela no objeto SELECT
                     select.addTabela(tabela);
                     //busca as colunas da tabela para incluir no retorno
+
                     foreach (String col in memoria.recuperarMetadados(tabela).getNomesColunas())
                     {
                         string coluna = tabela + "." + col;
@@ -453,6 +475,7 @@ namespace BD2.Analizadores
                 case acao.CriarTabela:
                     metadados.criarIndiciePrimary();
                     memoria.salvarMetadados(metadados);
+                    memoria.recuperarMetadados();
                     break;
 
                 case acao.InserirDados:
@@ -496,7 +519,7 @@ namespace BD2.Analizadores
                     // memoria.salvar(metadados)
                     break;
                 case acao.Select:
-
+                    Form1.addMensagem(select.ToString());
                     break;
                 case acao.CriarIndex:
                     id = identificadores[0];
@@ -516,6 +539,12 @@ namespace BD2.Analizadores
                     // Garantir nome unico de index
                     //metadados.criarIndex()
                     //memoria.salvar(metadados)
+                    break;
+
+                case acao.ExcluirIndex:
+                    memoria.excluirIndex(identificadores[0]);
+                    memoria.salvarMetadados();
+                    memoria.atualizar();
                     break;
                 default:
                     throw new SGDBException("Ação Real" + operacao + " não implementada.");

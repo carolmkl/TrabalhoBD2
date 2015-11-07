@@ -81,7 +81,7 @@ namespace BancoDeDadosPOD.SGDB
                 throw new SGDBException("Database já existe");
             }
             Directory.CreateDirectory(diretorioPath + "\\" + name);
-            pastaDatabase = name;
+            setDatabase(name);
         }
 
         public bool existeTabela(string nome)
@@ -112,18 +112,31 @@ namespace BancoDeDadosPOD.SGDB
             }
 
             // tentar verificar se existe o arquivo de indice
-            try
-            {
-                return File.Exists(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".idx");
-            }
-            catch
-            {
-                throw new SGDBException("Problemas ao executar a consulta");
-            }
+                Metadados m;
+                foreach (KeyValuePair<string, Metadados> item in metadados)
+                {
+                    m = item.Value;
+                    if (m.getIndexes().ContainsKey(nome))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
         }
 
         public bool excluirIndex(string nome)
         {
+            Metadados m;
+            foreach (KeyValuePair<string, Metadados> item in metadados)
+            {
+                m = item.Value;
+                if (m.getIndexes().ContainsKey(nome))
+                {
+                    m.getIndexes().Remove(nome);
+                    return true;
+                }
+            }
             return false;
         }
 
@@ -169,6 +182,11 @@ namespace BancoDeDadosPOD.SGDB
         }
 
         // Esses dois tão feitos, se funcionam é outra história
+        /// <summary>
+        /// Utilizado quando cria uma tabela.
+        /// </summary>
+        /// <param name="meta"></param>
+        /// <returns></returns>
         public bool salvarMetadados(Metadados meta)
         {
             try
@@ -178,11 +196,20 @@ namespace BancoDeDadosPOD.SGDB
                 formatter.Serialize(stream, meta);
                 stream.Close();
                 criarTabela(meta.getNome());
+                metadados.Add(meta.getNome(), meta);
                 return true;
             }
             catch
             {
                 return false;
+            }
+        }
+
+        public void salvarMetadados()
+        {
+            foreach (KeyValuePair<string, Metadados> item in metadados)
+            {
+                salvarMetadados(item.Value);
             }
         }
 
@@ -228,6 +255,10 @@ namespace BancoDeDadosPOD.SGDB
             }
         }
 
+        public void atualizar()
+        {
+            metadados = recuperarMetadados();
+        }
 
     }
 }

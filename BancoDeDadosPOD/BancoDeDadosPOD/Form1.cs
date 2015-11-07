@@ -41,9 +41,10 @@ namespace BancoDeDadosPOD
             try
             {
                 clearMensagem();
+                addMensagem("Executando...");
                 Lexico lexico = new Lexico(txtComando.Text);
                 Sintatico sintatico = new Sintatico();
-                Semantico semantico = new Semantico();
+                Semantico semantico = new Semantico(this);
                 sintatico.parse(lexico, semantico);
                 addMensagem("Success!!!");
             }
