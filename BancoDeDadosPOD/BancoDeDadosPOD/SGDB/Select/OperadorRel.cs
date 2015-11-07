@@ -14,5 +14,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         MaiorIgualA,
         MenorIgualA,
         Diferente
+
+            
     }
 }

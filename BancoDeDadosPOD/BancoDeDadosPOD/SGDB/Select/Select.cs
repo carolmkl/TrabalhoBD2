@@ -16,6 +16,9 @@ namespace BancoDeDadosPOD.SGDB.Select
         Where where;
         Dictionary<string, bool> ordem;
 
+        public enum EtapaSemantica { CAMPOS, TABELA, JOIN, WHERE, ORDER }
+        EtapaSemantica etapa = EtapaSemantica.CAMPOS;
+
         private Select()
         {
             tabelas = new List<string>();
@@ -41,6 +44,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             retorno = new Dictionary<string, string>();
             Where = null;
             ordem = new Dictionary<string, bool>();
+            Etapa = EtapaSemantica.CAMPOS;
         }
 
         /// <summary>
@@ -86,7 +90,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         {
             foreach (string s in tabelas)
             {
-                if (!tblVerifica.Exists(c => c.Equals(s))) throw new SemanticError("TabelaSelect " + s + " não declarada na cláusula FROM");
+                if (!tblVerifica.Exists(c => c.Equals(s))) throw new SemanticError("Tabela " + s + " não declarada na cláusula FROM");
             }
             foreach (string s in tblVerifica)
             {
@@ -102,6 +106,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         public void addRetorno(string retorno)
         {
             if (retorno.Equals("*")) throw new SGDBException("método Select.addRetorno não trata o *");
+            if (this.retorno.Keys.Contains(retorno)) throw new SemanticError("Não é possível adicionar o mesmo campo 2x na consulta (" + retorno + ")");
             this.retorno.Add(retorno, retorno);
         }
 
@@ -109,14 +114,15 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// Caso o campo incluído como retorno seja uma condicao, é possível removê-lo da lista para adicionar ao Filtro
         /// </summary>
         /// <returns> retorna o valor que foi removido</returns>
-        public string removeUltimoRetorno()
-        {
-            string key = retorno.ElementAt(retorno.Count - 1).Key;
-            string removed = retorno[key];
-            retorno.Remove(key);
-            return removed;
-        }
 
+        /*public string removeUltimoRetorno()
+                {
+                    string key = retorno.ElementAt(retorno.Count - 1).Key;
+                    string removed = retorno[key];
+                    retorno.Remove(key);
+                    return removed;
+                }
+                */
         /// <summary>
         /// Insere o apelido passado no último retorno incluído
         /// </summary>
@@ -137,6 +143,19 @@ namespace BancoDeDadosPOD.SGDB.Select
             set
             {
                 where = value;
+            }
+        }
+
+        public EtapaSemantica Etapa
+        {
+            get
+            {
+                return etapa;
+            }
+
+            set
+            {
+                etapa = value;
             }
         }
 
@@ -168,7 +187,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             {
                 foreach (Filtro f in where.ListaJoin)
                 {
-                    estrutura.Append(f.LValue + f.Op + f.RValue + ", ");
+                    estrutura.Append(f.LValue + " " + f.Op + " " + f.RValue + ", ");
                 }
                 estrutura.Remove(estrutura.Length - 2, 2);
             }
@@ -180,17 +199,18 @@ namespace BancoDeDadosPOD.SGDB.Select
 
 
             estrutura.Append("WHERE: ");
-            if(where != null)
+            if (where != null)
             {
-                foreach(List<Filtro> lista in where.ListaFiltro)
+                foreach (List<Filtro> lista in where.ListaFiltro)
                 {
                     estrutura.Append("(");
-                    foreach(Filtro f in lista)
+                    foreach (Filtro f in lista)
                     {
-                        estrutura.AppendLine(f.LValue + f.Op + f.RValue + " AND ");
+                        estrutura.Append(f.LValue + " " + f.Op + " " + f.RValue + " AND ");
                     }
                     estrutura.Remove(estrutura.Length - 4, 4);
                     estrutura.Append(") OR ");
+                    estrutura.AppendLine();
                 }
                 estrutura.Remove(estrutura.Length - 3, 3);
             }

@@ -29,11 +29,6 @@ namespace BD2.Analizadores
         private List<string> fromTabelas;
 
         /// <summary>
-        /// indica se já acabou os joins
-        /// </summary>
-        private bool acabouJoin = false;
-
-        /// <summary>
         /// armazena o último filtro que está sendo analisado pelas ações semanticas
         /// </summary>
         private Filtro ultimoFiltro;
@@ -231,7 +226,7 @@ namespace BD2.Analizadores
                     select.Where = select.Where == null ? new Where() : select.Where;
                     ultimoFiltro = ultimoFiltro == null ? new Filtro() : ultimoFiltro;
                     //Joga o campo para o LValue, caso tenha sido incluído como retorno do select. Acontece no primeiro filtro.
-                    ultimoFiltro.LValue = ultimoFiltro.LValue == null? select.removeUltimoRetorno(): ultimoFiltro.LValue;
+                    //ultimoFiltro.LValue = ultimoFiltro.LValue == null? select.removeUltimoRetorno(): ultimoFiltro.LValue;
                     switch (token.getId())
                     {
                         case 37:
@@ -239,23 +234,23 @@ namespace BD2.Analizadores
                             break;
                         case 38:
                             ultimoFiltro.Op = OperadorRel.MaiorQue;
-                            acabouJoin = true;
+                            select.Etapa = Select.EtapaSemantica.WHERE;
                             break;
                         case 39:
                             ultimoFiltro.Op = OperadorRel.MenorQue;
-                            acabouJoin = true;
+                            select.Etapa = Select.EtapaSemantica.WHERE;
                             break;
                         case 40:
                             ultimoFiltro.Op = OperadorRel.MaiorIgualA;
-                            acabouJoin = true;
+                            select.Etapa = Select.EtapaSemantica.WHERE;
                             break;
                         case 41:
                             ultimoFiltro.Op = OperadorRel.MenorIgualA;
-                            acabouJoin = true;
+                            select.Etapa = Select.EtapaSemantica.WHERE;
                             break;
                         case 42:
                             ultimoFiltro.Op = OperadorRel.Diferente;
-                            acabouJoin = true;
+                            select.Etapa = Select.EtapaSemantica.WHERE;
                             break;
                         default:
                             break;
@@ -348,52 +343,57 @@ namespace BD2.Analizadores
                     {
                         throw new SemanticError("Campo " + identificadores.Last() + "." + token.getLexeme() + " não existe", token.getLinha());
                     }
-                    if (select.Where == null)
+                    switch (select.Etapa)
                     {
-                        // Neste caso está no inicio do select (talvez no where, mas é resolvido depois)
-                        // Adiciona o campo de retorno do SELECT
-                        select.addTabela(identificadores.Last());
-                        string ret = identificadores.Last() + "." + token.getLexeme().ToLower();
-                        //identificadores[identificadores.Count() - 1] = ret;
-                        identificadores.Remove(identificadores.Last());
-                        select.addRetorno(ret);
-                        //Carol: Tem necessidade de incluir o token no identificadores, sendo que existe o objeto Select?
-                    }
-                    else if (ultimoFiltro == null)
-                    {
-                        //Neste caso deve estar no order by
+                        case Select.EtapaSemantica.CAMPOS:
+                            // Adiciona o campo de retorno do SELECT
+                            select.addTabela(identificadores.Last());
+                            string ret = identificadores.Last() + "." + token.getLexeme().ToLower();
+                            identificadores.Remove(identificadores.Last());
+                            select.addRetorno(ret);
+                            break;
+                        case Select.EtapaSemantica.TABELA:
+                            throw new SGDBException("Não devia passar por aqui. Ação semantica 21. Select.ETAPA = Tabela");
+                            
+                        case Select.EtapaSemantica.JOIN:
+                            ultimoFiltro = ultimoFiltro == null ? new Filtro() : ultimoFiltro; //necessário na primeira linha do where
+                            if (ultimoFiltro.LValue == null)
+                            {
+                                //se ainda não foi atribuído LValue, então deve estar no lado esquerdo da operação.
+                                ultimoFiltro.LValue = identificadores.Last() + "." + token.getLexeme().ToLower();
+                                identificadores.Remove(identificadores.Last());
+                            }
+                            else
+                            {
 
-                        string campo = identificadores.Last() + "." + token.getLexeme().ToLower();
-                        select.addOrderBy(campo);
-                        identificadores.Remove(identificadores.Last());
-                    }
-                    else
-                    {
-                        //Neste caso deve estar na cláusula where
-                        if (ultimoFiltro.LValue == null)
-                        {
-                            //se ainda não foi atribuído LValue, então deve estar no lado esquerdo da operação.
+                                if (select.Etapa == Select.EtapaSemantica.WHERE)
+                                {
+                                    throw new SemanticError("Os primeiros filtros devem ser de JOIN. Cláusula JOIN já finalizada.", token.getLinha());
+                                }
+                                if (ultimoFiltro.IsOR)
+                                {
+                                    throw new SemanticError("JOIN deve utilizar AND", token.getLinha());
+                                }
+                                ultimoFiltro.RValue = identificadores.Last() + "." + token.getLexeme();
+                                identificadores.Remove(identificadores.Last());
+                                ultimoFiltro.IsAND = true;
+                                select.Where.addJoin(ultimoFiltro);
+                                ultimoFiltro = null;
+                            }
+                            break;
+                        case Select.EtapaSemantica.WHERE:
                             ultimoFiltro.LValue = identificadores.Last() + "." + token.getLexeme().ToLower();
                             identificadores.Remove(identificadores.Last());
-                        }
-                        else
-                        {
-
-                            if (acabouJoin)
-                            {
-                                throw new SemanticError("Os primeiros filtros devem ser de JOIN. Cláusula JOIN já finalizada.", token.getLinha());
-                            }
-                            if (ultimoFiltro.IsOR)
-                            {
-                                throw new SemanticError("JOIN deve utilizar AND", token.getLinha());
-                            }
-                            ultimoFiltro.RValue = identificadores.Last() + "." + token.getLexeme();
+                            break;
+                        case Select.EtapaSemantica.ORDER:
+                            string campo = identificadores.Last() + "." + token.getLexeme().ToLower();
+                            select.addOrderBy(campo);
                             identificadores.Remove(identificadores.Last());
-                            ultimoFiltro.IsAND = true;
-                            select.Where.addJoin(ultimoFiltro);
-                            ultimoFiltro = null;
-                        }
+                            break;
+                        default:
+                            throw new SGDBException("Não devia passar por aqui. Ação semantica 21. Select.ETAPA = Default");
                     }
+
                     break;
                 case 22:
                     //token do apelido da cláusula AS. O SELECT adiciona o apelido no último campo adicionado.
@@ -444,7 +444,7 @@ namespace BD2.Analizadores
                     select.orderDesc();
                     break;
                 case 30:
-                    acabouJoin = true;
+                    select.Etapa = Select.EtapaSemantica.WHERE;
                     ultimoFiltro.RValue = token.getLexeme();
                     //ultimoFiltro.IsOR? select.Where:break;
                     if (ultimoFiltro.IsOR) select.Where.addFiltroOR(ultimoFiltro);
@@ -453,10 +453,16 @@ namespace BD2.Analizadores
                     break;
 
                 case 31:
+                    //logo depois do FROM
+                    select.Etapa = Select.EtapaSemantica.TABELA;
                     break;
                 case 32:
+                    //logo antes do Where. o where inicia com possível join.
+                    select.Etapa = Select.EtapaSemantica.JOIN;
                     break;
                 case 33:
+                    //logo antes do order
+                    select.Etapa = Select.EtapaSemantica.ORDER;
                     break;
                 default:
                     throw new SGDBException("Ação " + action + " não implementada.");
@@ -520,6 +526,8 @@ namespace BD2.Analizadores
                     break;
                 case acao.Select:
                     Form1.addMensagem(select.ToString());
+
+                    select.clear();
                     break;
                 case acao.CriarIndex:
                     id = identificadores[0];

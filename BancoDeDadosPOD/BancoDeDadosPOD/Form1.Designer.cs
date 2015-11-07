@@ -130,7 +130,7 @@
             this.Controls.Add(this.btnExecuta);
             this.Controls.Add(this.txtComando);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "BDPod";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.tabResultado.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
