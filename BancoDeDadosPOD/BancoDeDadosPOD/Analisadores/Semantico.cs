@@ -491,12 +491,12 @@ namespace BD2.Analizadores
                     identificadores.RemoveAt(0);
                     TabelaDado t = new TabelaDado(id, memoria.getDiretorioPath());
 
-                    Registro r = new Registro(-1);
+                    /*t.Campos = metadados.getNomesColunas().ToArray();
                     if (allColunas)
                     {
                         t.addRegistro(identificadores.ToArray());
                     }
-                    /*else
+                    else
                     {
                         bool nacho = true;
                         string[] dados = new string[metadados.getNomesColunas().Count()];
