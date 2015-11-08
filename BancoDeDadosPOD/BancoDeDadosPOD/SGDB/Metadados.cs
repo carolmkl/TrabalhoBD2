@@ -1,3 +1,4 @@
+using BancoDeDadosPOD.SGDB.Dados;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -171,20 +172,20 @@ namespace BancoDeDadosPOD.SGDB
         //optei por dictonary pra facilitar a pesquisa
         private Dictionary<string, DadosTabela> dados;
         private List<string> nomesColunas;
-        private Dictionary<string, Index> tabelaIndices;
+        private Dictionary<string, string[]> tabelaIndices;
 
         public Metadados()
         {
             dados = new Dictionary<string, DadosTabela>();
             nomesColunas = new List<string>();
-            tabelaIndices = new Dictionary<string, Index>();
+            tabelaIndices = new Dictionary<string, string[]>();
         }
 
         public Metadados(String nome)
         {
             this.setNome(nome);
             dados = new Dictionary<string, DadosTabela>();
-            tabelaIndices = new Dictionary<string, Index>();
+            tabelaIndices = new Dictionary<string, string[]>();
         }
 
         public string getNome()
@@ -230,24 +231,22 @@ namespace BancoDeDadosPOD.SGDB
             return nomesColunas;
         }
 
-        public Dictionary<string, Index> getIndexes()
+        public Dictionary<string, string[]> getIndexes()
         {
             return tabelaIndices;
         }
 
-        public void addIndice(TabelaSelect tabela, int lastPosi)
+        public void addIndice(Registro tabela, int lastPosi)
         {
-            Index indice;
             List<string> dado;
-            foreach (KeyValuePair<string, Index> item in tabelaIndices)
+            foreach (KeyValuePair<string, string[]> item in tabelaIndices)
             {
                 dado = new List<string>();
-                indice = item.Value;
-                for (int i = 0; i < indice.getNomesCampos().Count(); i++)
+                for (int i = 0; i < item.Value.Count(); i++)
                 {
-                    dado.Add(tabela.Registros[0][nomesColunas.IndexOf(indice.getNomesCampos()[i])]);
+                    dado.Add(tabela.dados[nomesColunas.IndexOf(item.Value[i])].valor);
                 }
-                indice.addIndice(dado.ToArray(), lastPosi);        
+                //douglas.salvarIndice(dado.ToArray(), lastPosi);        
             }
         }
 
@@ -264,31 +263,18 @@ namespace BancoDeDadosPOD.SGDB
 
             if(campos.Count != 0)
             {
-                Index index = new Index(campos.ToArray());
-                tabelaIndices["primary" + nome] = index;
+                tabelaIndices["primary" + nome] = campos.ToArray();
+                // TODO
+                //douglas.inserirIndice(nome)
             }
 
         }
 
         public void criarIndice(string nome, string[] campos)
         {
-            Index index = new Index(campos);
-            List<string> dado;
-            TabelaSelect tabela = new TabelaSelect();
-            int[] posis = null;
-            int j = 0;
-            // recuperar tudo com posicao
-            dado = new List<string>();
-            foreach (string[] item in tabela.Registros)
-            {
-                for (int i = 0; i < campos.Count(); i++)
-                {
-                    dado.Add(item[nomesColunas.IndexOf(campos[i])]);
-                }
-                index.addIndice(dado.ToArray(), posis[j]);
-                j++;
-            }
-            tabelaIndices[nome] = index;
+            tabelaIndices[nome] = campos;
+            // TODO
+            GerenciadorMemoria.getInstance().criarIndex(nome);
         }
 
         public override string ToString()
@@ -306,26 +292,14 @@ namespace BancoDeDadosPOD.SGDB
         public string StringIndices()
         {
             string desc = "";
-            foreach (KeyValuePair<string, Index> item in tabelaIndices)
+            foreach (KeyValuePair<string, string[]> item in tabelaIndices)
             {
                 desc += item.Key + "\n\t";
-                foreach (string i in item.Value.getNomesCampos())
+                foreach (string i in item.Value)
                 {
                     desc += i + "\t";
                 }
                 desc += "\n\t";
-                foreach (KeyValuePair<string[], List<int>> j in item.Value.getIndices())
-                {
-                    foreach (string i in j.Key)
-                    {
-                        desc += i + "\t";
-                    }
-                    desc += "\n";
-                    foreach (int i in j.Value)
-                    {
-                        desc += i + "\t";
-                    }
-                }
             }
             return desc;
         }

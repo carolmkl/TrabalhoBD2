@@ -108,11 +108,17 @@ namespace BD2.Analizadores
                     {
                         throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " não existe", token.getPosition());
                     }
+
+                    /*if (douglas.tabelaTemDados(token.getLexeme().ToLower()))
+                    {
+                        throw new SemanticError("Não se cria index em tabelas que já tenham dados", token.getLinha());
+                    }*/
                     // Como é so saber o metadados, e ele tem o nome da tabela, não precisa ficar colocando a mesma no array
                     // de identificadores
                     metadados = GerenciadorMemoria.getInstance().recuperarMetadados(token.getLexeme().ToLower());
                     break;
                 case 5:
+                    // tratar melhor isso
                     identificadores.Add(token.getLexeme().ToLower());
                     break;
                 case 6:
@@ -489,42 +495,62 @@ namespace BD2.Analizadores
                     
                     id = identificadores[0];
                     identificadores.RemoveAt(0);
-                    TabelaDado t = new TabelaDado(id, memoria.getDiretorioPath());
-
-                    /*t.Campos = metadados.getNomesColunas().ToArray();
+                    Registro registro = new Registro(-1);
+                    metadados = memoria.recuperarMetadados(id);
+                    
                     if (allColunas)
                     {
-                        t.addRegistro(identificadores.ToArray());
+                        Dado dado;
+                        for (int i = 0; i < identificadores.Count(); i++)
+                        {
+                            // falar sobre isso
+                            if (identificadores[i].Equals("null"))
+                            {
+                                dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[i]);
+                            }
+                            else
+                            {
+                                dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[i]);
+                            }
+
+                            registro.dados.Add(dado);
+
+                        }
                     }
                     else
                     {
+                        Dado dado = null;
                         bool nacho = true;
-                        string[] dados = new string[metadados.getNomesColunas().Count()];
-                        for (int i = 0; i < dados.Length; i++)
+                        for (int i = 0; i < metadados.getNomesColunas().Count(); i++)
                         {
                             nacho = true;
                             for (int j = 0; j < contColunas && nacho; j++)
                             {
                                 if (metadados.getNomesColunas()[i].Equals(identificadores[j]))
                                 {
-                                    dados[i] = identificadores[j + contColunas];
+                                    dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[j + contColunas]);
                                     nacho = false;
                                 }
                             }
                             if (nacho)
                             {
-                                dados[i] = "null";
+                                dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, "null");
                             }
+
+                            registro.dados.Add(dado);
                         }
-                        t.addRegistro(dados);
+                        
                     }
                     Console.WriteLine("TO STRING DA TABELA");
-                    Console.WriteLine(t.ToString());
-                    */
+                    //Console.WriteLine(t.ToString());
+                    TabelaDado tabelaDado = new TabelaDado(id, memoria.getPath());
+                    tabelaDado.Registros.Add(registro);
 
-                    //inserir dados no arquivo
+                    //int posi = douglas.inserirDado(tabelaDado)
                     //metadados.addIncice(t, posi);
-                    // memoria.salvar(metadados)
+                    memoria.salvarMetadados(metadados);
+                    memoria.atualizar();
+
                     break;
                 case acao.Select:
                     Form1.addMensagem(select.ToString());
@@ -541,14 +567,10 @@ namespace BD2.Analizadores
                             new SemanticError("A coluna " + item + "não existe na tabela " + metadados.getNome());
                         }
                     }
-                    if (metadados.getIndexes().ContainsKey(id))
-                    {
-                        new SemanticError("O indice " + id + "já existe na tabela " + metadados.getNome());
-                    }
-                    // Criar o index
-                    // Garantir nome unico de index
-                    //metadados.criarIndex()
-                    //memoria.salvar(metadados)
+                    metadados.criarIndice(id,identificadores.ToArray());
+                    memoria.salvarMetadados(metadados);
+                    memoria.atualizar();
+                    
                     break;
 
                 case acao.ExcluirIndex:

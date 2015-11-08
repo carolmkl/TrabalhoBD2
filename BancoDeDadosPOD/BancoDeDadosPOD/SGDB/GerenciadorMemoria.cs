@@ -139,6 +139,7 @@ namespace BancoDeDadosPOD.SGDB
                 if (m.getIndexes().ContainsKey(nome))
                 {
                     m.getIndexes().Remove(nome);
+                    // 
                     return true;
                 }
             }
@@ -221,9 +222,19 @@ namespace BancoDeDadosPOD.SGDB
         // ja cria a tabela pra não ter que criar durante a inserção
         private void criarTabela(string nome)
         {
-            if (!File.Exists(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".dat"))
+            criarFile(nome, ".dat");
+        }
+
+        public void criarIndex(string nome)
+        {
+            criarFile(nome, ".idx");
+        }
+
+        private void criarFile(string nome, string extencao)
+        {
+            if (!File.Exists(diretorioPath + "\\" + pastaDatabase + "\\" + nome + extencao))
             {
-                File.Create(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".dat");
+                File.Create(diretorioPath + "\\" + pastaDatabase + "\\" + nome + extencao);
             }
         }
 

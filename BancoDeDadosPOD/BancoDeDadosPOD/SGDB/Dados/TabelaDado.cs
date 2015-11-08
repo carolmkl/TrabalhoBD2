@@ -29,7 +29,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
     }
 
     // classes sealed nao podem serem herdadas
-    internal sealed class Registro
+    public sealed class Registro
     {
         private long posicao;
         public List<Dado> dados;
@@ -48,7 +48,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
     }
 
     // classes sealed nao podem serem herdadas
-    internal sealed class Dado
+    public sealed class Dado
     {
         public string nome;
         private byte tamanho;
