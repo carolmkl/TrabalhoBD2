@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BancoDeDadosPOD.SGDB.Select
 {
-    class Select
+    class Select 
     {
         static Select select;
 
@@ -19,6 +19,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         public enum EtapaSemantica { CAMPOS, TABELA, JOIN, WHERE, ORDER }
         EtapaSemantica etapa = EtapaSemantica.CAMPOS;
 
+        #region Construtor
         private Select()
         {
             tabelas = new List<string>();
@@ -33,7 +34,8 @@ namespace BancoDeDadosPOD.SGDB.Select
                 select = new Select();
             }
             return select;
-        }
+        } 
+        #endregion
 
         /// <summary>
         /// Limpa todos os campos
@@ -111,19 +113,6 @@ namespace BancoDeDadosPOD.SGDB.Select
         }
 
         /// <summary>
-        /// Caso o campo incluído como retorno seja uma condicao, é possível removê-lo da lista para adicionar ao Filtro
-        /// </summary>
-        /// <returns> retorna o valor que foi removido</returns>
-
-        /*public string removeUltimoRetorno()
-                {
-                    string key = retorno.ElementAt(retorno.Count - 1).Key;
-                    string removed = retorno[key];
-                    retorno.Remove(key);
-                    return removed;
-                }
-                */
-        /// <summary>
         /// Insere o apelido passado no último retorno incluído
         /// </summary>
         /// <param name="apelido"></param>
@@ -159,6 +148,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             }
         }
 
+        #region ToString
         public override string ToString()
         {
             StringBuilder estrutura = new StringBuilder();
@@ -240,7 +230,8 @@ namespace BancoDeDadosPOD.SGDB.Select
             }
 
             return estrutura.ToString();
-        }
+        } 
+        #endregion
 
     }
 }

@@ -20,7 +20,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             // aqui devem ser gravados apenas o ultimos registros inseridos na tabela
         }
 
-        public List<Registro> Ler()
+        public List<Registro> LerRegistros()
         {
             // aqui deverá ser carregado todos os registros de uma tabela da base de dados
 
