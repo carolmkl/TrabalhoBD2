@@ -506,11 +506,11 @@ namespace BD2.Analizadores
                             // falar sobre isso
                             if (identificadores[i].Equals("null"))
                             {
-                                dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[i]);
+                                dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[i].Replace("\"", ""));
                             }
                             else
                             {
-                                dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[i]);
+                                dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[i].Replace("\"", ""));
                             }
 
                             registro.dados.Add(dado);
@@ -528,7 +528,7 @@ namespace BD2.Analizadores
                             {
                                 if (metadados.getNomesColunas()[i].Equals(identificadores[j]))
                                 {
-                                    dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[j + contColunas]);
+                                    dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[j + contColunas].Replace("\"", ""));
                                     nacho = false;
                                 }
                             }
