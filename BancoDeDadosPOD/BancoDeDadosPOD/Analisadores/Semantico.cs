@@ -214,8 +214,7 @@ namespace BD2.Analizadores
                     }
                     break;
                 case 15:
-                    // Fazer o resto em relação a isso
-                    memoria.recuperarMetadados(token.getLexeme().ToLower()).ToString();
+                    Form1.setResultado(memoria.recuperarMetadados(token.getLexeme().ToLower()));
                     break;
                 case 16:
                     memoria.setDatabase(token.getLexeme().ToLower());

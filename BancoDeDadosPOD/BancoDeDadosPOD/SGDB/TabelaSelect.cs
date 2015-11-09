@@ -48,7 +48,7 @@ namespace BancoDeDadosPOD.SGDB
         /// compara se as strings contidas nos parametros são iguais
         /// </summary>
         /// <param name="l1">valor a ser comparado com l2</param>
-        /// <param name="l2">valor a ser comparado com l2</param>
+        /// <param name="l2">valor a ser comparado com l1</param>
         /// <returns></returns>
         private bool igual(string[] l1, string[] l2)
         {

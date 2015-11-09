@@ -1,4 +1,5 @@
-﻿using BD2.Analizadores;
+﻿using BancoDeDadosPOD.SGDB;
+using BD2.Analizadores;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,17 +16,19 @@ namespace BancoDeDadosPOD
     {
 
         private static TextBox mensagens;
+        private static DataGridView gridView;
         public Form1()
         {
             InitializeComponent();
             mensagens = txtMensagens;
+            gridView = dataGridView1;
             this.KeyUp += new KeyEventHandler(f5);
             this.txtComando.KeyUp += new KeyEventHandler(f5);
         }
 
         private void f5(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.F5)
+            if (e.KeyCode == Keys.F5)
             {
                 executa();
             }
@@ -40,6 +43,7 @@ namespace BancoDeDadosPOD
         {
             try
             {
+                tabResultado.SelectedIndex = 0;
                 clearMensagem();
                 addMensagem("Executando...");
                 Lexico lexico = new Lexico(txtComando.Text);
@@ -65,6 +69,38 @@ namespace BancoDeDadosPOD
         {
             mensagens.Clear();
             mensagens.Refresh();
+        }
+
+        public static void setResultado(TabelaSelect retorno)
+        {
+            foreach (KeyValuePair<string,string>  head in retorno.Apelidos)
+            {
+                gridView.Columns.Add(head.Key, head.Value);
+            }
+            foreach (string[] registro in retorno.Registros)
+            {
+                gridView.Rows.Add(registro);
+            }
+            gridView.Refresh();
+        }
+
+        public static void setResultado(Metadados meta)
+        {
+            string[] head = new string[] { meta.getNome(),"Campo","Tipo","Tamanho","Primary","Foreign" };
+            foreach (string s in head)
+            {
+                gridView.Columns.Add(s, s);
+            }
+            foreach ( DadosTabela d in meta.getDados().Values)
+            {
+                gridView.Rows.Add(d.getNomeCampo(), d.geTipo(), d.getTamanho(), d.isPrimary(), (d.isForeing() ? d.getForeing()[0] + "(" + d.getForeing()[1] + ")" : ""));
+            }
+            gridView.Refresh();
+        }
+
+        private void dataGridView1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            tabResultado.SelectedIndex = 1;
         }
     }
 }
