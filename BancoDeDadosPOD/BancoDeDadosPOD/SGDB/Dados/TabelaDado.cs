@@ -12,6 +12,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         {
             this.nome = nome;
             this.path = path;
+            registros = new List<Registro>();
         }
 
         internal List<Registro> Registros
@@ -25,6 +26,21 @@ namespace BancoDeDadosPOD.SGDB.Dados
             {
                 registros = value;
             }
+        }
+
+        public override string ToString()
+        {
+            string retorno = "";
+            foreach (Registro registro in registros)
+            {
+                foreach (Dado item in registro.dados)
+                {
+                    retorno += item.nome + " = " + item.valor + " " + item.isValido + " \n";
+                }
+            }
+            
+
+            return retorno;
         }
     }
 
