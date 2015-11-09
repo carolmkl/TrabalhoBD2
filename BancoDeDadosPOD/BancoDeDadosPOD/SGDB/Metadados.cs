@@ -244,7 +244,7 @@ namespace BancoDeDadosPOD.SGDB
                 dado = new List<string>();
                 for (int i = 0; i < item.Value.Count(); i++)
                 {
-                    dado.Add(tabela.dados[nomesColunas.IndexOf(item.Value[i])].valor);
+                    dado.Add(tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
                 }
                 //douglas.salvarIndice(dado.ToArray(), lastPosi);        
             }

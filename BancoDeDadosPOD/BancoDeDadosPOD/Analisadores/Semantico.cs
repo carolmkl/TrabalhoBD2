@@ -513,7 +513,7 @@ namespace BD2.Analizadores
                                 dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[i].Replace("\'", ""));
                             }
 
-                            registro.dados.Add(dado);
+                            registro.Dados.Add(dado);
 
                         }
                     }
@@ -544,7 +544,7 @@ namespace BD2.Analizadores
                                 dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, "null");
                             }
 
-                            registro.dados.Add(dado);
+                            registro.Dados.Add(dado);
                         }
                         
                     }

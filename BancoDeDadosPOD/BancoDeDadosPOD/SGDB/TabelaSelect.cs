@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BancoDeDadosPOD.SGDB.Dados;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -113,6 +114,34 @@ namespace BancoDeDadosPOD.SGDB
             apelidos.Add(campo, apelido);
         }
 
+        /// <summary>
+        /// Retorna uma TabelaSelect a partir de uma TabelaDado
+        /// OBS.: Não traz os apelidos do select
+        /// </summary>
+        /// <param name="tabelaDado"></param>
+        /// <returns></returns>
+        public static TabelaSelect getTabelaSelect(TabelaDado tabelaDado)
+        {
+            TabelaSelect tabelaSelect = new TabelaSelect();
+            List<Dado> dados = tabelaDado.Registros[0].Dados;
+            int colunas = dados.Count;
+            tabelaSelect.campos = new string[colunas];
+            for (int i = 0; i < colunas; i++)
+            {
+                tabelaSelect.campos[i] = dados[i].nome;
+            }
+            foreach (Registro registro in tabelaDado.Registros)
+            {
+                dados = registro.Dados;
+                string[] linha = new string[colunas];
+                for (int i = 0; i < colunas; i++)
+                {
+                    linha[i] = dados[i].valor;
+                }
+                tabelaSelect.Registros.Add(linha);
+            }
+            return tabelaSelect;
+        }
 
         public override string ToString()
         {

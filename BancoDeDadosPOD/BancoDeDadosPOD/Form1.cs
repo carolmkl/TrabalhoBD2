@@ -73,9 +73,10 @@ namespace BancoDeDadosPOD
 
         public static void setResultado(TabelaSelect retorno)
         {
-            foreach (KeyValuePair<string,string>  head in retorno.Apelidos)
+            foreach (string head in retorno.Campos)
             {
-                gridView.Columns.Add(head.Key, head.Value);
+                string apelido = retorno.Apelidos.ContainsValue(head) ? retorno.Apelidos[head] : head;
+                gridView.Columns.Add(head, apelido);
             }
             foreach (string[] registro in retorno.Registros)
             {

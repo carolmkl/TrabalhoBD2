@@ -2,7 +2,7 @@
 
 namespace BancoDeDadosPOD.SGDB.Dados
 {
-    class TabelaDado
+    public class TabelaDado
     {
         private string nome;
         private string path;
@@ -44,17 +44,33 @@ namespace BancoDeDadosPOD.SGDB.Dados
         }
     }
 
-    // classes sealed nao podem serem herdadas
+    // classes sealed nao podem ser herdadas
     public sealed class Registro
     {
         private long posicao;
-        public List<Dado> dados;
+        private List<Dado> dados;
 
-        // id -1 vai pro final do arquivo(inserção)
+        public List<Dado> Dados
+        {
+            get
+            {
+                return dados;
+            }
+
+            set
+            {
+                dados = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id -1 vai pro final do arquivo(inserção)</param>
         public Registro(long id)
         {
             this.posicao = id;
-            dados = new List<Dado>();
+            Dados = new List<Dado>();
         }
 
         public long getPosicao()
@@ -63,7 +79,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         }
     }
 
-    // classes sealed nao podem serem herdadas
+    // classes sealed nao podem ser herdadas
     public sealed class Dado
     {
         public string nome;
