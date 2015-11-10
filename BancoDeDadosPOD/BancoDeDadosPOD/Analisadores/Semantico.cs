@@ -382,6 +382,10 @@ namespace BD2.Analizadores
                                 {
                                     throw new SemanticError("JOIN deve utilizar AND", token.getLinha());
                                 }
+                                if (ultimoFiltro.LValue.Split('.')[0].Equals(identificadores.Last()))
+                                {
+                                    throw new SemanticError("JOIN deve ser feito entre tabelas distintas", token.getLinha());
+                                }
                                 ultimoFiltro.RValue = identificadores.Last() + "." + token.getLexeme();
                                 identificadores.Remove(identificadores.Last());
                                 ultimoFiltro.IsAND = true;
@@ -431,6 +435,7 @@ namespace BD2.Analizadores
                         identificadores.Add(coluna); //Carol: estou inserindo no identificadores também porque ainda não sei se isto será usado em outro momento
                         select.addRetorno(coluna);
                     }
+                    select.Asterisco = true;
                     break;
                 case 24:
                     // FROM tabelas
@@ -562,7 +567,7 @@ namespace BD2.Analizadores
                     break;
                 case acao.Select:
                     Form1.addMensagem(select.ToString());
-
+                    //Form1.setResultado(select.run());
                     select.clear();
                     break;
                 case acao.CriarIndex:

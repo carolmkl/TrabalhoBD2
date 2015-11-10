@@ -33,7 +33,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             string retorno = "";
             foreach (Registro registro in registros)
             {
-                foreach (Dado item in registro.dados)
+                foreach (Dado item in registro.Dados)
                 {
                     retorno += item.nome + " = " + item.valor + " " + item.isValido + " \n";
                 }

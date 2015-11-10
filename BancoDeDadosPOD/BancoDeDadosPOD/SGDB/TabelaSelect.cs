@@ -20,11 +20,48 @@ namespace BancoDeDadosPOD.SGDB
         }
 
         /// <summary>
+        /// Ordena os registros conforme colunas passadas
+        /// </summary>
+        /// <param name="colunas">colunas a serem ordenadas por prioridade</param>
+        /// <param name="asc">se a ordenação é ascendente</param>
+        public void ordena(List<string> colunas, bool asc)
+        {
+            for (int i = colunas.Count - 1; i >= 0; i--)
+            {
+                int pos;
+                for (pos = 0; pos < campos.Length; pos++)
+                {
+                    if (campos[pos].Equals(colunas[i])) break;
+                }
+                if (asc)
+                {
+                    registros.Sort(delegate (string[] x, string[] y)
+                    {
+                        if (x[pos] == null && y[pos] == null) return 0;
+                        else if (x[pos] == null) return -1;
+                        else if (y[pos] == null) return 1;
+                        else return x[pos].CompareTo(y[i]);
+                    });
+                }
+                else
+                {
+                    registros.Sort(delegate (string[] x, string[] y)
+                    {
+                        if (x[i] == null && y[i] == null) return 0;
+                        else if (x[i] == null) return 1;
+                        else if (y[i] == null) return -1;
+                        else return (x[i].CompareTo(y[i]) * -1);
+                    });
+                }
+            }
+        }
+
+        /// <summary>
         /// Realiza a união da tabela passada com a tabela atual.
         /// Os campos devem ser iguais, senão lança exceção.
         /// </summary>
         /// <param name="outraTabela"></param>
-        public void Uniao(TabelaSelect outraTabela)
+        public void uniao(TabelaSelect outraTabela)
         {
             if (!igual(this.campos, outraTabela.Campos))
                 throw new SGDBException("Para união de 2 tabelas, os campos devem ser iguais");
@@ -36,7 +73,7 @@ namespace BancoDeDadosPOD.SGDB
         /// Os campos devem ser iguais, senão lança exceção.
         /// </summary>
         /// <param name="outraTabela"></param>
-        public void UniaoDistinct(TabelaSelect outraTabela)
+        public void uniaoDistinct(TabelaSelect outraTabela)
         {
             if (!igual(this.campos, outraTabela.Campos))
                 throw new SGDBException("Para união de 2 tabelas, os campos devem ser iguais");

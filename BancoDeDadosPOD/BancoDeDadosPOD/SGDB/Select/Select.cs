@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 
 namespace BancoDeDadosPOD.SGDB.Select
 {
-    class Select 
+    class Select
     {
         static Select select;
 
         List<string> tabelas;
         Dictionary<string, string> retorno; //campo,apelido
         Where where;
-        Dictionary<string, bool> ordem;
+        List<string> ordem;
+        bool ordemAscendente;
+        bool asterisco;
 
         public enum EtapaSemantica { CAMPOS, TABELA, JOIN, WHERE, ORDER }
         EtapaSemantica etapa = EtapaSemantica.CAMPOS;
@@ -24,7 +26,9 @@ namespace BancoDeDadosPOD.SGDB.Select
         {
             tabelas = new List<string>();
             retorno = new Dictionary<string, string>();
-            ordem = new Dictionary<string, bool>();
+            ordem = new List<string>();
+            ordemAscendente = true;
+            asterisco = false;
         }
 
         public static Select singleton()
@@ -34,7 +38,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                 select = new Select();
             }
             return select;
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -45,7 +49,9 @@ namespace BancoDeDadosPOD.SGDB.Select
             tabelas = new List<string>();
             retorno = new Dictionary<string, string>();
             Where = null;
-            ordem = new Dictionary<string, bool>();
+            ordem = new List<string>();
+            ordemAscendente = true;
+            asterisco = false;
             Etapa = EtapaSemantica.CAMPOS;
         }
 
@@ -56,7 +62,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         public void addOrderBy(string campo)
         {
             if (!retorno.Keys.Contains(campo)) throw new SemanticError("Campo " + campo + ", do ORDER BY, não consta como retorno.");
-            ordem.Add(campo, true);
+            ordem.Add(campo);
         }
 
         /// <summary>
@@ -64,10 +70,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// </summary>
         public void orderDesc()
         {
-            foreach (string k in ordem.Keys)
-            {
-                ordem[k] = false;
-            }
+            ordemAscendente = false;
         }
 
         /// <summary>
@@ -122,6 +125,46 @@ namespace BancoDeDadosPOD.SGDB.Select
             retorno[key] = apelido;
         }
 
+        public TabelaSelect run()
+        {
+            TabelaSelect tabelaSelect = null;
+            if (asterisco)
+            {
+                if (where != null)
+                {
+                    if (where.ListaFiltro == null || where.ListaFiltro.Count == 0)
+                    {
+                        //tabelaSelect = returnDados(tabelas[0]);
+                    }
+                    foreach (List<Filtro> filtrosAND in where.ListaFiltro)
+                    {
+                        TabelaSelect tabela2 = null;
+                        //tabela2 = returnDados(List < Filtro > filtro, string tabela)
+                        if (tabelaSelect == null) tabelaSelect = tabela2;
+                        else tabelaSelect.uniaoDistinct(tabela2);
+                    }
+                }
+                else
+                {
+                    //tabelaSelect = returnDados(tabelas[0]);
+                }
+                if (ordem.Count > 0)
+                {
+                    tabelaSelect.ordena(ordem, ordemAscendente);
+                }
+                return tabelaSelect;
+            }
+            foreach (string s in tabelas)
+            {
+                //TODO: continuar
+                //TODO: Incluir ordenação
+            }
+
+            return null;
+        }
+
+
+        #region Getter e Setter
         public Where Where
         {
             get
@@ -147,6 +190,20 @@ namespace BancoDeDadosPOD.SGDB.Select
                 etapa = value;
             }
         }
+
+        public bool Asterisco
+        {
+            get
+            {
+                return asterisco;
+            }
+
+            set
+            {
+                asterisco = value;
+            }
+        }
+        #endregion
 
         #region ToString
         public override string ToString()
@@ -213,16 +270,14 @@ namespace BancoDeDadosPOD.SGDB.Select
 
             estrutura.Append("ORDER BY: ");
 
-            if (ordem.Keys.Count > 0)
+            if (ordem.Count > 0)
             {
-                bool asc = true;
-                foreach (string o in ordem.Keys)
+                foreach (string o in ordem)
                 {
                     estrutura.Append(o + ", ");
-                    asc = ordem[o];
                 }
                 estrutura.Remove(estrutura.Length - 2, 2);
-                if (!asc) estrutura.AppendLine(" DESC");
+                if (!ordemAscendente) estrutura.AppendLine(" DESC");
             }
             else
             {
@@ -230,7 +285,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             }
 
             return estrutura.ToString();
-        } 
+        }
         #endregion
 
     }
