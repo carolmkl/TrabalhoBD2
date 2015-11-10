@@ -1,4 +1,5 @@
 ﻿using BancoDeDadosPOD.SGDB.Dados;
+using BancoDeDadosPOD.SGDB.Select;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +81,16 @@ namespace BancoDeDadosPOD.SGDB
             this.registros.AddRange(outraTabela.registros);
             registros = registros.Distinct().ToList();
 
+        }
+
+        /// <summary>
+        /// realiza o INNER JOIN da tabela atual com a tabela passada conforme parametros da listaJoin
+        /// </summary>
+        /// <param name="outraTabela"></param>
+        /// <param name="listaJoin"></param>
+        public void join(TabelaSelect outraTabela, List<Filtro> listaJoin)
+        {
+            //TODO: fazer
         }
 
         /// <summary>
