@@ -583,7 +583,6 @@ namespace BD2.Analizadores
                     metadados.criarIndice(id,identificadores.ToArray());
                     memoria.salvarMetadados(metadados);
                     memoria.atualizar();
-                    
                     break;
 
                 case acao.ExcluirIndex:

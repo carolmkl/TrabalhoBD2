@@ -10,6 +10,7 @@ FOREIGN KEY (nm_bairro) REFERENCES bairro (nm_bairro));
 
 DROP TABLE bairro; 
 
+set database correio;
 CREATE INDEX bairro_nome_idx ON bairro(nm_bairro); 
 
 DROP INDEX bairro_nome_idx; 

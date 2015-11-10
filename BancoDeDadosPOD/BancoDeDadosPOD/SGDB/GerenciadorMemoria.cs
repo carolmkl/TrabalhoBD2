@@ -139,7 +139,7 @@ namespace BancoDeDadosPOD.SGDB
                 if (m.getIndexes().ContainsKey(nome))
                 {
                     m.getIndexes().Remove(nome);
-                    // 
+                    File.Delete(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".idx");
                     return true;
                 }
             }

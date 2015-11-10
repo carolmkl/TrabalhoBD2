@@ -279,8 +279,7 @@ namespace BancoDeDadosPOD.SGDB
 
         public override string ToString()
         {
-            string descricao = nome + "\n";
-            descricao += "Campo | Tipo | Tamanho | Primary |Foreing \n";
+            string descricao  = "Campo | Tipo | Tamanho | Primary |Foreing \n";
             foreach (KeyValuePair<string, DadosTabela> item in dados)
             {
                 DadosTabela d = item.Value;

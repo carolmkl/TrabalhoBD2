@@ -87,14 +87,14 @@ namespace BancoDeDadosPOD
 
         public static void setResultado(Metadados meta)
         {
-            string[] head = new string[] { meta.getNome(),"Campo","Tipo","Tamanho","Primary","Foreign" };
+            string[] head = new string[] { "Campo","Tipo","Tamanho","Primary","Foreign" };
             foreach (string s in head)
             {
                 gridView.Columns.Add(s, s);
             }
             foreach ( DadosTabela d in meta.getDados().Values)
             {
-                gridView.Rows.Add(d.getNomeCampo(), d.geTipo(), d.getTamanho(), d.isPrimary(), (d.isForeing() ? d.getForeing()[0] + "(" + d.getForeing()[1] + ")" : ""));
+                gridView.Rows.Add(d.getNomeCampo(), d.geTipo(), d.getTamanho(), d.isPrimary(), (d.isForeing() ? d.getForeing()[0] + "(" + d.getForeing()[1] + ")" : "False"));
             }
             gridView.Refresh();
         }
