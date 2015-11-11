@@ -264,6 +264,7 @@ namespace BancoDeDadosPOD.SGDB
             if(campos.Count != 0)
             {
                 tabelaIndices["primary" + nome] = campos.ToArray();
+                GerenciadorMemoria.getInstance().criarIndex("primary" + nome);
                 // TODO
                 //douglas.inserirIndice(nome)
             }

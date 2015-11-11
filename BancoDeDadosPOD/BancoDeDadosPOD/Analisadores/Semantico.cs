@@ -557,7 +557,7 @@ namespace BD2.Analizadores
                     
                     TabelaDado tabelaDado = new TabelaDado(id, memoria.getPath());
                     tabelaDado.Registros.Add(registro);
-                    Form1.addMensagem(tabelaDado.ToString());
+                   // Form1.addMensagem(tabelaDado.ToString());
 
                     //int posi = douglas.inserirDado(tabelaDado)
                     //metadados.addIncice(t, posi);
