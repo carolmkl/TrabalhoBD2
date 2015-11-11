@@ -3,35 +3,29 @@ using System.IO;
 
 namespace BancoDeDadosPOD.SGDB.Dados
 {
-    class ArquivoBinario
+    public sealed class ArquivoBinario
     {
         public ArquivoBinario(string path)
         {
             File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
         }
 
-        public void gravarTudo(List<Registro> registros)
+        public long insert(Registro registro)
         {
-            // aqui deve ser descarregada a tabela toda
+            foreach(Dado d in registro.dados)
+            {
+
+            }
+
+            return 0;
         }
+    }
 
-        public void gravarNovos()
-        {
-            // aqui devem ser gravados apenas o ultimos registros inseridos na tabela
-        }
-
-        public List<Registro> Ler()
-        {
-            // aqui deverá ser carregado todos os registros de uma tabela da base de dados
-
-            return null;
-        }
-
-        public MemoryStream Ler()
-        {
-            // se precisarmos desenvolverei este, q deverá ser hardcore.
-
-            return null;
-        }
+    internal static class Conversor
+    {
+//        public static int[] strToBin()
+//        {
+//            int[] binarios
+//        }
     }
 }

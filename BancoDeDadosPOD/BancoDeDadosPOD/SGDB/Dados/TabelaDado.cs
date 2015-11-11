@@ -34,10 +34,10 @@ namespace BancoDeDadosPOD.SGDB.Dados
         private long posicao;
         public List<Dado> dados;
 
-        // id -1 vai pro final do arquivo(inserção)
-        public Registro(long id)
+        // posicao -1 vai pro final do arquivo(inserção)
+        public Registro(long posicao)
         {
-            this.posicao = id;
+            this.posicao = posicao;
             dados = new List<Dado>();
         }
 
@@ -50,39 +50,43 @@ namespace BancoDeDadosPOD.SGDB.Dados
     // classes sealed nao podem serem herdadas
     public sealed class Dado
     {
-        public string nome;
-        private byte tamanho;
-        public long posicao;
+        public string nome { get; internal set; }
+        public TipoDado tipo { get; internal set; }
+        public byte tamanho { get; internal set; }
+        public long posicao { get; internal set; }
         public bool isValido { get; internal set; }
         public dynamic valor { get; internal set; }
 
 
-        public Dado(string nome, byte tamanho, long posicao, bool isValido, dynamic valor)
+        public Dado(string nome, TipoDado tipo, byte tamanho, long posicao, bool isValido, dynamic valor)
         {
             this.nome = nome;
+            this.tipo = tipo;
             this.tamanho = tamanho;
             this.posicao = posicao;
             this.isValido = isValido;
             this.valor = valor;
         }
 
-        public Dado(string nome, byte tamanho, bool isValido, dynamic valor)
+        public Dado(string nome, TipoDado tipo, byte tamanho, bool isValido, dynamic valor)
         {
             this.nome = nome;
+            this.tipo = tipo;
             this.tamanho = tamanho;
+            this.posicao = -1;
             this.isValido = isValido;
             this.valor = valor;
-        }
-
-        public void setValor(bool isValido, dynamic valor = null)
-        {
-            this.isValido = isValido;
-            this.isValido = valor;
         }
 
         public void setNulo()
         {
             this.isValido = false;
+        }
+
+        public void setValor(dynamic valor = null)
+        {
+            this.isValido = true;
+            this.isValido = valor;
         }
 
         public string getValorStr()
@@ -94,5 +98,10 @@ namespace BancoDeDadosPOD.SGDB.Dados
         {
             return this.valor;
         }
+    }
+
+    public enum TipoDado {
+        Inteiro,
+        String
     }
 }
