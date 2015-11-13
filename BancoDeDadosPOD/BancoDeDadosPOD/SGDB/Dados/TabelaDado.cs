@@ -46,8 +46,8 @@ namespace BancoDeDadosPOD.SGDB.Dados
     // classes sealed nao podem ser herdadas
     public sealed class Registro
     {
-        private long posicao;
-        private List<Dado> dados;
+        private long posicao;     // Byte de posicao me que o registro inicia dentro do arquivo
+        private List<Dado> dados; // Lista de dados, cada dado uma coluna da tabela
 
         public List<Dado> Dados
         {
@@ -81,12 +81,12 @@ namespace BancoDeDadosPOD.SGDB.Dados
     // classes sealed nao podem ser herdadas
     public sealed class Dado
     {
-        public string nome { get; internal set; }
-        public TipoDado tipo { get; internal set; }
-        public byte tamanho { get; internal set; }
-        public long posicao { get; internal set; }
-        public bool isValido { get; internal set; }
-        public dynamic valor { get; internal set; }
+        public string nome { get; internal set; }   // Nome da coluna
+        public TipoDado tipo { get; internal set; } // Tipo primitivo do dado
+        public byte tamanho { get; internal set; }  // Tamanho em bytes de cada dado
+        public long posicao { get; internal set; }  // Posicao do dado dentro do registro 0 a N
+        public bool isValido { get; internal set; } // Define se o dado é nulo ou valido
+        public dynamic valor { get; internal set; } // Valor que deve ser guardado
 
         public Dado(string nome, TipoDado tipo, byte tamanho, long posicao, bool isValido, dynamic valor)
         {

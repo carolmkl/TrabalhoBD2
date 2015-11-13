@@ -50,9 +50,21 @@ namespace BancoDeDadosPOD.SGDB
         {
             this.nomeCampo = nomeCampo;
         }
+
         public string geTipo()
         {
             return tipo;
+        }
+
+        public TipoDado getTipoDado()
+        {
+            if (this.tipo.Equals("char") || this.tipo.Equals("varchar"))
+                return TipoDado.String;
+            else
+                if (this.tipo.Equals("integer"))
+                    return TipoDado.Inteiro;
+
+            throw new SGDBException("Tipo de dado inválido ou não reconhecido!");
         }
 
         public void setTipo(string tipo)
@@ -229,6 +241,11 @@ namespace BancoDeDadosPOD.SGDB
         public List<string> getNomesColunas()
         {
             return nomesColunas;
+        }
+
+        public TipoDado getTipoDado(int i)
+        {
+            return dados[nomesColunas[i]].getTipoDado();
         }
 
         public Dictionary<string, string[]> getIndexes()
