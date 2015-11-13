@@ -253,7 +253,7 @@ namespace BancoDeDadosPOD.SGDB
             return tabelaIndices;
         }
 
-        public void addIndice(Registro tabela, int lastPosi)
+        public void addIndice(Registro tabela, long lastPosi, ArquivoBinario arquivoBinario)
         {
             List<string> dado;
             foreach (KeyValuePair<string, string[]> item in tabelaIndices)
@@ -263,7 +263,7 @@ namespace BancoDeDadosPOD.SGDB
                 {
                     dado.Add(tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
                 }
-                //douglas.salvarIndice(dado.ToArray(), lastPosi);        
+                //arquivoBinario.salvarIndice(dado.ToArray(), lastPosi);        
             }
         }
 

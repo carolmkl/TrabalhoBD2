@@ -46,6 +46,7 @@ namespace BD2.Analizadores
         private acao operacao;
         private GerenciadorMemoria memoria;
         private Form1 form1;
+        ArquivoBinario arquivoBinario;
 
         public Semantico()
         {
@@ -108,8 +109,8 @@ namespace BD2.Analizadores
                     {
                         throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " não existe", token.getPosition());
                     }
-
-                    /*if (douglas.tabelaTemDados(token.getLexeme().ToLower()))
+                   /* arquivoBinario = new ArquivoBinario(memoria.getPath());
+                    if (arquivoBinario.tabelaTemDados(token.getLexeme().ToLower()))
                     {
                         throw new SemanticError("Não se cria index em tabelas que já tenham dados", token.getLinha());
                     }*/
@@ -555,12 +556,13 @@ namespace BD2.Analizadores
                     }
                     Console.WriteLine("TO STRING DA TABELA");
                     
-                    TabelaDado tabelaDado = new TabelaDado(id, memoria.getPath());
-                    tabelaDado.Registros.Add(registro);
-                   // Form1.addMensagem(tabelaDado.ToString());
-
-                    //int posi = douglas.inserirDado(tabelaDado)
-                    //metadados.addIncice(t, posi);
+                    /*TabelaDado tabelaDado = new TabelaDado(id, memoria.getPath());
+                    tabelaDado.Registros.Add(registro);*/
+                    // Form1.addMensagem(tabelaDado.ToString());
+                    arquivoBinario = new ArquivoBinario(memoria.getPath());
+                    long posi = arquivoBinario.insert(registro);
+                    
+                    metadados.addIndice(registro, posi, arquivoBinario);
                     memoria.salvarMetadados(metadados);
                     memoria.atualizar();
 
