@@ -12,20 +12,10 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
         public long insert(Registro registro)
         {
-            foreach(Dado d in registro.dados)
+            foreach (Dado d in registro.dados)
             {
 
             }
-
-            return 0;
         }
-    }
-
-    internal static class Conversor
-    {
-//        public static int[] strToBin()
-//        {
-//            int[] binarios
-//        }
     }
 }

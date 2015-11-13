@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.txtComando = new System.Windows.Forms.TextBox();
             this.btnExecuta = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -48,10 +49,10 @@
             this.txtComando.Location = new System.Drawing.Point(13, 13);
             this.txtComando.Multiline = true;
             this.txtComando.Name = "txtComando";
+            this.txtComando.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtComando.Size = new System.Drawing.Size(675, 164);
             this.txtComando.TabIndex = 0;
-            this.txtComando.Text = "create database teste;\r\nset database teste;\r\ncreate table tabela (campo1 integer," +
-    " campo2 varchar(10));\r\nselect tabela.* from tabela;";
+            this.txtComando.Text = resources.GetString("txtComando.Text");
             // 
             // btnExecuta
             // 
@@ -65,15 +66,21 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToOrderColumns = true;
+            this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(6, 6);
             this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowTemplate.ReadOnly = true;
             this.dataGridView1.Size = new System.Drawing.Size(658, 191);
             this.dataGridView1.TabIndex = 2;
+            this.dataGridView1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dataGridView1_RowsAdded);
             // 
             // tabResultado
             // 
@@ -104,9 +111,11 @@
             this.txtMensagens.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMensagens.BackColor = System.Drawing.SystemColors.HighlightText;
             this.txtMensagens.Location = new System.Drawing.Point(4, 4);
             this.txtMensagens.Multiline = true;
             this.txtMensagens.Name = "txtMensagens";
+            this.txtMensagens.ReadOnly = true;
             this.txtMensagens.Size = new System.Drawing.Size(660, 196);
             this.txtMensagens.TabIndex = 0;
             // 

@@ -2,7 +2,7 @@
 
 namespace BancoDeDadosPOD.SGDB.Dados
 {
-    class TabelaDado
+    public class TabelaDado
     {
         private string nome;
         private string path;
@@ -12,6 +12,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         {
             this.nome = nome;
             this.path = path;
+            registros = new List<Registro>();
         }
 
         internal List<Registro> Registros
@@ -26,19 +27,49 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 registros = value;
             }
         }
+
+        public override string ToString()
+        {
+            string retorno = "";
+            foreach (Registro registro in registros)
+            {
+                foreach (Dado item in registro.Dados)
+                {
+                    retorno += item.nome + " = " + item.valor + " " + item.isValido + " \n";
+                }
+            }
+
+            return retorno;
+        }
     }
 
-    // classes sealed nao podem serem herdadas
+    // classes sealed nao podem ser herdadas
     public sealed class Registro
     {
         private long posicao;
-        public List<Dado> dados;
+        private List<Dado> dados;
 
-        // posicao -1 vai pro final do arquivo(inserção)
+        public List<Dado> Dados
+        {
+            get
+            {
+                return dados;
+            }
+
+            set
+            {
+                dados = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id -1 vai pro final do arquivo(inserção)</param>
         public Registro(long posicao)
         {
             this.posicao = posicao;
-            dados = new List<Dado>();
+            Dados = new List<Dado>();
         }
 
         public long getPosicao()
@@ -47,7 +78,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         }
     }
 
-    // classes sealed nao podem serem herdadas
+    // classes sealed nao podem ser herdadas
     public sealed class Dado
     {
         public string nome { get; internal set; }
@@ -56,7 +87,6 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public long posicao { get; internal set; }
         public bool isValido { get; internal set; }
         public dynamic valor { get; internal set; }
-
 
         public Dado(string nome, TipoDado tipo, byte tamanho, long posicao, bool isValido, dynamic valor)
         {

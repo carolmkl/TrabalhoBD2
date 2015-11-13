@@ -14,16 +14,21 @@ namespace BancoDeDadosPOD.SGDB.Select
         List<string> tabelas;
         Dictionary<string, string> retorno; //campo,apelido
         Where where;
-        Dictionary<string, bool> ordem;
+        List<string> ordem;
+        bool ordemAscendente;
+        bool asterisco;
 
         public enum EtapaSemantica { CAMPOS, TABELA, JOIN, WHERE, ORDER }
         EtapaSemantica etapa = EtapaSemantica.CAMPOS;
 
+        #region Construtor
         private Select()
         {
             tabelas = new List<string>();
             retorno = new Dictionary<string, string>();
-            ordem = new Dictionary<string, bool>();
+            ordem = new List<string>();
+            ordemAscendente = true;
+            asterisco = false;
         }
 
         public static Select singleton()
@@ -34,6 +39,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             }
             return select;
         }
+        #endregion
 
         /// <summary>
         /// Limpa todos os campos
@@ -43,7 +49,9 @@ namespace BancoDeDadosPOD.SGDB.Select
             tabelas = new List<string>();
             retorno = new Dictionary<string, string>();
             Where = null;
-            ordem = new Dictionary<string, bool>();
+            ordem = new List<string>();
+            ordemAscendente = true;
+            asterisco = false;
             Etapa = EtapaSemantica.CAMPOS;
         }
 
@@ -54,7 +62,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         public void addOrderBy(string campo)
         {
             if (!retorno.Keys.Contains(campo)) throw new SemanticError("Campo " + campo + ", do ORDER BY, não consta como retorno.");
-            ordem.Add(campo, true);
+            ordem.Add(campo);
         }
 
         /// <summary>
@@ -62,10 +70,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// </summary>
         public void orderDesc()
         {
-            foreach (string k in ordem.Keys)
-            {
-                ordem[k] = false;
-            }
+            ordemAscendente = false;
         }
 
         /// <summary>
@@ -111,19 +116,6 @@ namespace BancoDeDadosPOD.SGDB.Select
         }
 
         /// <summary>
-        /// Caso o campo incluído como retorno seja uma condicao, é possível removê-lo da lista para adicionar ao Filtro
-        /// </summary>
-        /// <returns> retorna o valor que foi removido</returns>
-
-        /*public string removeUltimoRetorno()
-                {
-                    string key = retorno.ElementAt(retorno.Count - 1).Key;
-                    string removed = retorno[key];
-                    retorno.Remove(key);
-                    return removed;
-                }
-                */
-        /// <summary>
         /// Insere o apelido passado no último retorno incluído
         /// </summary>
         /// <param name="apelido"></param>
@@ -133,6 +125,96 @@ namespace BancoDeDadosPOD.SGDB.Select
             retorno[key] = apelido;
         }
 
+        /// <summary>
+        /// método responsável por retornar o resultado do SELECT
+        /// </summary>
+        /// <returns>TabelaSelect formatada para apresentar no Form1</returns>
+        public TabelaSelect run()
+        {
+            TabelaSelect tabelaSelect = null;
+            //caso e select seja select tabela.* from tabela não será necessário 
+            //aplicar join pois tratará de apenas uma tabela
+            //tratamento apenas para where
+            if (asterisco)
+            {
+                if (where != null)
+                {
+                    if (where.ListaFiltro == null || where.ListaFiltro.Count == 0)
+                    {
+                        //se não tiver filtro retorna tudo
+                        tabelaSelect = returnDados(tabelas[0]);
+                    }
+                    //traz os resultados filtrados por grupos de AND e depois junta com os OR's
+                    foreach (List<Filtro> filtrosAND in where.ListaFiltro)
+                    {
+                        TabelaSelect tabela2 = null;
+                        tabela2 = returnDados(filtrosAND, tabelas[0]);
+                        if (tabelaSelect == null) tabelaSelect = tabela2;
+                        else tabelaSelect.uniaoDistinct(tabela2);
+                    }
+                }
+                else
+                {
+                    //se nao tiver filtro retorna tudo
+                    tabelaSelect = returnDados(tabelas[0]);
+                }
+                //envia comando para a TabelaSelect ordenar os registros
+                if (ordem.Count > 0)
+                {
+                    tabelaSelect.ordena(ordem, ordemAscendente);
+                }
+                return tabelaSelect;
+            }
+            //Se não tem asterisco o negócio complica
+            foreach (string s in tabelas)
+            {
+                TabelaSelect tabelaTemp = null;
+                //filtra as colunas relacionadas com a tabela
+                List<string> camposBuscar = retorno.Keys.Where(c => c.StartsWith(s)).ToList<string>();
+                //O Join pode ter colunas que não constam como retorno, mas é necessário para juntar as tabelas depois
+                //Adicionando campos de join para retorno.
+                foreach (Filtro f in where.ListaJoin)
+                {
+                    if (f.LValue.StartsWith(s) && !camposBuscar.Contains(f.LValue))
+                        camposBuscar.Add(f.LValue);
+                    if (f.RValue.StartsWith(s) && !camposBuscar.Contains(f.RValue))
+                        camposBuscar.Add(f.RValue);
+                }
+                //traz os resultados filtrados por grupos de AND e depois junta com os OR's
+                foreach (List<Filtro> filtrosAND in where.ListaFiltro)
+                {
+                    TabelaSelect tabelaTemp2 = null;
+                    //informa apenas os filtros relacionados com a tabela em questão
+                    tabelaTemp2 = returnDados(filtrosAND.Where(filtro => filtro.LValue.StartsWith(s)).ToList<Filtro>(), tabelas[0]);
+                    if (tabelaTemp == null) tabelaTemp = tabelaTemp2;
+                    else tabelaTemp.uniaoDistinct(tabelaTemp2);
+                }
+
+                //TODO: continuar. Ainda não terminou.
+
+            }
+            //envia comando para a TabelaSelect ordenar os registros
+            if (ordem.Count > 0)
+            {
+                tabelaSelect.ordena(ordem, ordemAscendente);
+            }
+            return tabelaSelect;
+        }
+
+        #region Gerenciador de Memória
+        TabelaSelect returnDados(string tabela)
+        {
+            throw new NotImplementedException();
+        }
+
+        private TabelaSelect returnDados(List<Filtro> filtrosAND, string v)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Getter e Setter
         public Where Where
         {
             get
@@ -159,6 +241,21 @@ namespace BancoDeDadosPOD.SGDB.Select
             }
         }
 
+        public bool Asterisco
+        {
+            get
+            {
+                return asterisco;
+            }
+
+            set
+            {
+                asterisco = value;
+            }
+        }
+        #endregion
+
+        #region ToString
         public override string ToString()
         {
             StringBuilder estrutura = new StringBuilder();
@@ -223,16 +320,14 @@ namespace BancoDeDadosPOD.SGDB.Select
 
             estrutura.Append("ORDER BY: ");
 
-            if (ordem.Keys.Count > 0)
+            if (ordem.Count > 0)
             {
-                bool asc = true;
-                foreach (string o in ordem.Keys)
+                foreach (string o in ordem)
                 {
                     estrutura.Append(o + ", ");
-                    asc = ordem[o];
                 }
                 estrutura.Remove(estrutura.Length - 2, 2);
-                if (!asc) estrutura.AppendLine(" DESC");
+                if (!ordemAscendente) estrutura.AppendLine(" DESC");
             }
             else
             {
@@ -241,6 +336,7 @@ namespace BancoDeDadosPOD.SGDB.Select
 
             return estrutura.ToString();
         }
+        #endregion
 
     }
 }

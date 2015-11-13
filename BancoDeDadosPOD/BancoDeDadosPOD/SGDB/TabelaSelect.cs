@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BancoDeDadosPOD.SGDB.Dados;
+using BancoDeDadosPOD.SGDB.Select;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,11 +21,48 @@ namespace BancoDeDadosPOD.SGDB
         }
 
         /// <summary>
+        /// Ordena os registros conforme colunas passadas
+        /// </summary>
+        /// <param name="colunas">colunas a serem ordenadas por prioridade</param>
+        /// <param name="asc">se a ordenação é ascendente</param>
+        public void ordena(List<string> colunas, bool asc)
+        {
+            for (int i = colunas.Count - 1; i >= 0; i--)
+            {
+                int pos;
+                for (pos = 0; pos < campos.Length; pos++)
+                {
+                    if (campos[pos].Equals(colunas[i])) break;
+                }
+                if (asc)
+                {
+                    registros.Sort(delegate (string[] x, string[] y)
+                    {
+                        if (x[pos] == null && y[pos] == null) return 0;
+                        else if (x[pos] == null) return -1;
+                        else if (y[pos] == null) return 1;
+                        else return x[pos].CompareTo(y[i]);
+                    });
+                }
+                else
+                {
+                    registros.Sort(delegate (string[] x, string[] y)
+                    {
+                        if (x[i] == null && y[i] == null) return 0;
+                        else if (x[i] == null) return 1;
+                        else if (y[i] == null) return -1;
+                        else return (x[i].CompareTo(y[i]) * -1);
+                    });
+                }
+            }
+        }
+
+        /// <summary>
         /// Realiza a união da tabela passada com a tabela atual.
         /// Os campos devem ser iguais, senão lança exceção.
         /// </summary>
         /// <param name="outraTabela"></param>
-        public void Uniao(TabelaSelect outraTabela)
+        public void uniao(TabelaSelect outraTabela)
         {
             if (!igual(this.campos, outraTabela.Campos))
                 throw new SGDBException("Para união de 2 tabelas, os campos devem ser iguais");
@@ -35,7 +74,7 @@ namespace BancoDeDadosPOD.SGDB
         /// Os campos devem ser iguais, senão lança exceção.
         /// </summary>
         /// <param name="outraTabela"></param>
-        public void UniaoDistinct(TabelaSelect outraTabela)
+        public void uniaoDistinct(TabelaSelect outraTabela)
         {
             if (!igual(this.campos, outraTabela.Campos))
                 throw new SGDBException("Para união de 2 tabelas, os campos devem ser iguais");
@@ -45,10 +84,20 @@ namespace BancoDeDadosPOD.SGDB
         }
 
         /// <summary>
+        /// realiza o INNER JOIN da tabela atual com a tabela passada conforme parametros da listaJoin
+        /// </summary>
+        /// <param name="outraTabela"></param>
+        /// <param name="listaJoin"></param>
+        public void join(TabelaSelect outraTabela, List<Filtro> listaJoin)
+        {
+            //TODO: fazer
+        }
+
+        /// <summary>
         /// compara se as strings contidas nos parametros são iguais
         /// </summary>
         /// <param name="l1">valor a ser comparado com l2</param>
-        /// <param name="l2">valor a ser comparado com l2</param>
+        /// <param name="l2">valor a ser comparado com l1</param>
         /// <returns></returns>
         private bool igual(string[] l1, string[] l2)
         {
@@ -113,6 +162,34 @@ namespace BancoDeDadosPOD.SGDB
             apelidos.Add(campo, apelido);
         }
 
+        /// <summary>
+        /// Retorna uma TabelaSelect a partir de uma TabelaDado
+        /// OBS.: Não traz os apelidos do select
+        /// </summary>
+        /// <param name="tabelaDado"></param>
+        /// <returns></returns>
+        public static TabelaSelect getTabelaSelect(TabelaDado tabelaDado)
+        {
+            TabelaSelect tabelaSelect = new TabelaSelect();
+            List<Dado> dados = tabelaDado.Registros[0].Dados;
+            int colunas = dados.Count;
+            tabelaSelect.campos = new string[colunas];
+            for (int i = 0; i < colunas; i++)
+            {
+                tabelaSelect.campos[i] = dados[i].nome;
+            }
+            foreach (Registro registro in tabelaDado.Registros)
+            {
+                dados = registro.Dados;
+                string[] linha = new string[colunas];
+                for (int i = 0; i < colunas; i++)
+                {
+                    linha[i] = dados[i].valor;
+                }
+                tabelaSelect.Registros.Add(linha);
+            }
+            return tabelaSelect;
+        }
 
         public override string ToString()
         {

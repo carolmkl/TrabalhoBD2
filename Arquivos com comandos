@@ -10,11 +10,15 @@ FOREIGN KEY (nm_bairro) REFERENCES bairro (nm_bairro));
 
 DROP TABLE bairro; 
 
+set database correio;
 CREATE INDEX bairro_nome_idx ON bairro(nm_bairro); 
 
 DROP INDEX bairro_nome_idx; 
 
+set database correio;
 INSERT INTO bairro(cd_bairro, nm_bairro, sg_uf) VALUES (1, 'Victor Konder', 'SC'); 
+
+set database correio;
 INSERT INTO bairro(cd_bairro, sg_uf, nm_bairro) VALUES (1, 'SC', 'Victor Konder'); 
 
 SELECT bairro.* FROM bairro ORDER BY bairro.nm_bairro up; 

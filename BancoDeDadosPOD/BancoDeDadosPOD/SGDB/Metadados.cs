@@ -244,7 +244,7 @@ namespace BancoDeDadosPOD.SGDB
                 dado = new List<string>();
                 for (int i = 0; i < item.Value.Count(); i++)
                 {
-                    dado.Add(tabela.dados[nomesColunas.IndexOf(item.Value[i])].valor);
+                    dado.Add(tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
                 }
                 //douglas.salvarIndice(dado.ToArray(), lastPosi);        
             }
@@ -264,6 +264,7 @@ namespace BancoDeDadosPOD.SGDB
             if(campos.Count != 0)
             {
                 tabelaIndices["primary" + nome] = campos.ToArray();
+                GerenciadorMemoria.getInstance().criarIndex("primary" + nome);
                 // TODO
                 //douglas.inserirIndice(nome)
             }
@@ -279,8 +280,7 @@ namespace BancoDeDadosPOD.SGDB
 
         public override string ToString()
         {
-            string descricao = nome + "\n";
-            descricao += "Campo | Tipo | Tamanho | Primary |Foreing \n";
+            string descricao  = "Campo | Tipo | Tamanho | Primary |Foreing \n";
             foreach (KeyValuePair<string, DadosTabela> item in dados)
             {
                 DadosTabela d = item.Value;

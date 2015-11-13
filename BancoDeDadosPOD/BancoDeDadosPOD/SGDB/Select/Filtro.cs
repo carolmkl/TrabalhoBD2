@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BancoDeDadosPOD.SGDB.Select
 {
-    class Filtro
+    public class Filtro
     {
         private string lValue;
         private OperadorRel op;

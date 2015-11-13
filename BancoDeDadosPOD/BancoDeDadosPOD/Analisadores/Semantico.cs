@@ -214,8 +214,7 @@ namespace BD2.Analizadores
                     }
                     break;
                 case 15:
-                    // Fazer o resto em relação a isso
-                    memoria.recuperarMetadados(token.getLexeme().ToLower()).ToString();
+                    Form1.setResultado(memoria.recuperarMetadados(token.getLexeme().ToLower()));
                     break;
                 case 16:
                     memoria.setDatabase(token.getLexeme().ToLower());
@@ -281,24 +280,26 @@ namespace BD2.Analizadores
                     }
                     break;
                 case 20:
-                    if (!allColunas)
+                    int indexColuna;
+                    if (allColunas)
                     {
-                        index = identificadores.Count() - 1 - contColunas;
-                        if (index >= contColunas)
+                        index = identificadores.Count()-1;
+                        indexColuna = index;
+                        if (index>= metadados.getNomesColunas().Count())
                         {
                             throw new SemanticError("Mais valores do que campos", token.getLinha());
                         }
                     }
                     else
                     {
-                        index = identificadores.Count() - 1;
-                        if (index >= metadados.getNomesColunas().Count())
+                        index = identificadores.Count() - contColunas;
+                        indexColuna = metadados.getNomesColunas().IndexOf(identificadores[index]);
+                        if ((index-1) >= contColunas)
                         {
                             throw new SemanticError("Mais valores do que campos", token.getLinha());
                         }
-
                     }
-                    if (ListaDeSimbolos.getInstance().classeToken(token.getId()).Contains(metadados.getDados()[metadados.getNomesColunas()[index]].geTipo()) || ListaDeSimbolos.getInstance().classeToken(token.getId()).Equals("null"))
+                    if (ListaDeSimbolos.getInstance().classeToken(token.getId()).Contains(metadados.getDados()[metadados.getNomesColunas()[indexColuna]].geTipo()) || ListaDeSimbolos.getInstance().classeToken(token.getId()).Equals("null"))
                     {
                         // tipo tá correto
                         // validação de tamanho
@@ -323,7 +324,7 @@ namespace BD2.Analizadores
                             }
                             else
                             {
-                                if ((token.getLexeme().Length - 2) <= metadados.getDados()[metadados.getNomesColunas()[index]].getTamanho())
+                                if ((token.getLexeme().Length - 2) <= metadados.getDados()[metadados.getNomesColunas()[indexColuna]].getTamanho())
                                 {
                                     identificadores.Add(token.getLexeme());
                                 }
@@ -381,6 +382,10 @@ namespace BD2.Analizadores
                                 {
                                     throw new SemanticError("JOIN deve utilizar AND", token.getLinha());
                                 }
+                                if (ultimoFiltro.LValue.Split('.')[0].Equals(identificadores.Last()))
+                                {
+                                    throw new SemanticError("JOIN deve ser feito entre tabelas distintas", token.getLinha());
+                                }
                                 ultimoFiltro.RValue = identificadores.Last() + "." + token.getLexeme();
                                 identificadores.Remove(identificadores.Last());
                                 ultimoFiltro.IsAND = true;
@@ -430,6 +435,7 @@ namespace BD2.Analizadores
                         identificadores.Add(coluna); //Carol: estou inserindo no identificadores também porque ainda não sei se isto será usado em outro momento
                         select.addRetorno(coluna);
                     }
+                    select.Asterisco = true;
                     break;
                 case 24:
                     // FROM tabelas
@@ -503,17 +509,16 @@ namespace BD2.Analizadores
                         Dado dado;
                         for (int i = 0; i < identificadores.Count(); i++)
                         {
-                            // falar sobre isso
                             if (identificadores[i].Equals("null"))
                             {
-                                dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[i]);
+                                dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[i].Replace("\'", ""));
                             }
                             else
                             {
-                                dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[i]);
+                                dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[i].Replace("\'", ""));
                             }
 
-                            registro.dados.Add(dado);
+                            registro.Dados.Add(dado);
 
                         }
                     }
@@ -528,7 +533,14 @@ namespace BD2.Analizadores
                             {
                                 if (metadados.getNomesColunas()[i].Equals(identificadores[j]))
                                 {
-                                    dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[j + contColunas]);
+                                    if (identificadores[j + contColunas].Equals("null"))
+                                    {
+                                        dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[j + contColunas].Replace("\'", ""));
+                                    }
+                                    else
+                                    {
+                                        dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[j + contColunas].Replace("\'", ""));
+                                    }
                                     nacho = false;
                                 }
                             }
@@ -537,14 +549,15 @@ namespace BD2.Analizadores
                                 dado = new Dado(metadados.getNomesColunas()[i], (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, "null");
                             }
 
-                            registro.dados.Add(dado);
+                            registro.Dados.Add(dado);
                         }
                         
                     }
                     Console.WriteLine("TO STRING DA TABELA");
-                    //Console.WriteLine(t.ToString());
+                    
                     TabelaDado tabelaDado = new TabelaDado(id, memoria.getPath());
                     tabelaDado.Registros.Add(registro);
+                   // Form1.addMensagem(tabelaDado.ToString());
 
                     //int posi = douglas.inserirDado(tabelaDado)
                     //metadados.addIncice(t, posi);
@@ -554,7 +567,7 @@ namespace BD2.Analizadores
                     break;
                 case acao.Select:
                     Form1.addMensagem(select.ToString());
-
+                    //Form1.setResultado(select.run());
                     select.clear();
                     break;
                 case acao.CriarIndex:
@@ -570,7 +583,6 @@ namespace BD2.Analizadores
                     metadados.criarIndice(id,identificadores.ToArray());
                     memoria.salvarMetadados(metadados);
                     memoria.atualizar();
-                    
                     break;
 
                 case acao.ExcluirIndex:
