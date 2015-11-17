@@ -2,13 +2,13 @@
 
 namespace BancoDeDadosPOD.SGDB.Dados
 {
-    public sealed class ArquivoBinario
+    public sealed class ArquivoTabela
     {
         Stream stream;
         BinaryWriter bw;
         BinaryReader br;
 
-        public ArquivoBinario(string path)
+        public ArquivoTabela(string path)
         {
             stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             bw = new BinaryWriter(stream);
@@ -44,6 +44,35 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
             // força a gravar no arquivo aquilo que ficou no buffer.
             bw.Flush();
+
+            return posicaoIni;
+        }
+
+        public bool temDados()
+        {
+            return stream.Length > 0;
+        }
+    }
+
+    public sealed class ArquivoIndice
+    {
+        Stream stream;
+        BinaryWriter bw;
+        BinaryReader br;
+
+        public ArquivoIndice(string path)
+        {
+            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            bw = new BinaryWriter(stream);
+            br = new BinaryReader(stream);
+        }
+
+        public long insert(DadoIndice[] registro, long posicao)
+        {
+            long posicaoIni = stream.Length;
+            stream.Position = posicaoIni - 1;
+
+            //...
 
             return posicaoIni;
         }

@@ -48,6 +48,8 @@
   <ItemGroup>
     <Compile Include="Analisadores\ListaDeSimbolos.cs" />
     <Compile Include="SGDB\Dados\ArquivoBinario.cs" />
+    <Compile Include="SGDB\Dados\Base.cs" />
+    <Compile Include="SGDB\Dados\Memoria.cs" />
     <Compile Include="SGDB\GerenciadorMemoria.cs" />
     <Compile Include="SGDB\Metadados.cs" />
     <Compile Include="Form1.cs">

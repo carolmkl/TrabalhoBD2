@@ -130,6 +130,18 @@ namespace BancoDeDadosPOD.SGDB.Dados
         }
     }
 
+    public sealed class DadoIndice
+    {
+        public TipoDado tipo { get; }
+        public dynamic valor { get; }
+
+        public DadoIndice(TipoDado tipo, dynamic valor)
+        {
+            this.tipo = tipo;
+            this.valor = valor;
+        }
+    }
+
     public enum TipoDado {
         Inteiro,
         String
