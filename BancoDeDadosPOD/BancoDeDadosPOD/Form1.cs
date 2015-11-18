@@ -73,39 +73,43 @@ namespace BancoDeDadosPOD
 
         public static void setResultado(TabelaSelect tabela, Dictionary<string, string> retorno)
         {
+            gridView.Columns.Clear();
             int[] indices = new int[retorno.Count];
             for (int i = 0; i < retorno.Count; i++)
             {
                 KeyValuePair<string, string> campo = retorno.ElementAt(i);
+                //insere a coluna no gridView com o apelido definido
+                gridView.Columns.Add(campo.Key, campo.Value);
+                //verifica qual eh o índice da tabelaSelect correspondente ao campo para ordenar depois
                 for (int j = 0; j < tabela.Campos.Length; j++)
                 {
-
+                    if (tabela.Campos[j].Equals(campo.Key))
+                    {
+                        indices[i] = j;
+                        break;
+                    }
                 }
-            }
-
-            /*
-            gridView.Columns.Clear();
-            foreach (string head in tabela.Campos)
-            {
-                //string apelido = tabela.Apelidos.ContainsValue(head) ? tabela.Apelidos[head] : head;
-                //gridView.Columns.Add(head, apelido);
             }
             foreach (string[] registro in tabela.Registros)
             {
-                gridView.Rows.Add(registro);
+                string[] linha = new string[registro.Length];
+                for (int i = 0; i < linha.Length; i++)
+                {
+                    linha[i] = registro[indices[i]];
+                }
+                gridView.Rows.Add(linha);
             }
-            gridView.Refresh();*/
         }
 
         public static void setResultado(Metadados meta)
         {
             gridView.Columns.Clear();
-            string[] head = new string[] { "Campo","Tipo","Tamanho","Primary","Foreign" };
+            string[] head = new string[] { "Campo", "Tipo", "Tamanho", "Primary", "Foreign" };
             foreach (string s in head)
             {
                 gridView.Columns.Add(s, s);
             }
-            foreach ( DadosTabela d in meta.getDados().Values)
+            foreach (DadosTabela d in meta.getDados().Values)
             {
                 gridView.Rows.Add(d.getNomeCampo(), d.geTipo(), d.getTamanho(), d.isPrimary(), (d.isForeing() ? d.getForeing()[0] + "(" + d.getForeing()[1] + ")" : "False"));
             }
