@@ -105,7 +105,7 @@ namespace BD2.Analizadores
 
         private int tokenForState(int state)
         {
-            if (state < 0 || state >= TOKEN_STATE.Count())
+            if (state < 0 || state >= TOKEN_STATE.Length)
             {
                 return -1;
             }
@@ -143,7 +143,7 @@ namespace BD2.Analizadores
 
         private bool hasInput()
         {
-            return position < input.Count();
+            return position < input.Length;
         }
 
         private char nextChar()

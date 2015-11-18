@@ -94,8 +94,8 @@ namespace BancoDeDadosPOD.SGDB
         {
             //para fazer o join será criado uma nova tabela com o resultado da operação
             TabelaSelect resultado = new TabelaSelect();
-            int colunas = this.Campos.Count() + outraTabela.Campos.Count();
-            int iniDir = this.Campos.Count(); //em que indice começam os registros da 2a tabela
+            int colunas = this.Campos.Length + outraTabela.Campos.Length;
+            int iniDir = this.Campos.Length; //em que indice começam os registros da 2a tabela
             resultado.Campos = new string[colunas];
             //define os campos da nova tabela com a uniao das originais
             this.Campos.CopyTo(resultado.Campos, 0);
@@ -112,7 +112,7 @@ namespace BancoDeDadosPOD.SGDB
                 if (resultado.Campos.Contains(filtro.RValue) && resultado.Campos.Contains(filtro.LValue))
                 {
                     //define em que indice o valor será verificado na 1a tabela;
-                    for (int i = 0; i < this.Campos.Count(); i++)
+                    for (int i = 0; i < this.Campos.Length; i++)
                     {
                         if (this.Campos[i].Equals(filtro.RValue) || this.Campos[i].Equals(filtro.LValue))
                         {
@@ -121,7 +121,7 @@ namespace BancoDeDadosPOD.SGDB
                         }
                     }
                     //define em que indice o valor será verificado na 2a tabela;
-                    for (int i = 0; i < outraTabela.Campos.Count(); i++)
+                    for (int i = 0; i < outraTabela.Campos.Length; i++)
                     {
                         if (outraTabela.Campos[i].Equals(filtro.RValue) || outraTabela.Campos[i].Equals(filtro.LValue))
                         {
@@ -138,7 +138,7 @@ namespace BancoDeDadosPOD.SGDB
             }//foreach filtro
 
             //se nao tiver join retornar um produto cartesiano
-            if (colFiltro.Count() == 0)
+            if (colFiltro.Count == 0)
             {
                 foreach (string[] regEsq in this.Registros)
                 {

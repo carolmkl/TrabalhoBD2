@@ -264,7 +264,7 @@ namespace BancoDeDadosPOD.SGDB
             {
                 dado = new List<DadoIndice>();
                 ai = new ArquivoIndice(path+"\\"+item.Key+".idx");
-                for (int i = 0; i < item.Value.Count(); i++)
+                for (int i = 0; i < item.Value.Length; i++)
                 {
                     DadoIndice dadoIndice = new DadoIndice(dados[item.Value[i]].getTipoDado(), tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
                     dado.Add(dadoIndice);

@@ -35,7 +35,7 @@ namespace BD2.Analizadores
             {
                 int pos = 0;
                 if (previousToken != null)
-                    pos = previousToken.getPosition() + previousToken.getLexeme().Count();
+                    pos = previousToken.getPosition() + previousToken.getLexeme().Length;
 
                 currentToken = new Token(DOLLAR, "$", pos);
             }
@@ -91,7 +91,7 @@ namespace BD2.Analizadores
             {
                 int[] production = PRODUCTIONS[p];
                 //empilha a produção em ordem reversa
-                for (int i = production.Count() - 1; i >= 0; i--)
+                for (int i = production.Length - 1; i >= 0; i--)
                 {
                     stack.Push(production[i]);
                 }

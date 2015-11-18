@@ -127,7 +127,7 @@ namespace BD2.Analizadores
                     {
                         Console.WriteLine(identificadores.Count);
                         Console.WriteLine(valoresColunas.Count);
-                        for (int i = 0; i < identificadores.Count(); i++)
+                        for (int i = 0; i < identificadores.Count; i++)
                         {
                             metadados.addDados(new DadosTabela(identificadores[i], valoresColunas[i].getTipo(), valoresColunas[i].getTamanho()));
                         }
@@ -266,12 +266,12 @@ namespace BD2.Analizadores
                 case 19:
                     operacao = acao.InserirDados;
                     metadados = memoria.recuperarMetadados(identificadores[0]);
-                    if (identificadores.Count() > 1)
+                    if (identificadores.Count > 1)
                     {
                         allColunas = false;
-                        contColunas = identificadores.Count() - 1;
+                        contColunas = identificadores.Count - 1;
 
-                        for (int i = 1; i < identificadores.Count(); i++)
+                        for (int i = 1; i < identificadores.Count; i++)
                         {
                             if (!metadados.getDados().ContainsKey(identificadores[i]))
                             {
@@ -284,16 +284,16 @@ namespace BD2.Analizadores
                     int indexColuna;
                     if (allColunas)
                     {
-                        index = identificadores.Count()-1;
+                        index = identificadores.Count-1;
                         indexColuna = index;
-                        if (index>= metadados.getNomesColunas().Count())
+                        if (index>= metadados.getNomesColunas().Count)
                         {
                             throw new SemanticError("Mais valores do que campos", token.getLinha());
                         }
                     }
                     else
                     {
-                        index = identificadores.Count() - contColunas;
+                        index = identificadores.Count - contColunas;
                         indexColuna = metadados.getNomesColunas().IndexOf(identificadores[index]);
                         if ((index-1) >= contColunas)
                         {
@@ -425,7 +425,7 @@ namespace BD2.Analizadores
                     operacao = acao.Select;
                     //busca a tabela armazenada na última ação semântica
                     string tabela = identificadores.Last();
-                    identificadores.RemoveAt(identificadores.Count() - 1);
+                    identificadores.RemoveAt(identificadores.Count - 1);
                     //inclui a tabela no objeto SELECT
                     select.addTabela(tabela);
                     //busca as colunas da tabela para incluir no retorno
@@ -508,7 +508,7 @@ namespace BD2.Analizadores
                     if (allColunas)
                     {
                         Dado dado;
-                        for (int i = 0; i < identificadores.Count(); i++)
+                        for (int i = 0; i < identificadores.Count; i++)
                         {
                             if (identificadores[i].Equals("null"))
                             {
@@ -527,7 +527,7 @@ namespace BD2.Analizadores
                     {
                         Dado dado = null;
                         bool nacho = true;
-                        for (int i = 0; i < metadados.getNomesColunas().Count(); i++)
+                        for (int i = 0; i < metadados.getNomesColunas().Count; i++)
                         {
                             nacho = true;
                             for (int j = 0; j < contColunas && nacho; j++)

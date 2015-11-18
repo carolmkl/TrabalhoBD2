@@ -73,6 +73,17 @@ namespace BancoDeDadosPOD
 
         public static void setResultado(TabelaSelect tabela, Dictionary<string, string> retorno)
         {
+            int[] indices = new int[retorno.Count];
+            for (int i = 0; i < retorno.Count; i++)
+            {
+                KeyValuePair<string, string> campo = retorno.ElementAt(i);
+                for (int j = 0; j < tabela.Campos.Length; j++)
+                {
+
+                }
+            }
+
+            /*
             gridView.Columns.Clear();
             foreach (string head in tabela.Campos)
             {
@@ -83,7 +94,7 @@ namespace BancoDeDadosPOD
             {
                 gridView.Rows.Add(registro);
             }
-            gridView.Refresh();
+            gridView.Refresh();*/
         }
 
         public static void setResultado(Metadados meta)
