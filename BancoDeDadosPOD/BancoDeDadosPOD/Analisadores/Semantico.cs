@@ -46,7 +46,7 @@ namespace BD2.Analizadores
         private acao operacao;
         private GerenciadorMemoria memoria;
         private Form1 form1;
-        ArquivoBinario arquivoBinario;
+        ArquivoTabela arquivoBinario;
 
         public Semantico()
         {
@@ -559,11 +559,11 @@ namespace BD2.Analizadores
                     /*TabelaDado tabelaDado = new TabelaDado(id, memoria.getPath());
                     tabelaDado.Registros.Add(registro);*/
                     // Form1.addMensagem(tabelaDado.ToString());
-                    arquivoBinario = new ArquivoBinario(memoria.getPath()+"\\"+metadados.getNome()+".dat");
+                    arquivoBinario = new ArquivoTabela(memoria.getPath()+"\\"+metadados.getNome()+".dat");
                     long posi = arquivoBinario.insert(registro);
 
                     metadados.addRegistro();
-                    metadados.addIndice(registro, posi, arquivoBinario);
+                    metadados.addIndice(registro, posi, memoria.getPath());
                     memoria.salvarMetadados(metadados);
                     memoria.atualizar();
 

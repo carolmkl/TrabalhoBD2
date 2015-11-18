@@ -73,6 +73,7 @@ namespace BancoDeDadosPOD
 
         public static void setResultado(TabelaSelect retorno)
         {
+            gridView.Columns.Clear();
             foreach (string head in retorno.Campos)
             {
                 string apelido = retorno.Apelidos.ContainsValue(head) ? retorno.Apelidos[head] : head;
@@ -87,6 +88,7 @@ namespace BancoDeDadosPOD
 
         public static void setResultado(Metadados meta)
         {
+            gridView.Columns.Clear();
             string[] head = new string[] { "Campo","Tipo","Tamanho","Primary","Foreign" };
             foreach (string s in head)
             {
