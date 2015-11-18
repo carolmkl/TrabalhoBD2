@@ -266,10 +266,11 @@ namespace BancoDeDadosPOD.SGDB
                 ai = new ArquivoIndice(path+"\\"+item.Key+".idx");
                 for (int i = 0; i < item.Value.Count(); i++)
                 {
-                    dado.Add(new DadoIndice(dados[item.Value[i]].getTipoDado(),tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor));
+                    DadoIndice dadoIndice = new DadoIndice(dados[item.Value[i]].getTipoDado(), tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
+                    dado.Add(dadoIndice);
                     //dado.Add(tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
+                    ai.insert(dadoIndice, lastPosi);
                 }
-                ai.insert(dado.ToArray(), lastPosi);       
             }
         }
 
