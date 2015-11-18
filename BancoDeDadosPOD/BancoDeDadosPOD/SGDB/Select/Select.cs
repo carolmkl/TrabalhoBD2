@@ -218,12 +218,16 @@ namespace BancoDeDadosPOD.SGDB.Select
         #region Gerenciador de Memória
         TabelaSelect returnDados(Metadados tabela)
         {
+
             throw new NotImplementedException();
+
         }
 
         TabelaSelect returnDados(List<Filtro> filtrosAND, Metadados tabela)
         {
+
             throw new NotImplementedException();
+
         }
 
         #endregion
