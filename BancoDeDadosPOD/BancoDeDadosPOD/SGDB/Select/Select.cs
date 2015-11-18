@@ -11,12 +11,13 @@ namespace BancoDeDadosPOD.SGDB.Select
     {
         static Select select;
 
-        List<string> tabelas;
+        List<Metadados> tabelas;
         Dictionary<string, string> retorno; //campo,apelido
         Where where;
         List<string> ordem;
         bool ordemAscendente;
         bool asterisco;
+        GerenciadorMemoria mem = GerenciadorMemoria.getInstance();
 
         public enum EtapaSemantica { CAMPOS, TABELA, JOIN, WHERE, ORDER }
         EtapaSemantica etapa = EtapaSemantica.CAMPOS;
@@ -24,7 +25,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         #region Construtor
         private Select()
         {
-            tabelas = new List<string>();
+            tabelas = new List<Metadados>();
             retorno = new Dictionary<string, string>();
             ordem = new List<string>();
             ordemAscendente = true;
@@ -46,7 +47,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// </summary>
         public void clear()
         {
-            tabelas = new List<string>();
+            tabelas = new List<Metadados>();
             retorno = new Dictionary<string, string>();
             Where = null;
             ordem = new List<string>();
@@ -79,9 +80,13 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// <param name="tabela"></param>
         public void addTabela(string tabela)
         {
+            if (!mem.existeTabela(tabela))
+            {
+                throw new SemanticError("Tabela " + tabela + " não existe.");
+            }
             if (!tabelas.Exists(c => c.Equals(tabela)))
             {
-                tabelas.Add(tabela);
+                tabelas.Add(mem.recuperarMetadados(tabela));
             }
         }
 
@@ -93,9 +98,9 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// <param name="tblVerifica"></param>
         public void verificaTabelas(List<string> tblVerifica)
         {
-            foreach (string s in tabelas)
+            foreach (Metadados m in tabelas)
             {
-                if (!tblVerifica.Exists(c => c.Equals(s))) throw new SemanticError("Tabela " + s + " não declarada na cláusula FROM");
+                if (!tblVerifica.Exists(c => c.Equals(m.getNome()))) throw new SemanticError("Tabela " + m.getNome() + " não declarada na cláusula FROM");
             }
             foreach (string s in tblVerifica)
             {
@@ -131,6 +136,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// <returns>TabelaSelect formatada para apresentar no Form1</returns>
         public TabelaSelect run()
         {
+             
             TabelaSelect tabelaSelect = null;
             //caso e select seja select tabela.* from tabela não será necessário 
             //aplicar join pois tratará de apenas uma tabela
@@ -161,23 +167,30 @@ namespace BancoDeDadosPOD.SGDB.Select
                 //envia comando para a TabelaSelect ordenar os registros
                 if (ordem.Count > 0)
                 {
-                    tabelaSelect.ordena(ordem, ordemAscendente);
+                    tabelaSelect.ordenaRegistros(ordem, ordemAscendente);
                 }
                 return tabelaSelect;
             }
+
             //Se não tem asterisco o negócio complica
-            foreach (string s in tabelas)
+
+            //ordena as tabelas por qtdade registros
+            tabelas.Sort(delegate(Metadados m1,Metadados m2)
+            {
+                return m1.getNumeroRegistros() > m2.getNumeroRegistros() ? 1 : -1;
+            });
+            foreach (Metadados s in tabelas)
             {
                 TabelaSelect tabelaTemp = null;
                 //filtra as colunas relacionadas com a tabela
-                List<string> camposBuscar = retorno.Keys.Where(c => c.StartsWith(s)).ToList<string>();
+                List<string> camposBuscar = retorno.Keys.Where(c => c.StartsWith(s.getNome())).ToList<string>();
                 //O Join pode ter colunas que não constam como retorno, mas é necessário para juntar as tabelas depois
                 //Adicionando campos de join para retorno.
                 foreach (Filtro f in where.ListaJoin)
                 {
-                    if (f.LValue.StartsWith(s) && !camposBuscar.Contains(f.LValue))
+                    if (f.LValue.StartsWith(s.getNome()) && !camposBuscar.Contains(f.LValue))
                         camposBuscar.Add(f.LValue);
-                    if (f.RValue.StartsWith(s) && !camposBuscar.Contains(f.RValue))
+                    if (f.RValue.StartsWith(s.getNome()) && !camposBuscar.Contains(f.RValue))
                         camposBuscar.Add(f.RValue);
                 }
                 //traz os resultados filtrados por grupos de AND e depois junta com os OR's
@@ -185,7 +198,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                 {
                     TabelaSelect tabelaTemp2 = null;
                     //informa apenas os filtros relacionados com a tabela em questão
-                    tabelaTemp2 = returnDados(filtrosAND.Where(filtro => filtro.LValue.StartsWith(s)).ToList<Filtro>(), tabelas[0]);
+                    tabelaTemp2 = returnDados(filtrosAND.Where(filtro => filtro.LValue.StartsWith(s.getNome())).ToList<Filtro>(), tabelas[0]);
                     if (tabelaTemp == null) tabelaTemp = tabelaTemp2;
                     else tabelaTemp.uniaoDistinct(tabelaTemp2);
                 }
@@ -196,18 +209,18 @@ namespace BancoDeDadosPOD.SGDB.Select
             //envia comando para a TabelaSelect ordenar os registros
             if (ordem.Count > 0)
             {
-                tabelaSelect.ordena(ordem, ordemAscendente);
+                tabelaSelect.ordenaRegistros(ordem, ordemAscendente);
             }
             return tabelaSelect;
         }
 
         #region Gerenciador de Memória
-        TabelaSelect returnDados(string tabela)
+        TabelaSelect returnDados(Metadados tabela)
         {
             throw new NotImplementedException();
         }
 
-        private TabelaSelect returnDados(List<Filtro> filtrosAND, string v)
+        private TabelaSelect returnDados(List<Filtro> filtrosAND, Metadados tabela)
         {
             throw new NotImplementedException();
         }
@@ -271,9 +284,9 @@ namespace BancoDeDadosPOD.SGDB.Select
 
 
             estrutura.Append("FROM: ");
-            foreach (string t in tabelas)
+            foreach (Metadados t in tabelas)
             {
-                estrutura.Append(t + ", ");
+                estrutura.Append(t.getNome() + ", ");
             }
             estrutura.Remove(estrutura.Length - 2, 2);
             estrutura.AppendLine();

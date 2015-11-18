@@ -25,7 +25,7 @@ namespace BancoDeDadosPOD.SGDB
         /// </summary>
         /// <param name="colunas">colunas a serem ordenadas por prioridade</param>
         /// <param name="asc">se a ordenação é ascendente</param>
-        public void ordena(List<string> colunas, bool asc)
+        public void ordenaRegistros(List<string> colunas, bool asc)
         {
             for (int i = colunas.Count - 1; i >= 0; i--)
             {
@@ -88,9 +88,38 @@ namespace BancoDeDadosPOD.SGDB
         /// </summary>
         /// <param name="outraTabela"></param>
         /// <param name="listaJoin"></param>
-        public void join(TabelaSelect outraTabela, List<Filtro> listaJoin)
+        public TabelaSelect join(TabelaSelect outraTabela, List<Filtro> listaJoin)
         {
-            //TODO: fazer
+            //para fazer o join será criado uma nova tabela com o resultado da operação
+            TabelaSelect resultado = new TabelaSelect();
+            resultado.Campos = new string[this.Campos.Count() + outraTabela.Campos.Count()];
+            //define os campos da nova tabela com a uniao das originais
+            this.Campos.CopyTo(resultado.Campos, 0);
+            outraTabela.Campos.CopyTo(resultado.Campos, this.Campos.Count());
+
+            foreach (Filtro filtro in listaJoin)
+            {
+                int colEsq=-1;
+                int colDir=-1;
+                if (resultado.Campos.Contains(filtro.RValue) && resultado.Campos.Contains(filtro.LValue))
+                {
+                    for (int i = 0; i < this.Campos.Count(); i++)
+                    {
+                        if(this.Campos[i].Equals(filtro.RValue) || this.Campos[i].Equals(filtro.LValue)){
+                            colEsq = i;
+                            break;
+                        }
+                    }
+                    for (int i = 0; i < outraTabela.Campos.Count(); i++)
+                    {
+
+                    }
+                }
+
+            }
+
+
+            return resultado;
         }
 
         /// <summary>
@@ -158,7 +187,7 @@ namespace BancoDeDadosPOD.SGDB
         public void addApelido(string campo, string apelido)
         {
             if (!campos.Contains(campo))
-                throw new SGDBException("TabelaSelect não contém o campo '" + campo + "' para aplicar o apelido '" + apelido + "'");
+                throw new SGDBException("Tabela não contém o campo '" + campo + "' para aplicar o apelido '" + apelido + "'");
             apelidos.Add(campo, apelido);
         }
 
