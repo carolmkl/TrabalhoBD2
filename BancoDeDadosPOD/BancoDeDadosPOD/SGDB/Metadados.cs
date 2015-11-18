@@ -58,10 +58,10 @@ namespace BancoDeDadosPOD.SGDB
 
         public TipoDado getTipoDado()
         {
-            if (this.tipo.Equals("char") || this.tipo.Equals("varchar"))
+            if (this.tipo.Equals("char", StringComparison.InvariantCultureIgnoreCase) || this.tipo.Equals("varchar", StringComparison.InvariantCultureIgnoreCase))
                 return TipoDado.String;
             else
-                if (this.tipo.Equals("integer"))
+                if (this.tipo.Equals("integer", StringComparison.InvariantCultureIgnoreCase))
                     return TipoDado.Inteiro;
 
             throw new SGDBException("Tipo de dado inválido ou não reconhecido!");
@@ -185,12 +185,14 @@ namespace BancoDeDadosPOD.SGDB
         private Dictionary<string, DadosTabela> dados;
         private List<string> nomesColunas;
         private Dictionary<string, string[]> tabelaIndices;
+        private int contRegistros;
 
         public Metadados()
         {
             dados = new Dictionary<string, DadosTabela>();
             nomesColunas = new List<string>();
             tabelaIndices = new Dictionary<string, string[]>();
+            contRegistros = 0;
         }
 
         public Metadados(String nome)
@@ -198,6 +200,7 @@ namespace BancoDeDadosPOD.SGDB
             this.setNome(nome);
             dados = new Dictionary<string, DadosTabela>();
             tabelaIndices = new Dictionary<string, string[]>();
+            contRegistros = 0;
         }
 
         public string getNome()
@@ -293,6 +296,16 @@ namespace BancoDeDadosPOD.SGDB
             tabelaIndices[nome] = campos;
             // TODO
             GerenciadorMemoria.getInstance().criarIndex(nome);
+        }
+
+        public int getNumeroRegistros()
+        {
+            return contRegistros;
+        }
+
+        public void addRegistro()
+        {
+            contRegistros++;
         }
 
         public override string ToString()

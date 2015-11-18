@@ -119,7 +119,7 @@ namespace BD2.Analizadores
                     metadados = GerenciadorMemoria.getInstance().recuperarMetadados(token.getLexeme().ToLower());
                     break;
                 case 5:
-                    // tratar melhor isso
+
                     identificadores.Add(token.getLexeme().ToLower());
                     break;
                 case 6:
@@ -561,7 +561,8 @@ namespace BD2.Analizadores
                     // Form1.addMensagem(tabelaDado.ToString());
                     arquivoBinario = new ArquivoBinario(memoria.getPath());
                     long posi = arquivoBinario.insert(registro);
-                    
+
+                    metadados.addRegistro();
                     metadados.addIndice(registro, posi, arquivoBinario);
                     memoria.salvarMetadados(metadados);
                     memoria.atualizar();
