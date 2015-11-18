@@ -72,7 +72,8 @@ namespace BancoDeDadosPOD.SGDB.Dados
             long posicaoIni = stream.Length;
             stream.Position = posicaoIni - 1;
 
-            //...
+            // Posição do registro
+            //bw.Write(registro.);
 
             return posicaoIni;
         }

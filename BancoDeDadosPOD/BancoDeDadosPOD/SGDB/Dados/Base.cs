@@ -19,8 +19,23 @@ namespace BancoDeDadosPOD.SGDB.Dados
     */
     class Base
     {
-        private Memoria memoria;
-        private ArquivoTabela arqTabela;
-        private ArquivoIndice arqIndice;
+        private Memoria memoria { get; }
+        private ArquivoTabela arqTabela { get; }
+        private ArquivoIndice arqIndice { get; }
+
+        public Base(string pathTabela, string pathIndice)
+        {
+            memoria = new Memoria();
+            arqTabela = new ArquivoTabela(pathTabela);
+            arqIndice = new ArquivoIndice(pathIndice);
+        }
+
+        public bool insert(Registro registro)
+        {
+            // Aqui vai inserir na tabela e no indice logo em seguida
+            // qqr problema, false, erros geram exceções
+            // true = fica tranquilo querido, tudo certo!
+            return false;
+        }
     }
 }
