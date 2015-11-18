@@ -559,7 +559,7 @@ namespace BD2.Analizadores
                     /*TabelaDado tabelaDado = new TabelaDado(id, memoria.getPath());
                     tabelaDado.Registros.Add(registro);*/
                     // Form1.addMensagem(tabelaDado.ToString());
-                    arquivoBinario = new ArquivoBinario(memoria.getPath());
+                    arquivoBinario = new ArquivoBinario(memoria.getPath()+"\\"+metadados.getNome()+".dat");
                     long posi = arquivoBinario.insert(registro);
 
                     metadados.addRegistro();
