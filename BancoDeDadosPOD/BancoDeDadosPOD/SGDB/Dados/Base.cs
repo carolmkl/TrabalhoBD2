@@ -12,6 +12,10 @@ namespace BancoDeDadosPOD.SGDB.Dados
     tabelaSelect returnDados(List<string> colunas, string tabela) //select tabela.campo1 from tabela;
     tabelaSelect returnDados(List<Filtro> filtro, List<string> colunas, string tabela) //select tabela.campo1 from tabela where tabela.campo1 = 0 AND ...;
 
+    Evoluiu para:
+    TabelaSelect returnDados(Metadados tabela)
+    private TabelaSelect returnDados(List<Filtro> filtrosAND, Metadados tabela)
+
     metodos necessario para Evandro
     salvarIndice(string[] valor, int lastPosi); - o nome já diz ele salva os dados com a posição no índice
     tabelaTemDados(string nomeTabela); - true se a tabela tem dados, false se não tiver

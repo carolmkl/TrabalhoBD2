@@ -67,13 +67,24 @@ namespace BancoDeDadosPOD.SGDB.Dados
             br = new BinaryReader(stream);
         }
 
-        public long insert(DadoIndice[] registro, long posicao)
+        public long insert(DadoIndice registro, long posicao)
         {
             long posicaoIni = stream.Length;
             stream.Position = posicaoIni - 1;
 
-            // Posição do registro
-            //bw.Write(registro.);
+            /*
+                primeiro posição do registro no arquivo da tabela, 
+                para nao precisar saber o tamanho da chave se for string.
+            */
+
+            // insere a posicao do registro no arquivo da tabela
+            bw.Write(posicao);
+
+            // grava o dado no indice
+            if (registro.tipo == TipoDado.Inteiro)
+                bw.Write(registro.getValorInt());
+            else
+                bw.Write(registro.getValorStr());
 
             return posicaoIni;
         }

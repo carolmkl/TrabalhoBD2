@@ -140,6 +140,16 @@ namespace BancoDeDadosPOD.SGDB.Dados
             this.tipo = tipo;
             this.valor = valor;
         }
+
+        public string getValorStr()
+        {
+            return this.valor;
+        }
+
+        public int getValorInt()
+        {
+            return this.valor;
+        }
     }
 
     public enum TipoDado {
