@@ -570,7 +570,7 @@ namespace BD2.Analizadores
                     break;
                 case acao.Select:
                     Form1.addMensagem(select.ToString());
-                    //Form1.setResultado(select.run());
+                    Form1.setResultado(select.run(),select.Retorno);
                     select.clear();
                     break;
                 case acao.CriarIndex:

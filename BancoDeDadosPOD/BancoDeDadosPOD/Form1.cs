@@ -71,15 +71,15 @@ namespace BancoDeDadosPOD
             mensagens.Refresh();
         }
 
-        public static void setResultado(TabelaSelect retorno)
+        public static void setResultado(TabelaSelect tabela, Dictionary<string, string> retorno)
         {
             gridView.Columns.Clear();
-            foreach (string head in retorno.Campos)
+            foreach (string head in tabela.Campos)
             {
-                string apelido = retorno.Apelidos.ContainsValue(head) ? retorno.Apelidos[head] : head;
-                gridView.Columns.Add(head, apelido);
+                //string apelido = tabela.Apelidos.ContainsValue(head) ? tabela.Apelidos[head] : head;
+                //gridView.Columns.Add(head, apelido);
             }
-            foreach (string[] registro in retorno.Registros)
+            foreach (string[] registro in tabela.Registros)
             {
                 gridView.Rows.Add(registro);
             }

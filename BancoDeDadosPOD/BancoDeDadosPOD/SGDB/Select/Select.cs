@@ -153,10 +153,10 @@ namespace BancoDeDadosPOD.SGDB.Select
                     //traz os resultados filtrados por grupos de AND e depois junta com os OR's
                     foreach (List<Filtro> filtrosAND in where.ListaFiltro)
                     {
-                        TabelaSelect tabela2 = null;
-                        tabela2 = returnDados(filtrosAND, tabelas[0]);
-                        if (tabelaSelect == null) tabelaSelect = tabela2;
-                        else tabelaSelect.uniaoDistinct(tabela2);
+                        TabelaSelect tabelaFiltro = null;
+                        tabelaFiltro = returnDados(filtrosAND, tabelas[0]);
+                        if (tabelaSelect == null) tabelaSelect = tabelaFiltro;
+                        else tabelaSelect.uniaoDistinct(tabelaFiltro);
                     }
                 }
                 else
@@ -181,7 +181,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             });
             foreach (Metadados s in tabelas)
             {
-                TabelaSelect tabelaTemp = null;
+                TabelaSelect tabelaFiltro = null;
                 //filtra as colunas relacionadas com a tabela
                 List<string> camposBuscar = retorno.Keys.Where(c => c.StartsWith(s.getNome())).ToList<string>();
                 //O Join pode ter colunas que não constam como retorno, mas é necessário para juntar as tabelas depois
@@ -196,15 +196,16 @@ namespace BancoDeDadosPOD.SGDB.Select
                 //traz os resultados filtrados por grupos de AND e depois junta com os OR's
                 foreach (List<Filtro> filtrosAND in where.ListaFiltro)
                 {
-                    TabelaSelect tabelaTemp2 = null;
+                    TabelaSelect tabelaFiltroOR = null;
                     //informa apenas os filtros relacionados com a tabela em questão
-                    tabelaTemp2 = returnDados(filtrosAND.Where(filtro => filtro.LValue.StartsWith(s.getNome())).ToList<Filtro>(), tabelas[0]);
-                    if (tabelaTemp == null) tabelaTemp = tabelaTemp2;
-                    else tabelaTemp.uniaoDistinct(tabelaTemp2);
+                    tabelaFiltroOR = returnDados(filtrosAND.Where(filtro => filtro.LValue.StartsWith(s.getNome())).ToList<Filtro>(), tabelas[0]);
+                    if (tabelaFiltro == null) tabelaFiltro = tabelaFiltroOR;
+                    else tabelaFiltro.uniaoDistinct(tabelaFiltroOR);
                 }
 
-                //TODO: continuar. Ainda não terminou.
-
+                //se tem mais tabelas faz o join
+                if (tabelaSelect == null) tabelaSelect = tabelaFiltro;
+                else tabelaSelect = tabelaSelect.join(tabelaFiltro, Where.ListaJoin);
             }
             //envia comando para a TabelaSelect ordenar os registros
             if (ordem.Count > 0)
@@ -220,7 +221,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             throw new NotImplementedException();
         }
 
-        private TabelaSelect returnDados(List<Filtro> filtrosAND, Metadados tabela)
+        TabelaSelect returnDados(List<Filtro> filtrosAND, Metadados tabela)
         {
             throw new NotImplementedException();
         }
@@ -264,6 +265,19 @@ namespace BancoDeDadosPOD.SGDB.Select
             set
             {
                 asterisco = value;
+            }
+        }
+
+        public Dictionary<string, string> Retorno
+        {
+            get
+            {
+                return retorno;
+            }
+
+            set
+            {
+                retorno = value;
             }
         }
         #endregion
