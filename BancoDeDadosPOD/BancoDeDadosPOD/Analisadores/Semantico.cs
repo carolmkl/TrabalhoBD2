@@ -109,14 +109,14 @@ namespace BD2.Analizadores
                     {
                         throw new SemanticError("Tabela " + token.getLexeme().ToLower() + " não existe", token.getPosition());
                     }
-                   /* arquivoBinario = new ArquivoBinario(memoria.getPath());
-                    if (arquivoBinario.tabelaTemDados(token.getLexeme().ToLower()))
-                    {
-                        throw new SemanticError("Não se cria index em tabelas que já tenham dados", token.getLinha());
-                    }*/
                     // Como é so saber o metadados, e ele tem o nome da tabela, não precisa ficar colocando a mesma no array
                     // de identificadores
                     metadados = GerenciadorMemoria.getInstance().recuperarMetadados(token.getLexeme().ToLower());
+                    /* arquivoBinario = new ArquivoBinario(memoria.getPath());*/
+                    if (metadados.getNumeroRegistros() > 0)
+                    {
+                        throw new SemanticError("Não se cria index em tabelas que já tenham dados", token.getLinha());
+                    }
                     break;
                 case 5:
 
