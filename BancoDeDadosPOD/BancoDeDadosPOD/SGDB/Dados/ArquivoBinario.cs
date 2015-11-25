@@ -90,12 +90,14 @@ namespace BancoDeDadosPOD.SGDB.Dados
                     Dado d;
                     if (meta.getDados()[meta.getNomesColunas()[i]].getTipoDado() == TipoDado.Inteiro)
                     {
-                        Form1.addMensagem("Inteiro");
+                        
                         d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
+                        Form1.addMensagem("Inteiro " + d.getValorInt());
                     } else
                     {
-                        Form1.addMensagem("Char");
+                        
                         d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadString());
+                        Form1.addMensagem("Char " + d.getValorStr());
                     }
                     
 
