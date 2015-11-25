@@ -256,7 +256,7 @@ namespace BancoDeDadosPOD.SGDB
                 string[] linha = new string[colunas];
                 for (int i = 0; i < colunas; i++)
                 {
-                    linha[i] = dados[i].valor;
+                    linha[i] = dados[i].valor + "";
                 }
                 tabelaSelect.Registros.Add(linha);
             }
