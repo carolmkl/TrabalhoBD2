@@ -238,6 +238,10 @@ namespace BancoDeDadosPOD.SGDB
         /// <returns></returns>
         public static TabelaSelect getTabelaSelect(TabelaDado tabelaDado)
         {
+            if(tabelaDado == null || tabelaDado.Registros == null || tabelaDado.Registros.Count == 0)
+            {
+                return null;
+            }
             TabelaSelect tabelaSelect = new TabelaSelect();
             List<Dado> dados = tabelaDado.Registros[0].Dados;
             int colunas = dados.Count;

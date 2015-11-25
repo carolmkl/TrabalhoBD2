@@ -62,7 +62,7 @@ namespace BD2.Analizadores
         {
             this.form1 = form1;
             identificadores = new List<string>();
-            //clausulaAs = new Dictionary<string, string>();
+            select = Select.singleton();
             valoresColunas = new List<ValoresCampos>();
             fromTabelas = new List<string>();
 
@@ -601,7 +601,7 @@ namespace BD2.Analizadores
         private void acaoZero()
         {
             identificadores.Clear();
-            //clausulaAs.Clear();
+            select.clear();
             fromTabelas.Clear();
             valoresColunas.Clear();
             metadados = new Metadados();
