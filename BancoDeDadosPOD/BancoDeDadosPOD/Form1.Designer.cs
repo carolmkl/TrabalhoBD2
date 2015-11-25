@@ -36,6 +36,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.txtMensagens = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btnLimpa = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabResultado.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -130,11 +131,22 @@
             this.tabPage2.Text = "Resultado";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // btnLimpa
+            // 
+            this.btnLimpa.Location = new System.Drawing.Point(94, 184);
+            this.btnLimpa.Name = "btnLimpa";
+            this.btnLimpa.Size = new System.Drawing.Size(75, 23);
+            this.btnLimpa.TabIndex = 4;
+            this.btnLimpa.Text = "Limpa";
+            this.btnLimpa.UseVisualStyleBackColor = true;
+            this.btnLimpa.Click += new System.EventHandler(this.btnLimpa_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(700, 454);
+            this.Controls.Add(this.btnLimpa);
             this.Controls.Add(this.tabResultado);
             this.Controls.Add(this.btnExecuta);
             this.Controls.Add(this.txtComando);
@@ -159,6 +171,7 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TextBox txtMensagens;
+        private System.Windows.Forms.Button btnLimpa;
     }
 }
 

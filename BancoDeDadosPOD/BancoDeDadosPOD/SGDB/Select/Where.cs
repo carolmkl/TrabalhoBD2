@@ -8,12 +8,13 @@ namespace BancoDeDadosPOD.SGDB.Select
 {
     class Where
     {
-        private List<List<Filtro>> listaFiltro; //A lista mais externa contém os agrupamentos de OU
+        private List<Dictionary<string,Filtro>> listaFiltro; //A lista mais externa contém os agrupamentos de OU
+        //o Dictionary contem o nome do campo filtrado (LValue) e o Filtro
         private List<Filtro> listaJoin;
 
         public Where()
         {
-            listaFiltro = new List<List<Filtro>>();
+            listaFiltro = new List<Dictionary<string, Filtro>>();
             listaJoin = new List<Filtro>();
 
         }
@@ -26,9 +27,9 @@ namespace BancoDeDadosPOD.SGDB.Select
         public void addFiltroOR(Filtro filtro)
         {
             //cria um novo bloco de consulta para agrupar o OU
-            listaFiltro.Add(new List<Filtro>());
+            listaFiltro.Add(new Dictionary<string, Filtro>());
             //insere o filtro no último bloco criado
-            listaFiltro[listaFiltro.Count - 1].Add(filtro);
+            listaFiltro[listaFiltro.Count - 1].Add(filtro.LValue,filtro);
         }
 
         public void addFiltroAND(Filtro filtro)
@@ -36,13 +37,13 @@ namespace BancoDeDadosPOD.SGDB.Select
             if(listaFiltro.Count == 0)
             {
                 //caso nao exista nenhum bloco de consulta, cria
-                listaFiltro.Add(new List<Filtro>());
+                listaFiltro.Add(new Dictionary<string, Filtro>());
             }
             //insere o filtro no último bloco criado
-            listaFiltro[listaFiltro.Count - 1].Add(filtro);
+            listaFiltro[listaFiltro.Count - 1].Add(filtro.LValue,filtro);
         }
 
-        internal List<List<Filtro>> ListaFiltro
+        internal List<Dictionary<string, Filtro>> ListaFiltro
         {
             get
             {

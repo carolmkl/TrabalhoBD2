@@ -102,7 +102,7 @@ namespace BancoDeDadosPOD
                 foreach (string[] registro in tabela.Registros)
                 {
                     string[] linha = new string[registro.Length];
-                    for (int i = 0; i < linha.Length; i++)
+                    for (int i = 0; i < indices.Length; i++)
                     {
                         linha[i] = registro[indices[i]];
                     }
@@ -128,6 +128,12 @@ namespace BancoDeDadosPOD
         private void dataGridView1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
         {
             tabResultado.SelectedIndex = 1;
+        }
+
+        private void btnLimpa_Click(object sender, EventArgs e)
+        {
+            txtComando.Clear();
+            txtComando.Refresh();
         }
     }
 }

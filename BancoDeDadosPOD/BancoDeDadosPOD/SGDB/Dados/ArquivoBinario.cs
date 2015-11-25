@@ -12,7 +12,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public ArquivoTabela(string path)
         {
             this.path = path;
-            
+
         }
 
         public long insert(Registro registro)
@@ -43,7 +43,13 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 if (d.tipo == TipoDado.Inteiro)
                     bw.Write(d.getValorInt());
                 else
-                    bw.Write(d.getValorStr().PadRight(d.tamanho));
+                {
+                    byte[] valor = new byte[d.tamanho];
+                    new System.Text.ASCIIEncoding().GetBytes(d.getValorStr().PadRight(d.tamanho)).CopyTo(valor,0);
+
+                    bw.Write(valor);
+                    //bw.Write(d.getValorStr().PadRight(d.tamanho));
+                }
             }
 
             // força a gravar no arquivo aquilo que ficou no buffer.
@@ -62,7 +68,6 @@ namespace BancoDeDadosPOD.SGDB.Dados
     public sealed class ArquivoSelect
     {
         Stream stream;
-        BinaryWriter bw;
         BinaryReader br;
         string path;
 
@@ -74,12 +79,11 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public TabelaSelect returnTudo(string nome, string path)
         {
             stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            bw = new BinaryWriter(stream);
             br = new BinaryReader(stream);
 
             int count;
             TabelaDado td = new TabelaDado(nome, path);
-            Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados()[nome];
+            Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(nome);
             while (br.BaseStream.Position != br.BaseStream.Length)
             {
                 Registro r = new Registro(br.ReadInt64());
@@ -92,25 +96,25 @@ namespace BancoDeDadosPOD.SGDB.Dados
                     {
                         Form1.addMensagem("Inteiro");
                         d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
-                    } else
+                    }
+                    else
                     {
                         Form1.addMensagem("Char");
                         d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadString());
                     }
-                    
+
 
                     r.Dados.Add(d);
                 }
                 td.Registros.Add(r);
             }
             br.Close();
-            bw.Close();
             return TabelaSelect.getTabelaSelect(td);
 
         }
     }
 
-        public sealed class ArquivoIndice
+    public sealed class ArquivoIndice
     {
         Stream stream;
         BinaryWriter bw;
@@ -150,6 +154,6 @@ namespace BancoDeDadosPOD.SGDB.Dados
             return posicaoIni;
         }
 
-        
+
     }
 }
