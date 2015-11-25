@@ -58,10 +58,10 @@ namespace BancoDeDadosPOD.SGDB
 
         public TipoDado getTipoDado()
         {
-            if (this.tipo.Equals("char", StringComparison.InvariantCultureIgnoreCase) || this.tipo.Equals("varchar", StringComparison.InvariantCultureIgnoreCase))
+            if (this.tipo.Equals("CHAR", StringComparison.InvariantCultureIgnoreCase) || this.tipo.Equals("VARCHAR", StringComparison.InvariantCultureIgnoreCase))
                 return TipoDado.String;
             else
-                if (this.tipo.Equals("integer", StringComparison.InvariantCultureIgnoreCase))
+                if (this.tipo.Equals("INTEGER", StringComparison.InvariantCultureIgnoreCase))
                     return TipoDado.Inteiro;
 
             throw new SGDBException("Tipo de dado inválido ou não reconhecido!");

@@ -82,11 +82,22 @@ namespace BancoDeDadosPOD.SGDB.Dados
             Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados()[nome];
             while (br.BaseStream.Position != br.BaseStream.Length)
             {
-                Registro r = new Registro(br.Read());
+                Registro r = new Registro(br.ReadInt64());
                 count = br.ReadInt32();
+                Form1.addMensagem("Count colunas" + count);
                 for (int i = 0; i < count; i++)
                 {
-                    Dado d = new Dado(meta.getNomesColunas()[i],meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(),br.Read());
+                    Dado d;
+                    if (meta.getDados()[meta.getNomesColunas()[i]].getTipoDado() == TipoDado.Inteiro)
+                    {
+                        Form1.addMensagem("Inteiro");
+                        d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
+                    } else
+                    {
+                        Form1.addMensagem("Char");
+                        d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadString());
+                    }
+                    
 
                     r.Dados.Add(d);
                 }
