@@ -62,7 +62,6 @@ namespace BancoDeDadosPOD.SGDB.Dados
     public sealed class ArquivoSelect
     {
         Stream stream;
-        BinaryWriter bw;
         BinaryReader br;
         string path;
 
@@ -74,12 +73,11 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public TabelaSelect returnTudo(string nome, string path)
         {
             stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            bw = new BinaryWriter(stream);
             br = new BinaryReader(stream);
 
             int count;
             TabelaDado td = new TabelaDado(nome, path);
-            Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados()[nome];
+            Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(nome);
             while (br.BaseStream.Position != br.BaseStream.Length)
             {
                 Registro r = new Registro(br.ReadInt64());
@@ -89,13 +87,11 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 {
                     Dado d;
                     if (meta.getDados()[meta.getNomesColunas()[i]].getTipoDado() == TipoDado.Inteiro)
-                    {
-                        
+                    {   
                         d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
                         Form1.addMensagem("Inteiro " + d.getValorInt());
                     } else
                     {
-                        
                         d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadString());
                         Form1.addMensagem("Char " + d.getValorStr());
                     }
@@ -106,7 +102,6 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 td.Registros.Add(r);
             }
             br.Close();
-            bw.Close();
             return TabelaSelect.getTabelaSelect(td);
 
         }
