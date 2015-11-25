@@ -1,4 +1,5 @@
-﻿using BD2.Analizadores;
+﻿using BancoDeDadosPOD.SGDB.Dados;
+using BD2.Analizadores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -162,7 +163,8 @@ namespace BancoDeDadosPOD.SGDB.Select
                 else
                 {
                     //se nao tiver filtro retorna tudo
-                    tabelaSelect = GambiarraSelect.getInstance().returnDados(tabelas[0]);
+                    string arqTabela = mem.getPath() + "\\" + tabelas[0].getNome() + ".dat";
+                    tabelaSelect = new Base(arqTabela).returnDados(tabelas[0]);
                 }
                 //envia comando para a TabelaSelect ordenar os registros
                 if (ordem.Count > 0)
