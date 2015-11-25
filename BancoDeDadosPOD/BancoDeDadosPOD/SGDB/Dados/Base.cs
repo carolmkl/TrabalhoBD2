@@ -26,12 +26,14 @@ namespace BancoDeDadosPOD.SGDB.Dados
         private Memoria memoria { get; }
         private ArquivoTabela arqTabela { get; }
         private ArquivoIndice arqIndice { get; }
+        private string path;
 
         public Base(string pathTabela, string pathIndice)
         {
             memoria = new Memoria();
             arqTabela = new ArquivoTabela(pathTabela);
             arqIndice = new ArquivoIndice(pathIndice);
+            path = pathTabela;
         }
 
         public bool insert(Registro registro)
@@ -40,6 +42,13 @@ namespace BancoDeDadosPOD.SGDB.Dados
             // qqr problema, false, erros geram exceções
             // true = fica tranquilo querido, tudo certo!
             return false;
+        }
+
+        public TabelaSelect returnDados(String tabela)
+        {
+
+            return new ArquivoSelect(path).returnTudo(tabela, path);
+
         }
     }
 }

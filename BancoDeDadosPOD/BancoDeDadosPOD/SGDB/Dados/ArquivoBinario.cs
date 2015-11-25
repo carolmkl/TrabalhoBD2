@@ -54,7 +54,43 @@ namespace BancoDeDadosPOD.SGDB.Dados
         }
     }
 
-    public sealed class ArquivoIndice
+    public sealed class ArquivoSelect
+    {
+        Stream stream;
+        BinaryWriter bw;
+        BinaryReader br;
+
+        public ArquivoSelect(string path)
+        {
+            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            bw = new BinaryWriter(stream);
+            br = new BinaryReader(stream);
+        }
+
+        public TabelaSelect returnTudo(string nome, string path)
+        {
+            int count;
+            TabelaDado td = new TabelaDado(nome, path);
+            Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados()[nome];
+            while (br.BaseStream.Position != br.BaseStream.Length)
+            {
+                Registro r = new Registro(br.Read());
+                count = br.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    Dado d = new Dado(meta.getNomesColunas()[i],meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(),br.Read());
+
+                    r.Dados.Add(d);
+                }
+                td.Registros.Add(r);
+            }
+
+            return TabelaSelect.getTabelaSelect(td);
+
+        }
+    }
+
+        public sealed class ArquivoIndice
     {
         Stream stream;
         BinaryWriter bw;
@@ -88,5 +124,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
             return posicaoIni;
         }
+
+        
     }
 }
