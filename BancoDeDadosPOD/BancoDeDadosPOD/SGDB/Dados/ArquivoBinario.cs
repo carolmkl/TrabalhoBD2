@@ -18,7 +18,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public long insert(Registro registro)
         {
             long posicaoIni = stream.Length;
-            stream.Position = posicaoIni - 1;
+            stream.Position = posicaoIni;
 
             // Posição do registro
             bw.Write(posicaoIni);
@@ -70,7 +70,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public long insert(DadoIndice registro, long posicao)
         {
             long posicaoIni = stream.Length;
-            stream.Position = posicaoIni - 1;
+            stream.Position = posicaoIni;
 
             /*
                 primeiro posição do registro no arquivo da tabela, 

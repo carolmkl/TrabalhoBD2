@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BancoDeDadosPOD.SGDB.Dados
 {
@@ -126,7 +127,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
         public int getValorInt()
         {
-            return this.valor;
+            return Convert.ToInt32(this.valor);
         }
     }
 
@@ -148,7 +149,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
         public int getValorInt()
         {
-            return this.valor;
+            return Convert.ToInt32(this.valor);
         }
     }
 
