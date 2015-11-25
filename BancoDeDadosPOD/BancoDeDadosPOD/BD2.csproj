@@ -73,6 +73,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SGDB\Operacoes.cs" />
     <Compile Include="SGDB\Select\Filtro.cs" />
+    <Compile Include="SGDB\Select\GambiarraSelect.cs" />
     <Compile Include="SGDB\Select\OperadorRel.cs" />
     <Compile Include="SGDB\Select\Select.cs" />
     <Compile Include="SGDB\Select\Where.cs" />

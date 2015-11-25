@@ -148,13 +148,13 @@ namespace BancoDeDadosPOD.SGDB.Select
                     if (where.ListaFiltro == null || where.ListaFiltro.Count == 0)
                     {
                         //se não tiver filtro retorna tudo
-                        tabelaSelect = returnDados(tabelas[0]);
+                        tabelaSelect = GambiarraSelect.getInstance().returnDados(tabelas[0]);
                     }
                     //traz os resultados filtrados por grupos de AND e depois junta com os OR's
                     foreach (List<Filtro> filtrosAND in where.ListaFiltro)
                     {
                         TabelaSelect tabelaFiltro = null;
-                        tabelaFiltro = returnDados(filtrosAND, tabelas[0]);
+                        tabelaFiltro = GambiarraSelect.getInstance().returnDados(filtrosAND, tabelas[0]);
                         if (tabelaSelect == null) tabelaSelect = tabelaFiltro;
                         else tabelaSelect.uniaoDistinct(tabelaFiltro);
                     }
@@ -162,7 +162,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                 else
                 {
                     //se nao tiver filtro retorna tudo
-                    tabelaSelect = returnDados(tabelas[0]);
+                    tabelaSelect = GambiarraSelect.getInstance().returnDados(tabelas[0]);
                 }
                 //envia comando para a TabelaSelect ordenar os registros
                 if (ordem.Count > 0)
@@ -198,7 +198,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                 {
                     TabelaSelect tabelaFiltroOR = null;
                     //informa apenas os filtros relacionados com a tabela em questão
-                    tabelaFiltroOR = returnDados(filtrosAND.Where(filtro => filtro.LValue.StartsWith(s.getNome())).ToList<Filtro>(), tabelas[0]);
+                    tabelaFiltroOR = GambiarraSelect.getInstance().returnDados(filtrosAND.Where(filtro => filtro.LValue.StartsWith(s.getNome())).ToList<Filtro>(), tabelas[0]);
                     if (tabelaFiltro == null) tabelaFiltro = tabelaFiltroOR;
                     else tabelaFiltro.uniaoDistinct(tabelaFiltroOR);
                 }
@@ -214,23 +214,6 @@ namespace BancoDeDadosPOD.SGDB.Select
             }
             return tabelaSelect;
         }
-
-        #region Gerenciador de Memória
-        TabelaSelect returnDados(Metadados tabela)
-        {
-
-            throw new NotImplementedException();
-
-        }
-
-        TabelaSelect returnDados(List<Filtro> filtrosAND, Metadados tabela)
-        {
-
-            throw new NotImplementedException();
-
-        }
-
-        #endregion
 
         #region Getter e Setter
         public Where Where

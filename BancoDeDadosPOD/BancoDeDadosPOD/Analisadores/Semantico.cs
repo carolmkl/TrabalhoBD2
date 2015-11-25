@@ -16,7 +16,6 @@ namespace BD2.Analizadores
         private enum acao : int { Nada = 0, CriarTabela, InserirDados, Select, CriarIndex, ExcluirIndex };
         private List<string> identificadores;
         private List<ValoresCampos> valoresColunas;
-        //private Dictionary<string, string> clausulaAs; //Carol: Sendo a cláusula AS usada apenas no select, é necessário este Dictionary?
         private Metadados metadados;// aqui é por hora, pode ser mudado para uma list por causa dos select, ou não
 
         /// <summary>
