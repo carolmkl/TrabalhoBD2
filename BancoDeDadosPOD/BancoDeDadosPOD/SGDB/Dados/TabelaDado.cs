@@ -16,6 +16,19 @@ namespace BancoDeDadosPOD.SGDB.Dados
             registros = new List<Registro>();
         }
 
+        public string Nome
+        {
+            get
+            {
+                return nome;
+            }
+
+            set
+            {
+                nome = value;
+            }
+        }
+
         internal List<Registro> Registros
         {
             get

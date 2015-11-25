@@ -248,7 +248,7 @@ namespace BancoDeDadosPOD.SGDB
             tabelaSelect.campos = new string[colunas];
             for (int i = 0; i < colunas; i++)
             {
-                tabelaSelect.campos[i] = dados[i].nome;
+                tabelaSelect.campos[i] = tabelaDado.Nome+"."+dados[i].nome;
             }
             foreach (Registro registro in tabelaDado.Registros)
             {
