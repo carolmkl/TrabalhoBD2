@@ -268,7 +268,6 @@ namespace BancoDeDadosPOD.SGDB
                 {
                     DadoIndice dadoIndice = new DadoIndice(dados[item.Value[i]].getTipoDado(), tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
                     dado.Add(dadoIndice);
-                    //dado.Add(tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
                     ai.insert(dadoIndice, lastPosi);
                 }
             }

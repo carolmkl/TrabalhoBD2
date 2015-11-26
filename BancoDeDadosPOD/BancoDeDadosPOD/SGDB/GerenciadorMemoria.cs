@@ -177,6 +177,10 @@ namespace BancoDeDadosPOD.SGDB
                 }
 
 
+                foreach (KeyValuePair<string, string[]> indices in metaExcluir.getIndexes())
+                {
+                    File.Delete(diretorioPath + "\\" + pastaDatabase + "\\" + indices.Key + ".idx");
+                }
                 File.Delete(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".meta");
                 File.Delete(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".dat");
             }

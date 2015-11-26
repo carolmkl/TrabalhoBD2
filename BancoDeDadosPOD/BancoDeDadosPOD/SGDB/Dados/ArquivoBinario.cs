@@ -72,7 +72,11 @@ namespace BancoDeDadosPOD.SGDB.Dados
             {
                 Registro r = new Registro(br.ReadInt64());
                 count = br.ReadInt32();
+<<<<<<< HEAD
                 //Form1.addMensagem("Count colunas" + count); *** para depuração
+=======
+                //Form1.addMensagem("Count colunas" + count);
+>>>>>>> origin/master
                 for (int i = 0; i < count; i++)
                 {
                     Dado d;
