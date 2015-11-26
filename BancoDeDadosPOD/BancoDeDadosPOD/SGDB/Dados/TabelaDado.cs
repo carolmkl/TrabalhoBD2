@@ -146,13 +146,9 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
     public sealed class DadoIndice
     {
-        public long ordemCampo { get; } // Posição ordinal do campo no registro do dado.
-        public dynamic valor { get; }   // Valor registrado no indice.
-
-        public DadoIndice(TipoDado tipo, dynamic valor)
-        {
-            this.valor = valor;
-        }
+        public long posicao { get; }  // Posição ordinal do campo no registro do dado.
+        public TipoDado tipo { get; internal set; } // Tipo primitivo do dado
+        public dynamic valor { get; } // Valor registrado no indice.
 
         public string getValorStr()
         {
@@ -161,7 +157,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
         public int getValorInt()
         {
-            return Convert.ToInt32(this.valor);
+            return Convert.ToInt32(getValorStr().Replace('\"', ' ').Trim());
         }
     }
 
@@ -178,6 +174,19 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public RegistroIndice(long posicao)
         {
             this.posicao = posicao;
+        }
+
+        public List<DadoIndice> Dados
+        {
+            get
+            {
+                return dados;
+            }
+
+            set
+            {
+                dados = value;
+            }
         }
     }
 }

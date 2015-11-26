@@ -118,7 +118,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             this.stream.Close();
         }
 
-        public long insert(DadoIndice registro, long posicao)
+        public long insert(RegistroIndice registro, long posicao)
         {
             long posicaoIni = stream.Length;
             stream.Position = posicaoIni;
