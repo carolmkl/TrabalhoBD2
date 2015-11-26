@@ -4,22 +4,29 @@ namespace BancoDeDadosPOD.SGDB.Dados
 {
     public sealed class ArquivoTabela
     {
-        Stream stream;
-        BinaryWriter bw;
-        BinaryReader br;
-        string path;
+        private Stream stream;
+        private BinaryWriter bw;
+        private BinaryReader br;
+        private string path;
 
         public ArquivoTabela(string path)
         {
+            this.stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            this.bw = new BinaryWriter(stream);
+            this.br = new BinaryReader(stream);
             this.path = path;
         }
+        /*
+        ~ArquivoTabela(string path)
+        {
+            this.br.Close();
+            this.bw.Close();
+            this.stream.Close();
+        }
+        */
 
         public long insert(Registro registro)
         {
-            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            bw = new BinaryWriter(stream);
-            br = new BinaryReader(stream);
-
             long posicaoIni = stream.Length;
             stream.Position = posicaoIni;
 
@@ -47,8 +54,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
             // força a gravar no arquivo aquilo que ficou no buffer.
             bw.Flush();
-            br.Close();
-            bw.Close();
+            
             return posicaoIni;
         }
 
@@ -56,24 +62,9 @@ namespace BancoDeDadosPOD.SGDB.Dados
         {
             return stream.Length > 0;
         }
-    }
-
-    public sealed class ArquivoSelect
-    {
-        Stream stream;
-        BinaryReader br;
-        string path;
-
-        public ArquivoSelect(string path)
-        {
-            this.path = path;
-        }
 
         public TabelaSelect returnTudo(string nome, string path)
         {
-            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            br = new BinaryReader(stream);
-
             int count;
             TabelaDado td = new TabelaDado(nome, path);
             Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(nome);
@@ -81,15 +72,16 @@ namespace BancoDeDadosPOD.SGDB.Dados
             {
                 Registro r = new Registro(br.ReadInt64());
                 count = br.ReadInt32();
-                Form1.addMensagem("Count colunas" + count);
+                //Form1.addMensagem("Count colunas" + count); *** para depuração
                 for (int i = 0; i < count; i++)
                 {
                     Dado d;
                     if (meta.getDados()[meta.getNomesColunas()[i]].getTipoDado() == TipoDado.Inteiro)
-                    {   
+                    {
                         d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
                         // Form1.addMensagem("Inteiro " + d.getValorInt()); *** para depuração
-                    } else
+                    }
+                    else
                     {
                         d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadString());
                         //  Form1.addMensagem("Char " + d.getValorStr()); *** para depuração
@@ -99,29 +91,35 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 }
                 td.Registros.Add(r);
             }
-            br.Close();
+
             return TabelaSelect.getTabelaSelect(td);
         }
     }
 
     public sealed class ArquivoIndice
     {
-        Stream stream;
-        BinaryWriter bw;
-        BinaryReader br;
-        string path;
+        private Stream stream;
+        private BinaryReader br;
+        private BinaryWriter bw;
+        private string path;
 
         public ArquivoIndice(string path)
         {
+            this.stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            this.br = new BinaryReader(stream);
+            this.bw = new BinaryWriter(stream);
             this.path = path;
+        }
+
+        ~ArquivoIndice()
+        {
+            this.br.Close();
+            this.bw.Close();
+            this.stream.Close();
         }
 
         public long insert(DadoIndice registro, long posicao)
         {
-            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            bw = new BinaryWriter(stream);
-            br = new BinaryReader(stream);
-
             long posicaoIni = stream.Length;
             stream.Position = posicaoIni;
 
@@ -139,8 +137,8 @@ namespace BancoDeDadosPOD.SGDB.Dados
             else
                 bw.Write(registro.getValorStr());
 
-            br.Close();
-            bw.Close();
+            bw.Flush();
+
             return posicaoIni;
         }
     }
