@@ -12,7 +12,6 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public ArquivoTabela(string path)
         {
             this.path = path;
-            
         }
 
         public long insert(Registro registro)
@@ -22,11 +21,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             br = new BinaryReader(stream);
 
             long posicaoIni = stream.Length;
-<<<<<<< HEAD
-            stream.Position = posicaoIni > 0 ? posicaoIni - 1 : 0;
-=======
             stream.Position = posicaoIni;
->>>>>>> origin/master
 
             // Posição do registro
             bw.Write(posicaoIni);
@@ -93,13 +88,12 @@ namespace BancoDeDadosPOD.SGDB.Dados
                     if (meta.getDados()[meta.getNomesColunas()[i]].getTipoDado() == TipoDado.Inteiro)
                     {   
                         d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
-                        Form1.addMensagem("Inteiro " + d.getValorInt());
+                        // Form1.addMensagem("Inteiro " + d.getValorInt()); *** para depuração
                     } else
                     {
                         d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadString());
-                        Form1.addMensagem("Char " + d.getValorStr());
+                        //  Form1.addMensagem("Char " + d.getValorStr()); *** para depuração
                     }
-                    
 
                     r.Dados.Add(d);
                 }
@@ -107,11 +101,10 @@ namespace BancoDeDadosPOD.SGDB.Dados
             }
             br.Close();
             return TabelaSelect.getTabelaSelect(td);
-
         }
     }
 
-        public sealed class ArquivoIndice
+    public sealed class ArquivoIndice
     {
         Stream stream;
         BinaryWriter bw;
@@ -130,11 +123,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             br = new BinaryReader(stream);
 
             long posicaoIni = stream.Length;
-<<<<<<< HEAD
-            stream.Position = posicaoIni > 0 ? posicaoIni - 1 : 0;
-=======
             stream.Position = posicaoIni;
->>>>>>> origin/master
 
             /*
                 primeiro posição do registro no arquivo da tabela, 
@@ -154,7 +143,5 @@ namespace BancoDeDadosPOD.SGDB.Dados
             bw.Close();
             return posicaoIni;
         }
-
-        
     }
 }

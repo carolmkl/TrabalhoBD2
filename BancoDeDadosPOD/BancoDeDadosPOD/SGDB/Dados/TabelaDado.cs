@@ -140,11 +140,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
         public int getValorInt()
         {
-<<<<<<< HEAD
             return Convert.ToInt32(getValorStr().Replace('\"', ' ').Trim());
-=======
-            return Convert.ToInt32(this.valor);
->>>>>>> origin/master
         }
     }
 

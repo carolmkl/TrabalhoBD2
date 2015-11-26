@@ -53,7 +53,6 @@ namespace BancoDeDadosPOD.SGDB.Dados
         {
             string arqTabela = GerenciadorMemoria.getInstance().getPath() + "\\" + tabela.getNome() + ".dat";
             return new ArquivoSelect(arqTabela).returnTudo(tabela.getNome(), arqTabela);
-
         }
     }
 }
