@@ -182,14 +182,14 @@ namespace BancoDeDadosPOD.SGDB
     {
         private string nome;
         //optei por dictonary pra facilitar a pesquisa
-        private Dictionary<string, DadosTabela> dados;
+        private Dictionary<string, DadosTabela> dadosColuna;
         private List<string> nomesColunas;
         private Dictionary<string, string[]> tabelaIndices;
         private int contRegistros;
 
         public Metadados()
         {
-            dados = new Dictionary<string, DadosTabela>();
+            dadosColuna = new Dictionary<string, DadosTabela>();
             nomesColunas = new List<string>();
             tabelaIndices = new Dictionary<string, string[]>();
             contRegistros = 0;
@@ -198,7 +198,7 @@ namespace BancoDeDadosPOD.SGDB
         public Metadados(String nome)
         {
             this.setNome(nome);
-            dados = new Dictionary<string, DadosTabela>();
+            dadosColuna = new Dictionary<string, DadosTabela>();
             tabelaIndices = new Dictionary<string, string[]>();
             contRegistros = 0;
         }
@@ -213,27 +213,27 @@ namespace BancoDeDadosPOD.SGDB
             this.nome = nome;
         }
 
-        public Dictionary<string, DadosTabela> getDados()
+        public Dictionary<string, DadosTabela> getDadosColuna()
         {
-            return dados;
+            return dadosColuna;
         }
 
-        public void addDados(DadosTabela dados)
+        public void addDadosColuna(DadosTabela dados)
         {
             addNomeColuna(dados.getNomeCampo());
-            this.dados[dados.getNomeCampo()] = dados;
+            this.dadosColuna[dados.getNomeCampo()] = dados;
         }
 
-        public void addDados(string nome, string tipo, int tamanho, bool primary, string[] foreing)
+        public void addDadosColuna(string nome, string tipo, int tamanho, bool primary, string[] foreing)
         {
             addNomeColuna(nome);
-            dados[nome] = new DadosTabela(nome,tipo,tamanho,primary,foreing);
+            dadosColuna[nome] = new DadosTabela(nome,tipo,tamanho,primary,foreing);
         }
 
-        public void addDados(string nome, string tipo, int tamanho)
+        public void addDadosColuna(string nome, string tipo, int tamanho)
         {
             addNomeColuna(nome);
-            dados[nome] = new DadosTabela(nome, tipo, tamanho);
+            dadosColuna[nome] = new DadosTabela(nome, tipo, tamanho);
         }
 
         private void addNomeColuna(string nome)
@@ -248,7 +248,7 @@ namespace BancoDeDadosPOD.SGDB
 
         public TipoDado getTipoDado(int i)
         {
-            return dados[nomesColunas[i]].getTipoDado();
+            return dadosColuna[nomesColunas[i]].getTipoDado();
         }
 
         public Dictionary<string, string[]> getIndexes()
@@ -266,7 +266,7 @@ namespace BancoDeDadosPOD.SGDB
                 ai = new ArquivoIndice(path+"\\"+item.Key+".idx");
                 for (int i = 0; i < item.Value.Length; i++)
                 {
-                    DadoIndice dadoIndice = new DadoIndice(dados[item.Value[i]].getTipoDado(), tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
+                    DadoIndice dadoIndice = new DadoIndice(dadosColuna[item.Value[i]].getTipoDado(), tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
                     dado.Add(dadoIndice);
                     //dado.Add(tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
                 }
@@ -279,7 +279,7 @@ namespace BancoDeDadosPOD.SGDB
             List<string> campos = new List<string>();
             foreach (string item in nomesColunas)
             {
-                if (dados[item].isPrimary())
+                if (dadosColuna[item].isPrimary())
                 {
                     campos.Add(item);
                 }
@@ -315,7 +315,7 @@ namespace BancoDeDadosPOD.SGDB
         public override string ToString()
         {
             string descricao  = "Campo | Tipo | Tamanho | Primary |Foreing \n";
-            foreach (KeyValuePair<string, DadosTabela> item in dados)
+            foreach (KeyValuePair<string, DadosTabela> item in dadosColuna)
             {
                 DadosTabela d = item.Value;
                 descricao += d.getNomeCampo() +"|"+ d.geTipo() +"|"+ d.getTamanho() +"|"+ d.isPrimary() +"|"+ (d.isForeing()? d.getForeing()[0]+"(" +d.getForeing()[1]+")":"-") +"|"+ "\n";

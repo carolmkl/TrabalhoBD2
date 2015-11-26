@@ -76,14 +76,14 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 for (int i = 0; i < count; i++)
                 {
                     Dado d;
-                    if (meta.getDados()[meta.getNomesColunas()[i]].getTipoDado() == TipoDado.Inteiro)
+                    if (meta.getDadosColuna()[meta.getNomesColunas()[i]].getTipoDado() == TipoDado.Inteiro)
                     {
-                        d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
+                        d = new Dado(meta.getNomesColunas()[i], meta.getDadosColuna()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
                         // Form1.addMensagem("Inteiro " + d.getValorInt()); *** para depuração
                     }
                     else
                     {
-                        d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadString());
+                        d = new Dado(meta.getNomesColunas()[i], meta.getDadosColuna()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadString());
                         //  Form1.addMensagem("Char " + d.getValorStr()); *** para depuração
                     }
 

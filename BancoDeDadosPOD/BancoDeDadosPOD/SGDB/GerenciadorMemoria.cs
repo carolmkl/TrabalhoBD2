@@ -152,7 +152,7 @@ namespace BancoDeDadosPOD.SGDB
             bool pode = true;
             for (int i = 0; i < meta.getNomesColunas().Count && pode; i++)
             {
-                if (meta.getDados()[meta.getNomesColunas()[i]].isRForeing())
+                if (meta.getDadosColuna()[meta.getNomesColunas()[i]].isRForeing())
                 {
                     pode = false;
                 }
@@ -166,12 +166,12 @@ namespace BancoDeDadosPOD.SGDB
             {
                 Metadados metaExcluir, metaAux;
                 metaExcluir = recuperarMetadados(nome);
-                foreach (KeyValuePair<string, DadosTabela> dt in metaExcluir.getDados())
+                foreach (KeyValuePair<string, DadosTabela> dt in metaExcluir.getDadosColuna())
                 {
                     if (dt.Value.isForeing())
                     {
                         metaAux = recuperarMetadados(dt.Value.getForeing()[0]);
-                        metaAux.getDados()[dt.Value.getForeing()[1]].minusForeing();
+                        metaAux.getDadosColuna()[dt.Value.getForeing()[1]].minusForeing();
                         salvarMetadados(metaAux);
                     }
                 }

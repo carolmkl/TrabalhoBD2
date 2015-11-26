@@ -118,7 +118,7 @@ namespace BancoDeDadosPOD
             {
                 gridView.Columns.Add(s, s);
             }
-            foreach (DadosTabela d in meta.getDados().Values)
+            foreach (DadosTabela d in meta.getDadosColuna().Values)
             {
                 gridView.Rows.Add(d.getNomeCampo(), d.geTipo(), d.getTamanho(), d.isPrimary(), (d.isForeing() ? d.getForeing()[0] + "(" + d.getForeing()[1] + ")" : "False"));
             }
