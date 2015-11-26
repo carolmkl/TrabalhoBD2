@@ -234,7 +234,7 @@ namespace BancoDeDadosPOD.SGDB
         {
             if (!File.Exists(diretorioPath + "\\" + pastaDatabase + "\\" + nome + extencao))
             {
-                File.Create(diretorioPath + "\\" + pastaDatabase + "\\" + nome + extencao);
+                using (File.Create(diretorioPath + "\\" + pastaDatabase + "\\" + nome + extencao)) { }
             }
         }
 
