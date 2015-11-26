@@ -81,24 +81,33 @@ namespace BancoDeDadosPOD
                 //insere a coluna no gridView com o apelido definido
                 gridView.Columns.Add(campo.Key, campo.Value);
                 //verifica qual eh o índice da tabelaSelect correspondente ao campo para ordenar depois
-                for (int j = 0; j < tabela.Campos.Length; j++)
+                if (tabela != null)
                 {
-                    if (tabela.Campos[j].Equals(campo.Key))
+                    for (int j = 0; j < tabela.Campos.Length; j++)
                     {
-                        indices[i] = j;
-                        break;
+                        if (tabela.Campos[j].Equals(campo.Key))
+                        {
+                            indices[i] = j;
+                            break;
+                        }
                     }
                 }
             }
-            foreach (string[] registro in tabela.Registros)
+            if (tabela == null)
             {
-                string[] linha = new string[registro.Length];
-                for (int i = 0; i < linha.Length; i++)
-                {
-                    linha[i] = registro[indices[i]];
-                }
+                string[] linha = new string[retorno.Count];
                 gridView.Rows.Add(linha);
             }
+            else
+                foreach (string[] registro in tabela.Registros)
+                {
+                    string[] linha = new string[registro.Length];
+                    for (int i = 0; i < linha.Length; i++)
+                    {
+                        linha[i] = registro[indices[i]];
+                    }
+                    gridView.Rows.Add(linha);
+                }
         }
 
         public static void setResultado(Metadados meta)

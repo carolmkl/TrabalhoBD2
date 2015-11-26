@@ -16,6 +16,19 @@ namespace BancoDeDadosPOD.SGDB.Dados
             registros = new List<Registro>();
         }
 
+        public string Nome
+        {
+            get
+            {
+                return nome;
+            }
+
+            set
+            {
+                nome = value;
+            }
+        }
+
         internal List<Registro> Registros
         {
             get
@@ -127,7 +140,11 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
         public int getValorInt()
         {
+<<<<<<< HEAD
             return Convert.ToInt32(getValorStr().Replace('\"', ' ').Trim());
+=======
+            return Convert.ToInt32(this.valor);
+>>>>>>> origin/master
         }
     }
 
@@ -149,7 +166,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
         public int getValorInt()
         {
-            return this.valor;
+            return Convert.ToInt32(this.valor);
         }
     }
 

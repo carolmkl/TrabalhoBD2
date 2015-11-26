@@ -16,7 +16,6 @@ namespace BD2.Analizadores
         private enum acao : int { Nada = 0, CriarTabela, InserirDados, Select, CriarIndex, ExcluirIndex };
         private List<string> identificadores;
         private List<ValoresCampos> valoresColunas;
-        //private Dictionary<string, string> clausulaAs; //Carol: Sendo a cláusula AS usada apenas no select, é necessário este Dictionary?
         private Metadados metadados;// aqui é por hora, pode ser mudado para uma list por causa dos select, ou não
 
         /// <summary>
@@ -63,7 +62,7 @@ namespace BD2.Analizadores
         {
             this.form1 = form1;
             identificadores = new List<string>();
-            //clausulaAs = new Dictionary<string, string>();
+            select = Select.singleton();
             valoresColunas = new List<ValoresCampos>();
             fromTabelas = new List<string>();
 
@@ -602,7 +601,7 @@ namespace BD2.Analizadores
         private void acaoZero()
         {
             identificadores.Clear();
-            //clausulaAs.Clear();
+            select.clear();
             fromTabelas.Clear();
             valoresColunas.Clear();
             metadados = new Metadados();

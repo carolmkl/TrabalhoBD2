@@ -7,18 +7,26 @@ namespace BancoDeDadosPOD.SGDB.Dados
         Stream stream;
         BinaryWriter bw;
         BinaryReader br;
+        string path;
 
         public ArquivoTabela(string path)
         {
-            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            bw = new BinaryWriter(stream);
-            br = new BinaryReader(stream);
+            this.path = path;
+            
         }
 
         public long insert(Registro registro)
         {
+            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            bw = new BinaryWriter(stream);
+            br = new BinaryReader(stream);
+
             long posicaoIni = stream.Length;
+<<<<<<< HEAD
             stream.Position = posicaoIni > 0 ? posicaoIni - 1 : 0;
+=======
+            stream.Position = posicaoIni;
+>>>>>>> origin/master
 
             // Posição do registro
             bw.Write(posicaoIni);
@@ -44,7 +52,8 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
             // força a gravar no arquivo aquilo que ficou no buffer.
             bw.Flush();
-
+            br.Close();
+            bw.Close();
             return posicaoIni;
         }
 
@@ -54,23 +63,78 @@ namespace BancoDeDadosPOD.SGDB.Dados
         }
     }
 
-    public sealed class ArquivoIndice
+    public sealed class ArquivoSelect
+    {
+        Stream stream;
+        BinaryReader br;
+        string path;
+
+        public ArquivoSelect(string path)
+        {
+            this.path = path;
+        }
+
+        public TabelaSelect returnTudo(string nome, string path)
+        {
+            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            br = new BinaryReader(stream);
+
+            int count;
+            TabelaDado td = new TabelaDado(nome, path);
+            Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(nome);
+            while (br.BaseStream.Position != br.BaseStream.Length)
+            {
+                Registro r = new Registro(br.ReadInt64());
+                count = br.ReadInt32();
+                Form1.addMensagem("Count colunas" + count);
+                for (int i = 0; i < count; i++)
+                {
+                    Dado d;
+                    if (meta.getDados()[meta.getNomesColunas()[i]].getTipoDado() == TipoDado.Inteiro)
+                    {   
+                        d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
+                        Form1.addMensagem("Inteiro " + d.getValorInt());
+                    } else
+                    {
+                        d = new Dado(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadString());
+                        Form1.addMensagem("Char " + d.getValorStr());
+                    }
+                    
+
+                    r.Dados.Add(d);
+                }
+                td.Registros.Add(r);
+            }
+            br.Close();
+            return TabelaSelect.getTabelaSelect(td);
+
+        }
+    }
+
+        public sealed class ArquivoIndice
     {
         Stream stream;
         BinaryWriter bw;
         BinaryReader br;
+        string path;
 
         public ArquivoIndice(string path)
         {
-            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            bw = new BinaryWriter(stream);
-            br = new BinaryReader(stream);
+            this.path = path;
         }
 
         public long insert(DadoIndice registro, long posicao)
         {
+            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            bw = new BinaryWriter(stream);
+            br = new BinaryReader(stream);
+
             long posicaoIni = stream.Length;
+<<<<<<< HEAD
             stream.Position = posicaoIni > 0 ? posicaoIni - 1 : 0;
+=======
+            stream.Position = posicaoIni;
+>>>>>>> origin/master
 
             /*
                 primeiro posição do registro no arquivo da tabela, 
@@ -86,7 +150,11 @@ namespace BancoDeDadosPOD.SGDB.Dados
             else
                 bw.Write(registro.getValorStr());
 
+            br.Close();
+            bw.Close();
             return posicaoIni;
         }
+
+        
     }
 }

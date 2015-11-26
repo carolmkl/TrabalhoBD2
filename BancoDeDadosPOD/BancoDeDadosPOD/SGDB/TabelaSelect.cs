@@ -238,13 +238,17 @@ namespace BancoDeDadosPOD.SGDB
         /// <returns></returns>
         public static TabelaSelect getTabelaSelect(TabelaDado tabelaDado)
         {
+            if(tabelaDado == null || tabelaDado.Registros == null || tabelaDado.Registros.Count == 0)
+            {
+                return null;
+            }
             TabelaSelect tabelaSelect = new TabelaSelect();
             List<Dado> dados = tabelaDado.Registros[0].Dados;
             int colunas = dados.Count;
             tabelaSelect.campos = new string[colunas];
             for (int i = 0; i < colunas; i++)
             {
-                tabelaSelect.campos[i] = dados[i].nome;
+                tabelaSelect.campos[i] = tabelaDado.Nome+"."+dados[i].nome;
             }
             foreach (Registro registro in tabelaDado.Registros)
             {
@@ -252,7 +256,7 @@ namespace BancoDeDadosPOD.SGDB
                 string[] linha = new string[colunas];
                 for (int i = 0; i < colunas; i++)
                 {
-                    linha[i] = dados[i].valor;
+                    linha[i] = dados[i].valor + "";
                 }
                 tabelaSelect.Registros.Add(linha);
             }
