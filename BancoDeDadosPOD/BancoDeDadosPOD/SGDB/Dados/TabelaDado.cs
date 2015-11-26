@@ -146,12 +146,11 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
     public sealed class DadoIndice
     {
-        public TipoDado tipo { get; }
-        public dynamic valor { get; }
+        public long ordemCampo { get; } // Posição ordinal do campo no registro do dado.
+        public dynamic valor { get; }   // Valor registrado no indice.
 
         public DadoIndice(TipoDado tipo, dynamic valor)
         {
-            this.tipo = tipo;
             this.valor = valor;
         }
 
@@ -169,5 +168,16 @@ namespace BancoDeDadosPOD.SGDB.Dados
     public enum TipoDado {
         Inteiro,
         String
+    }
+
+    public class RegistroIndice
+    {
+        public long posicao { get; } // Posição fisica do registro no arquivo da tabela.
+        List<DadoIndice> dados;      // Lista de dados, cada dado uma coluna do indice.
+
+        public RegistroIndice(long posicao)
+        {
+            this.posicao = posicao;
+        }
     }
 }
