@@ -30,7 +30,7 @@ CREATE TABLE bairror
   nm_bairro VARCHAR(75),
   sg_uf CHAR(2)
 );
-
+CREATE INDEX bairro_nome_idx ON bairro(nm_bairro); 
 INSERT INTO bairror(cd_bairro, sg_uf, nm_bairro) VALUES (1, 'SC', 'Victor Konder'); 
 select bairror.* from bairror;
 
