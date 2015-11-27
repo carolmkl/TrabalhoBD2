@@ -146,9 +146,9 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
     public sealed class DadoIndice
     {
-        public long posicao { get; }  // Posição ordinal do campo no registro do dado.
+        public long posicao { get; }                // Posição ordinal do campo no registro do dado.
         public TipoDado tipo { get; internal set; } // Tipo primitivo do dado
-        public dynamic valor { get; } // Valor registrado no indice.
+        public dynamic valor { get; }               // Valor registrado no indice.
 
         public string getValorStr()
         {

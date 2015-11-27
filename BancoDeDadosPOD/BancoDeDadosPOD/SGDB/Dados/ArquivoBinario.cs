@@ -131,12 +131,20 @@ namespace BancoDeDadosPOD.SGDB.Dados
             // insere a posicao do registro no arquivo da tabela
             bw.Write(posicao);
 
-            // grava o dado no indice
-            if (registro.tipo == TipoDado.Inteiro)
-                bw.Write(registro.getValorInt());
-            else
-                bw.Write(registro.getValorStr());
+            // Dados do registro
+            foreach (DadoIndice d in registro.Dados)
+            {
+                // posicao ordinal do campo dentro da tabela
+                bw.Write(d.posicao);
 
+                // grava o dado no indice
+                if (d.tipo == TipoDado.Inteiro)
+                    bw.Write(d.getValorInt());
+                else
+                    bw.Write(d.getValorStr());
+            }
+
+            // força a gravar no arquivo aquilo que ficou no buffer.
             bw.Flush();
 
             return posicaoIni;

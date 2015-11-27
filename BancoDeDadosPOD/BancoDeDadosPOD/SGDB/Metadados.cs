@@ -1,7 +1,6 @@
 using BancoDeDadosPOD.SGDB.Dados;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BancoDeDadosPOD.SGDB
 {
@@ -172,9 +171,9 @@ namespace BancoDeDadosPOD.SGDB
             {
                 indices[chave] = new List<int>();
             }
+
             indices[chave].Add(posi);
         }
-
     }
 
     [Serializable]
@@ -266,8 +265,14 @@ namespace BancoDeDadosPOD.SGDB
                 ai = new ArquivoIndice(path+"\\"+item.Key+".idx");
                 for (int i = 0; i < item.Value.Length; i++)
                 {
+                    // ***** inibido somente para compilar - Inicio *****
+                    // by Douglas Santos
+                    // Acredito que isto va mudar
+                    /*
                     DadoIndice dadoIndice = new DadoIndice(dadosColuna[item.Value[i]].getTipoDado(), tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
                     dado.Add(dadoIndice);
+                    */
+                    // ***** inibido somente para compilar - Fim *****
                     //dado.Add(tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
                 }
                 //ai.insert(dadoIndice, lastPosi);
@@ -288,18 +293,17 @@ namespace BancoDeDadosPOD.SGDB
             if(campos.Count != 0)
             {
                 tabelaIndices["primary" + nome] = campos.ToArray();
-                GerenciadorMemoria.getInstance().criarIndex("primary" + nome);
+                GerenciadorMemoria.getInstance().createIndex("primary" + nome);
                 // TODO
                 //douglas.inserirIndice(nome)
             }
-
         }
 
         public void criarIndice(string nome, string[] campos)
         {
             tabelaIndices[nome] = campos;
             // TODO
-            GerenciadorMemoria.getInstance().criarIndex(nome);
+            GerenciadorMemoria.getInstance().createIndex(nome);
         }
 
         public int getNumeroRegistros()
@@ -320,6 +324,7 @@ namespace BancoDeDadosPOD.SGDB
                 DadosTabela d = item.Value;
                 descricao += d.getNomeCampo() +"|"+ d.geTipo() +"|"+ d.getTamanho() +"|"+ d.isPrimary() +"|"+ (d.isForeing()? d.getForeing()[0]+"(" +d.getForeing()[1]+")":"-") +"|"+ "\n";
             }
+
             return descricao;
         }
 
@@ -335,6 +340,7 @@ namespace BancoDeDadosPOD.SGDB
                 }
                 desc += "\n\t";
             }
+
             return desc;
         }
     }

@@ -9,31 +9,36 @@ namespace BancoDeDadosPOD.SGDB
 
     public class GerenciadorMemoria
     {
-        // caminho para o diretório onde fica todos os dados do banco de dados
-        private string diretorioPath;
-        // caminho pra uma das subpastas do banco, os database
-        private string pastaDatabase;
+        // Caminho para o diretório onde ficam todos os dados do banco de dados
+        private string dirBanco;
+
+        // Caminho para uma das subpastas do banco, os database
+        private string dirBaseDados;
+
         // Metadados da Database selecionada
         private Dictionary<string, Metadados> metadados; //nome tabela, metadados da tabela
 
+        // Instancia unica
         private static GerenciadorMemoria singleton;
-        // Construtores
 
+        #region *** Construtores ***
         private GerenciadorMemoria()
         {
             if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ bdPod"))
             {
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ bdPod");
             }
-            setDiretorioPath(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ bdPod");
+            setDiretorioBanco(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\ bdPod");
         }
 
         private GerenciadorMemoria(string diretorioPath)
-        { setDiretorioPath(diretorioPath); }
+        {
+            setDiretorioBanco(diretorioPath);
+        }
 
         private GerenciadorMemoria(string diretorioPath, string subPastaPath)
         {
-            setDiretorioPath(diretorioPath);
+            setDiretorioBanco(diretorioPath);
             setDatabase(subPastaPath);
         }
 
@@ -45,92 +50,73 @@ namespace BancoDeDadosPOD.SGDB
             }
             return singleton;
         }
+        #endregion
 
-        // Métodos
-
-        public void setDiretorioPath(string diretorioPath)
+        #region *** Setters e Getters ***
+        public void setDiretorioBanco(string diretorioBanco)
         {
-            this.diretorioPath = diretorioPath;
+            this.dirBanco = diretorioBanco;
         }
 
-        public string getDiretorioPath()
+        public string getDiretorioBanco()
         {
-            return diretorioPath;
+            return dirBanco;
         }
 
         public void setDatabase(string subPastaPath)
         {
-            if (subPastaPath != null && !Directory.Exists(diretorioPath + "\\" + subPastaPath))
+            if (subPastaPath != null && !Directory.Exists(dirBanco + "\\" + subPastaPath))
             {
                 throw new SGDBException("Datadase " + subPastaPath + " não existe");
             }
-            this.pastaDatabase = subPastaPath;
+            this.dirBaseDados = subPastaPath;
             metadados = recuperarMetadados();
         }
 
         public string getDatabase()
         {
-            return pastaDatabase;
+            return dirBaseDados;
         }
 
         public string getPath()
         {
-            return diretorioPath + "\\" + pastaDatabase;
+            return dirBanco + "\\" + dirBaseDados;
         }
+        #endregion
 
-        // Cria a base de dados já set a coloca como database atual
+        // Criar a base de dados e apontar como database atual
         public void createDatabase(string name)
         {
-            if (Directory.Exists(diretorioPath + "\\" + name))
+            if (Directory.Exists(dirBanco + "\\" + name))
             {
                 throw new SGDBException("Database já existe");
             }
-            Directory.CreateDirectory(diretorioPath + "\\" + name);
+
+            Directory.CreateDirectory(dirBanco + "\\" + name);
             setDatabase(name);
         }
 
-        public bool existeTabela(string nome)
+        private void criarArquivo(string nome, string extencao)
         {
-            // se ainda ta na pasta principal;
-            if (pastaDatabase == null)
+            if (!File.Exists(dirBanco + "\\" + dirBaseDados + "\\" + nome + extencao))
             {
-                throw new SGDBException("Database não selecionado");
-            }
-
-            // tentar verificar se existe a tabela
-            try
-            {
-                return File.Exists(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".meta");
-            }
-            catch
-            {
-                throw new SGDBException("Problemas ao executar a consulta");
+                using (File.Create(dirBanco + "\\" + dirBaseDados + "\\" + nome + extencao)) { }
             }
         }
 
-        public bool existeIndex(string nome)
+        // Cria a tabela para não ter que criar durante a inserção
+        private void createTable(string nome)
         {
-            // se ainda ta na pasta principal;
-            if (pastaDatabase == null)
-            {
-                throw new SGDBException("Database não selecionado");
-            }
-
-            // tentar verificar se existe o arquivo de indice
-                Metadados m;
-                foreach (KeyValuePair<string, Metadados> item in metadados)
-                {
-                    m = item.Value;
-                    if (m.getIndexes().ContainsKey(nome))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+            criarArquivo(nome, ".dat");
         }
 
-        public bool excluirIndex(string nome)
+        // Cria o indice para não ter que criar durante a inserção
+        public void createIndex(string nome)
+        {
+            criarArquivo(nome, ".idx");
+        }
+
+        public bool dropIndex(string nome)
         {
             Metadados m;
             foreach (KeyValuePair<string, Metadados> item in metadados)
@@ -139,14 +125,15 @@ namespace BancoDeDadosPOD.SGDB
                 if (m.getIndexes().ContainsKey(nome))
                 {
                     m.getIndexes().Remove(nome);
-                    File.Delete(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".idx");
+                    File.Delete(dirBanco + "\\" + dirBaseDados + "\\" + nome + ".idx");
                     return true;
                 }
             }
+
             return false;
         }
 
-        private bool podeExcluirTable(string nome)
+        private bool permitirDropTable(string nome)
         {
             Metadados meta = singleton.recuperarMetadados(nome);
             bool pode = true;
@@ -157,12 +144,13 @@ namespace BancoDeDadosPOD.SGDB
                     pode = false;
                 }
             }
+
             return pode;
         }
 
-        public void excluirTable(string nome)
+        public void dropTable(string nome)
         {
-            if (podeExcluirTable(nome))
+            if (permitirDropTable(nome))
             {
                 Metadados metaExcluir, metaAux;
                 metaExcluir = recuperarMetadados(nome);
@@ -178,16 +166,59 @@ namespace BancoDeDadosPOD.SGDB
 
                 foreach (KeyValuePair<string, string[]> indices in metaExcluir.getIndexes())
                 {
-                    File.Delete(diretorioPath + "\\" + pastaDatabase + "\\" + indices.Key + ".idx");
+                    File.Delete(dirBanco + "\\" + dirBaseDados + "\\" + indices.Key + ".idx");
                 }
-                File.Delete(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".meta");
-                File.Delete(diretorioPath + "\\" + pastaDatabase + "\\" + nome + ".dat");
+
+                File.Delete(dirBanco + "\\" + dirBaseDados + "\\" + nome + ".meta");
+                File.Delete(dirBanco + "\\" + dirBaseDados + "\\" + nome + ".dat");
             }
             else
             {
                 throw new SGDBException("Tabela contém campos usados pra foreing keys");
             }
+        }
 
+        private void validarDataBase()
+        {
+            if (dirBaseDados == null)
+            {
+                throw new SGDBException("Database não selecionado");
+            }
+        }
+
+        public bool existeTabela(string nome)
+        {
+            // se ainda ta na pasta principal;
+            validarDataBase();
+
+            // tentar verificar se existe a tabela
+            try
+            {
+                return File.Exists(dirBanco + "\\" + dirBaseDados + "\\" + nome + ".meta");
+            }
+            catch
+            {
+                throw new SGDBException("Problemas ao executar a consulta");
+            }
+        }
+
+        public bool existeIndice(string nome)
+        {
+            // se ainda ta na pasta principal;
+            validarDataBase();
+
+            // tentar verificar se existe o arquivo de indice
+            Metadados m;
+            foreach (KeyValuePair<string, Metadados> item in metadados)
+            {
+                m = item.Value;
+                if (m.getIndexes().ContainsKey(nome))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // Esses dois tão feitos, se funcionam é outra história
@@ -201,11 +232,12 @@ namespace BancoDeDadosPOD.SGDB
             try
             {
                 IFormatter formatter = new BinaryFormatter();
-                Stream stream = new FileStream(diretorioPath + "\\" + pastaDatabase + "\\" + meta.getNome() + ".meta", FileMode.Create, FileAccess.Write, FileShare.None);
+                Stream stream = new FileStream(dirBanco + "\\" + dirBaseDados + "\\" + meta.getNome() + ".meta", FileMode.Create, FileAccess.Write, FileShare.None);
                 formatter.Serialize(stream, meta);
                 stream.Close();
-                criarTabela(meta.getNome());
+                createTable(meta.getNome());
                 metadados.Add(meta.getNome(), meta);
+
                 return true;
             }
             catch
@@ -222,28 +254,11 @@ namespace BancoDeDadosPOD.SGDB
             }
         }
 
-        // ja cria a tabela pra não ter que criar durante a inserção
-        private void criarTabela(string nome)
-        {
-            criarFile(nome, ".dat");
-        }
-
-        public void criarIndex(string nome)
-        {
-            criarFile(nome, ".idx");
-        }
-
-        private void criarFile(string nome, string extencao)
-        {
-            if (!File.Exists(diretorioPath + "\\" + pastaDatabase + "\\" + nome + extencao))
-            {
-                using (File.Create(diretorioPath + "\\" + pastaDatabase + "\\" + nome + extencao)) { }
-            }
-        }
-
         public Metadados recuperarMetadados(string nome)
         {
-            if (!metadados.ContainsKey(nome)) throw new SGDBException("Tabela não existe");
+            if (!metadados.ContainsKey(nome))
+                throw new SGDBException("Tabela não existe");
+
             return metadados[nome];
         }
 
@@ -252,7 +267,7 @@ namespace BancoDeDadosPOD.SGDB
             try
             {
                 IFormatter formatter = new BinaryFormatter();
-                string[] arquivos = Directory.GetFiles(diretorioPath + "\\" + pastaDatabase + "\\");
+                string[] arquivos = Directory.GetFiles(dirBanco + "\\" + dirBaseDados + "\\");
                 Dictionary<string, Metadados> dados = new Dictionary<string, Metadados>();
                 foreach (string arquivo in arquivos)
                 {
@@ -266,6 +281,7 @@ namespace BancoDeDadosPOD.SGDB
                         stream.Close();
                     }
                 }
+
                 return dados;
             }
             catch
@@ -278,6 +294,5 @@ namespace BancoDeDadosPOD.SGDB
         {
             metadados = recuperarMetadados();
         }
-
     }
 }
