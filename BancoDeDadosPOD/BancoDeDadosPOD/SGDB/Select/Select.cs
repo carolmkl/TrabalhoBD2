@@ -85,7 +85,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             {
                 throw new SemanticError("Tabela " + tabela + " não existe.");
             }
-            if (!tabelas.Exists(c => c.Equals(tabela)))
+            if (!tabelas.Exists(c => c.getNome().Equals(tabela)))
             {
                 tabelas.Add(mem.recuperarMetadados(tabela));
             }
@@ -137,22 +137,23 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// <returns>TabelaSelect formatada para apresentar no Form1</returns>
         public TabelaSelect run()
         {
-             
+
             TabelaSelect tabelaSelect = null;
             //caso e select seja select tabela.* from tabela não será necessário 
             //aplicar join pois tratará de apenas uma tabela
             //tratamento apenas para where
             if (asterisco)
             {
+                string arqTabela = mem.getPath() + "\\" + tabelas[0].getNome() + ".dat";
                 if (where != null)
                 {
                     if (where.ListaFiltro == null || where.ListaFiltro.Count == 0)
                     {
                         //se não tiver filtro retorna tudo
-                        tabelaSelect = GambiarraSelect.getInstance().returnDados(tabelas[0]);
+                        tabelaSelect = new Base(arqTabela).returnDados(tabelas[0]);
                     }
                     //traz os resultados filtrados por grupos de AND e depois junta com os OR's
-                    foreach (List<Filtro> filtrosAND in where.ListaFiltro)
+                    foreach (Dictionary<string, Filtro> filtrosAND in where.ListaFiltro)
                     {
                         TabelaSelect tabelaFiltro = null;
                         tabelaFiltro = GambiarraSelect.getInstance().returnDados(filtrosAND, tabelas[0]);
@@ -163,7 +164,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                 else
                 {
                     //se nao tiver filtro retorna tudo
-                    string arqTabela = mem.getPath() + "\\" + tabelas[0].getNome() + ".dat";
+
                     tabelaSelect = new Base(arqTabela).returnDados(tabelas[0]);
                 }
                 //envia comando para a TabelaSelect ordenar os registros
@@ -177,7 +178,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             //Se não tem asterisco o negócio complica
 
             //ordena as tabelas por qtdade registros
-            tabelas.Sort(delegate(Metadados m1,Metadados m2)
+            tabelas.Sort(delegate (Metadados m1, Metadados m2)
             {
                 return m1.getNumeroRegistros() > m2.getNumeroRegistros() ? 1 : -1;
             });
@@ -196,11 +197,11 @@ namespace BancoDeDadosPOD.SGDB.Select
                         camposBuscar.Add(f.RValue);
                 }
                 //traz os resultados filtrados por grupos de AND e depois junta com os OR's
-                foreach (List<Filtro> filtrosAND in where.ListaFiltro)
+                foreach (Dictionary<string, Filtro> filtrosAND in where.ListaFiltro)
                 {
                     TabelaSelect tabelaFiltroOR = null;
                     //informa apenas os filtros relacionados com a tabela em questão
-                    tabelaFiltroOR = GambiarraSelect.getInstance().returnDados(filtrosAND.Where(filtro => filtro.LValue.StartsWith(s.getNome())).ToList<Filtro>(), tabelas[0]);
+                    tabelaFiltroOR = GambiarraSelect.getInstance().returnDados(filtrosAND.Where(filtro => filtro.Key.StartsWith(s.getNome())).ToDictionary(p => p.Key, p => p.Value), tabelas[0]);
                     if (tabelaFiltro == null) tabelaFiltro = tabelaFiltroOR;
                     else tabelaFiltro.uniaoDistinct(tabelaFiltroOR);
                 }
@@ -314,10 +315,10 @@ namespace BancoDeDadosPOD.SGDB.Select
             estrutura.Append("WHERE: ");
             if (where != null)
             {
-                foreach (List<Filtro> lista in where.ListaFiltro)
+                foreach (Dictionary<string, Filtro> lista in where.ListaFiltro)
                 {
                     estrutura.Append("(");
-                    foreach (Filtro f in lista)
+                    foreach (Filtro f in lista.Values)
                     {
                         estrutura.Append(f.LValue + " " + f.Op + " " + f.RValue + " AND ");
                     }

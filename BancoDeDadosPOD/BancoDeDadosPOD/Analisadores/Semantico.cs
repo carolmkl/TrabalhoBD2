@@ -127,7 +127,7 @@ namespace BD2.Analizadores
                         Console.WriteLine(valoresColunas.Count);
                         for (int i = 0; i < identificadores.Count; i++)
                         {
-                            metadados.addDadosColuna(new DadosTabela(identificadores[i], valoresColunas[i].getTipo(), valoresColunas[i].getTamanho()));
+                            metadados.addDados(new DadosTabela(identificadores[i], valoresColunas[i].getTipo(), valoresColunas[i].getTamanho()));
                         }
                         identificadores.Clear();
                         valoresColunas.Clear();
@@ -137,18 +137,18 @@ namespace BD2.Analizadores
                     {
                         foreach (string id in identificadores)
                         {
-                            if (!metadados.getDadosColuna().ContainsKey(id))
+                            if (!metadados.getDados().ContainsKey(id))
                             {
                                 throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
                             }
-                            metadados.getDadosColuna()[id].setPrimary(true);
+                            metadados.getDados()[id].setPrimary(true);
                         }
                         identificadores.Clear();
                     }
                     break;
 
                 case 7:
-                    if (!metadados.getDadosColuna().ContainsKey(token.getLexeme()))
+                    if (!metadados.getDados().ContainsKey(token.getLexeme()))
                     {
                         throw new SemanticError("Campo " + token.getLexeme() + " não existe", token.getLinha());
                     }
@@ -162,15 +162,19 @@ namespace BD2.Analizadores
                     identificadores.Add(token.getLexeme().ToLower());
                     break;
                 case 9:
-                    if (!memoria.recuperarMetadados(identificadores[1]).getDadosColuna().ContainsKey(token.getLexeme().ToLower()))
+                    if (!memoria.recuperarMetadados(identificadores[1]).getDados().ContainsKey(token.getLexeme().ToLower()))
                     {
                         throw new SemanticError("Campo " + token.getLexeme().ToLower() + " na tabela " + identificadores[1] + "não existe", token.getPosition());
                     }
-                    metadados.getDadosColuna()[identificadores[0]].setForeing(identificadores[1], token.getLexeme().ToLower());
+                    metadados.getDados()[identificadores[0]].setForeing(identificadores[1], token.getLexeme().ToLower());
 
                     // so pra salvar a alteração de mais uma chave estrangeira
                     Metadados aux = memoria.recuperarMetadados(identificadores[1]);
+<<<<<<< HEAD
                     aux.getDadosColuna()[identificadores[1]].incForeing();
+=======
+                    aux.getDados()[identificadores[1]].addForeing();
+>>>>>>> origin/master
                     memoria.salvarMetadados(aux);
 
                     identificadores.Clear();
@@ -271,7 +275,7 @@ namespace BD2.Analizadores
 
                         for (int i = 1; i < identificadores.Count; i++)
                         {
-                            if (!metadados.getDadosColuna().ContainsKey(identificadores[i]))
+                            if (!metadados.getDados().ContainsKey(identificadores[i]))
                             {
                                 throw new SemanticError("Campo " + identificadores[i] + "não existe na tabela " + identificadores[0], token.getLinha());
                             }
@@ -298,7 +302,7 @@ namespace BD2.Analizadores
                             throw new SemanticError("Mais valores do que campos", token.getLinha());
                         }
                     }
-                    if (ListaDeSimbolos.getInstance().classeToken(token.getId()).Contains(metadados.getDadosColuna()[metadados.getNomesColunas()[indexColuna]].geTipo()) || ListaDeSimbolos.getInstance().classeToken(token.getId()).Equals("null"))
+                    if (ListaDeSimbolos.getInstance().classeToken(token.getId()).Contains(metadados.getDados()[metadados.getNomesColunas()[indexColuna]].geTipo()) || ListaDeSimbolos.getInstance().classeToken(token.getId()).Equals("null"))
                     {
                         // tipo tá correto
                         // validação de tamanho
@@ -323,13 +327,13 @@ namespace BD2.Analizadores
                             }
                             else
                             {
-                                if ((token.getLexeme().Length - 2) <= metadados.getDadosColuna()[metadados.getNomesColunas()[indexColuna]].getTamanho())
+                                if ((token.getLexeme().Length - 2) <= metadados.getDados()[metadados.getNomesColunas()[indexColuna]].getTamanho())
                                 {
                                     identificadores.Add(token.getLexeme());
                                 }
                                 else
                                 {
-                                    throw new SemanticError("Dado " + token.getLexeme() + " de tamanho incompativel(" + metadados.getDadosColuna()[metadados.getNomesColunas()[index]].getTamanho() + ")", token.getLinha());
+                                    throw new SemanticError("Dado " + token.getLexeme() + " de tamanho incompativel(" + metadados.getDados()[metadados.getNomesColunas()[index]].getTamanho() + ")", token.getLinha());
                                 }
                             }
                         }
@@ -337,7 +341,7 @@ namespace BD2.Analizadores
                     }
                     else
                     {
-                        throw new SemanticError("Dado " + token.getLexeme() + " tem tipo incompativel com o campo " + metadados.getDadosColuna()[metadados.getNomesColunas()[index]] + " de tipo " + metadados.getDadosColuna()[metadados.getNomesColunas()[index]].geTipo(), token.getLinha());
+                        throw new SemanticError("Dado " + token.getLexeme() + " tem tipo incompativel com o campo " + metadados.getDados()[metadados.getNomesColunas()[index]] + " de tipo " + metadados.getDados()[metadados.getNomesColunas()[index]].geTipo(), token.getLinha());
                     }
                     break;
                 case 21:
@@ -510,11 +514,11 @@ namespace BD2.Analizadores
                         {
                             if (identificadores[i].Equals("null"))
                             {
-                                dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDadosColuna()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[i].Replace("\'", ""));
+                                dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[i].Replace("\'", ""));
                             }
                             else
                             {
-                                dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDadosColuna()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[i].Replace("\'", ""));
+                                dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[i].Replace("\'", ""));
                             }
 
                             registro.Dados.Add(dado);
@@ -534,18 +538,18 @@ namespace BD2.Analizadores
                                 {
                                     if (identificadores[j + contColunas].Equals("null"))
                                     {
-                                        dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDadosColuna()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[j + contColunas].Replace("\'", ""));
+                                        dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[j + contColunas].Replace("\'", ""));
                                     }
                                     else
                                     {
-                                        dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDadosColuna()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[j + contColunas].Replace("\'", ""));
+                                        dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[j + contColunas].Replace("\'", ""));
                                     }
                                     nacho = false;
                                 }
                             }
                             if (nacho)
                             {
-                                dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDadosColuna()[metadados.getNomesColunas()[i]].getTamanho(), false, "null");
+                                dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, "null");
                             }
 
                             registro.Dados.Add(dado);
@@ -576,7 +580,7 @@ namespace BD2.Analizadores
                     identificadores.RemoveAt(0);
                     foreach (string item in identificadores)
                     {
-                        if (!metadados.getDadosColuna().ContainsKey(item))
+                        if (!metadados.getDados().ContainsKey(item))
                         {
                             new SemanticError("A coluna " + item + "não existe na tabela " + metadados.getNome());
                         }

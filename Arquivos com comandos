@@ -18,23 +18,14 @@ DROP INDEX bairro_nome_idx;
 set database correio;
 INSERT INTO bairro(cd_bairro, nm_bairro, sg_uf) VALUES (1, 'Victor Konder', 'SC'); 
 
-set database correio;
 INSERT INTO bairro(cd_bairro, sg_uf, nm_bairro) VALUES (1, 'SC', 'Victor Konder'); 
-set database correio;
-select bairro.* from bairro;
-
-set database correio;
-CREATE TABLE bairror 
-(
-  cd_bairro INTEGER,
-  nm_bairro VARCHAR(75),
-  sg_uf CHAR(2)
-);
-CREATE INDEX bairro_nome_idx ON bairro(nm_bairro); 
-INSERT INTO bairror(cd_bairro, sg_uf, nm_bairro) VALUES (1, 'SC', 'Victor Konder'); 
-select bairror.* from bairror;
 
 SELECT bairro.* FROM bairro ORDER BY bairro.nm_bairro up; 
+
+set database correio;
+select localidade.* from localidade where localidade.cd_localidade = 1 or localidade.nm_localidade = 'Acrelândia';
+
+
 
 SELECT bairro.nm_bairro as `LALALA`, bairro.sg_uf FROM bairro WHERE bairro.nm_bairro = 'Victor Konder' AND bairro.sg_uf = 'SC'; 
 

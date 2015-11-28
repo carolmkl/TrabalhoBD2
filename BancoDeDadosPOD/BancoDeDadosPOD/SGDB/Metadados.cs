@@ -190,7 +190,7 @@ namespace BancoDeDadosPOD.SGDB
         private string nome;
 
         //optei por dictonary pra facilitar a pesquisa
-        private Dictionary<string, DadosTabela> dadosColuna;
+        private Dictionary<string, DadosTabela> dados;
         private List<string> nomesColunas;
         private Dictionary<string, string[]> tabelaIndices;
         private int contRegistros;
@@ -198,7 +198,7 @@ namespace BancoDeDadosPOD.SGDB
         #region *** Construtores ***
         public Metadados()
         {
-            dadosColuna = new Dictionary<string, DadosTabela>();
+            dados = new Dictionary<string, DadosTabela>();
             nomesColunas = new List<string>();
             tabelaIndices = new Dictionary<string, string[]>();
             contRegistros = 0;
@@ -207,7 +207,7 @@ namespace BancoDeDadosPOD.SGDB
         public Metadados(String nome)
         {
             this.setNome(nome);
-            dadosColuna = new Dictionary<string, DadosTabela>();
+            dados = new Dictionary<string, DadosTabela>();
             tabelaIndices = new Dictionary<string, string[]>();
             contRegistros = 0;
         }
@@ -231,7 +231,7 @@ namespace BancoDeDadosPOD.SGDB
 
         public TipoDado getTipoDado(int i)
         {
-            return dadosColuna[nomesColunas[i]].getTipoDado();
+            return dados[nomesColunas[i]].getTipoDado();
         }
 
         public Dictionary<string, string[]> getIndexes()
@@ -244,28 +244,28 @@ namespace BancoDeDadosPOD.SGDB
             return contRegistros;
         }
 
-        public Dictionary<string, DadosTabela> getDadosColuna()
+        public Dictionary<string, DadosTabela> getDados()
         {
-            return dadosColuna;
+            return dados;
         }
         #endregion
 
-        public void addDadosColuna(DadosTabela dados)
+        public void addDados(DadosTabela dados)
         {
             addNomeColuna(dados.getNomeCampo());
-            this.dadosColuna[dados.getNomeCampo()] = dados;
+            this.dados[dados.getNomeCampo()] = dados;
         }
 
-        public void addDadosColuna(string nome, string tipo, int tamanho, bool primary, string[] foreing)
+        public void addDados(string nome, string tipo, int tamanho, bool primary, string[] foreing)
         {
             addNomeColuna(nome);
-            dadosColuna[nome] = new DadosTabela(nome,tipo,tamanho,primary,foreing);
+            dados[nome] = new DadosTabela(nome,tipo,tamanho,primary,foreing);
         }
 
-        public void addDadosColuna(string nome, string tipo, int tamanho)
+        public void addDados(string nome, string tipo, int tamanho)
         {
             addNomeColuna(nome);
-            dadosColuna[nome] = new DadosTabela(nome, tipo, tamanho);
+            dados[nome] = new DadosTabela(nome, tipo, tamanho);
         }
 
         private void addNomeColuna(string nome)
@@ -273,6 +273,24 @@ namespace BancoDeDadosPOD.SGDB
             this.nomesColunas.Add(nome);
         }
 
+<<<<<<< HEAD
+=======
+        public List<string> getNomesColunas()
+        {
+            return nomesColunas;
+        }
+
+        public TipoDado getTipoDado(int i)
+        {
+            return dados[nomesColunas[i]].getTipoDado();
+        }
+
+        public Dictionary<string, string[]> getIndexes()
+        {
+            return tabelaIndices;
+        }
+
+>>>>>>> origin/master
         public void addIndice(Registro tabela, long lastPosi, string path)
         {
             List<DadoIndice> dado;
@@ -292,8 +310,8 @@ namespace BancoDeDadosPOD.SGDB
                     */
                     // ***** inibido somente para compilar - Fim *****
                     //dado.Add(tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
+                    //ai.insert(dadoIndice, lastPosi);
                 }
-                //ai.insert(dadoIndice, lastPosi);
             }
         }
 
@@ -302,7 +320,7 @@ namespace BancoDeDadosPOD.SGDB
             List<string> campos = new List<string>();
             foreach (string item in nomesColunas)
             {
-                if (dadosColuna[item].isPrimary())
+                if (dados[item].isPrimary())
                 {
                     campos.Add(item);
                 }
@@ -332,7 +350,7 @@ namespace BancoDeDadosPOD.SGDB
         public override string ToString()
         {
             string descricao  = "Campo | Tipo | Tamanho | Primary |Foreing \n";
-            foreach (KeyValuePair<string, DadosTabela> item in dadosColuna)
+            foreach (KeyValuePair<string, DadosTabela> item in dados)
             {
                 DadosTabela d = item.Value;
                 descricao += d.getNomeCampo() +"|"+ d.geTipo() +"|"+ d.getTamanho() +"|"+ d.isPrimary() +"|"+ (d.isForeing()? d.getForeing()[0]+"(" +d.getForeing()[1]+")":"-") +"|"+ "\n";

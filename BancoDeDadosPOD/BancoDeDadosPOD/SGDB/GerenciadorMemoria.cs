@@ -139,7 +139,7 @@ namespace BancoDeDadosPOD.SGDB
             bool pode = true;
             for (int i = 0; i < meta.getNomesColunas().Count && pode; i++)
             {
-                if (meta.getDadosColuna()[meta.getNomesColunas()[i]].isRForeing())
+                if (meta.getDados()[meta.getNomesColunas()[i]].isRForeing())
                 {
                     pode = false;
                 }
@@ -154,12 +154,12 @@ namespace BancoDeDadosPOD.SGDB
             {
                 Metadados metaExcluir, metaAux;
                 metaExcluir = recuperarMetadados(nome);
-                foreach (KeyValuePair<string, DadosTabela> dt in metaExcluir.getDadosColuna())
+                foreach (KeyValuePair<string, DadosTabela> dt in metaExcluir.getDados())
                 {
                     if (dt.Value.isForeing())
                     {
                         metaAux = recuperarMetadados(dt.Value.getForeing()[0]);
-                        metaAux.getDadosColuna()[dt.Value.getForeing()[1]].decForeing();
+                        metaAux.getDados()[dt.Value.getForeing()[1]].decForeing();
                         salvarMetadados(metaAux);
                     }
                 }
@@ -251,6 +251,25 @@ namespace BancoDeDadosPOD.SGDB
             foreach (KeyValuePair<string, Metadados> item in metadados)
             {
                 salvarMetadados(item.Value);
+            }
+        }
+
+        // ja cria a tabela pra não ter que criar durante a inserção
+        private void criarTabela(string nome)
+        {
+            criarFile(nome, ".dat");
+        }
+
+        public void criarIndex(string nome)
+        {
+            criarFile(nome, ".idx");
+        }
+
+        private void criarFile(string nome, string extencao)
+        {
+            if (!File.Exists(dirBanco + "\\" + dirBaseDados + "\\" + nome + extencao))
+            {
+                File.Create(dirBanco + "\\" + dirBaseDados + "\\" + nome + extencao);
             }
         }
 

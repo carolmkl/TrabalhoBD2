@@ -46,6 +46,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             set
             {
                 rValue = value;
+                rValue = rValue.Replace('\'', ' ').Trim();
             }
         }
 

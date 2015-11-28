@@ -46,7 +46,8 @@
         public TabelaSelect returnDados(Metadados tabela)
         {
             string arqTabela = GerenciadorMemoria.getInstance().getPath() + "\\" + tabela.getNome() + ".dat";
-            return new ArquivoTabela(arqTabela).returnTudo(tabela.getNome(), arqTabela);
+            return new ArquivoSelect(arqTabela).returnTudo(tabela.getNome(), arqTabela);
+
         }
     }
 }
