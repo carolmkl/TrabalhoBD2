@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -17,40 +18,51 @@ namespace BancoDeDadosPOD
 
         private static TextBox mensagens;
         private static DataGridView gridView;
+        OpenFileDialog ofd;
+
         public Form1()
         {
             InitializeComponent();
             mensagens = txtMensagens;
             gridView = dataGridView1;
+            //gridView.RowTemplate.
             this.KeyUp += new KeyEventHandler(f5);
             this.txtComando.KeyUp += new KeyEventHandler(f5);
+            ofd = new OpenFileDialog();
+            ofd.Filter = "(Arquivos SQL)|*.sql";
+            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            ofd.RestoreDirectory = true;
         }
 
         private void f5(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F5)
             {
-                executa();
+                executa(txtComando.Text);
             }
         }
 
         private void btnExecuta_Click(object sender, EventArgs e)
         {
-            executa();
+            executa(txtComando.Text);
         }
 
-        public void executa()
+        public void executa(string comandos)
         {
             try
             {
                 tabResultado.SelectedIndex = 0;
                 clearMensagem();
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
                 addMensagem("Executando...");
-                Lexico lexico = new Lexico(txtComando.Text);
+                Lexico lexico = new Lexico(comandos);
                 Sintatico sintatico = new Sintatico();
                 Semantico semantico = new Semantico(this);
                 sintatico.parse(lexico, semantico);
-                addMensagem("Success!!!");
+                sw.Stop();
+                TimeSpan tempo = sw.Elapsed;
+                addMensagem(String.Format("Sucesso!!! Tempo de Execução: {0}min {1}s {2}ms", tempo.Minutes, tempo.Seconds, tempo.Milliseconds));
             }
             catch (Exception ex)
             {
@@ -74,6 +86,7 @@ namespace BancoDeDadosPOD
         public static void setResultado(TabelaSelect tabela, Dictionary<string, string> retorno)
         {
             gridView.Columns.Clear();
+            addMensagem(String.Format("{0} linhas selecionadas.", tabela.Registros.Count));
             int[] indices = new int[retorno.Count];
             for (int i = 0; i < retorno.Count; i++)
             {
@@ -134,6 +147,19 @@ namespace BancoDeDadosPOD
         {
             txtComando.Clear();
             txtComando.Refresh();
+            txtComando.Focus();
+        }
+
+        private void btn_CarregaArquivo_Click(object sender, EventArgs e)
+        {
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                using (System.IO.StreamReader sr = new System.IO.StreamReader(ofd.FileName))
+                {
+                    executa(sr.ReadToEnd());
+                    sr.Close();
+                }
+            }
         }
     }
 }

@@ -37,6 +37,7 @@
             this.txtMensagens = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.btnLimpa = new System.Windows.Forms.Button();
+            this.btn_CarregaArquivo = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabResultado.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -141,11 +142,22 @@
             this.btnLimpa.UseVisualStyleBackColor = true;
             this.btnLimpa.Click += new System.EventHandler(this.btnLimpa_Click);
             // 
+            // btn_CarregaArquivo
+            // 
+            this.btn_CarregaArquivo.Location = new System.Drawing.Point(588, 184);
+            this.btn_CarregaArquivo.Name = "btn_CarregaArquivo";
+            this.btn_CarregaArquivo.Size = new System.Drawing.Size(99, 23);
+            this.btn_CarregaArquivo.TabIndex = 5;
+            this.btn_CarregaArquivo.Text = "Carrega Arquivo";
+            this.btn_CarregaArquivo.UseVisualStyleBackColor = true;
+            this.btn_CarregaArquivo.Click += new System.EventHandler(this.btn_CarregaArquivo_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(700, 454);
+            this.Controls.Add(this.btn_CarregaArquivo);
             this.Controls.Add(this.btnLimpa);
             this.Controls.Add(this.tabResultado);
             this.Controls.Add(this.btnExecuta);
@@ -172,6 +184,7 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TextBox txtMensagens;
         private System.Windows.Forms.Button btnLimpa;
+        private System.Windows.Forms.Button btn_CarregaArquivo;
     }
 }
 
