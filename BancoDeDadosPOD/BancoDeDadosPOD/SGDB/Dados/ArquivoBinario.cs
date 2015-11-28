@@ -14,7 +14,6 @@ namespace BancoDeDadosPOD.SGDB.Dados
             this.path = path;
 
         }
-<<<<<<< HEAD
         
         ~ArquivoTabela()
         {
@@ -22,8 +21,6 @@ namespace BancoDeDadosPOD.SGDB.Dados
             this.bw.Close();
             this.stream.Close();
         }
-=======
->>>>>>> origin/master
 
         public long insert(Registro registro)
         {

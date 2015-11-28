@@ -273,24 +273,6 @@ namespace BancoDeDadosPOD.SGDB
             this.nomesColunas.Add(nome);
         }
 
-<<<<<<< HEAD
-=======
-        public List<string> getNomesColunas()
-        {
-            return nomesColunas;
-        }
-
-        public TipoDado getTipoDado(int i)
-        {
-            return dados[nomesColunas[i]].getTipoDado();
-        }
-
-        public Dictionary<string, string[]> getIndexes()
-        {
-            return tabelaIndices;
-        }
-
->>>>>>> origin/master
         public void addIndice(Registro tabela, long lastPosi, string path)
         {
             List<DadoIndice> dado;

@@ -170,11 +170,9 @@ namespace BD2.Analizadores
 
                     // so pra salvar a alteração de mais uma chave estrangeira
                     Metadados aux = memoria.recuperarMetadados(identificadores[1]);
-<<<<<<< HEAD
-                    aux.getDadosColuna()[identificadores[1]].incForeing();
-=======
-                    aux.getDados()[identificadores[1]].addForeing();
->>>>>>> origin/master
+                    //aux.getDadosColuna()[identificadores[1]].incForeing();
+                    //aux.getDados()[identificadores[1]].addForeing();
+                    aux.getDados()[identificadores[1]].incForeing();
                     memoria.salvarMetadados(aux);
 
                     identificadores.Clear();
