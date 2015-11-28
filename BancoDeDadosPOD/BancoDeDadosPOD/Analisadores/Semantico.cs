@@ -3,8 +3,6 @@ using BancoDeDadosPOD.SGDB.Select;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BancoDeDadosPOD;
 using BancoDeDadosPOD.SGDB.Dados;
 
@@ -73,10 +71,11 @@ namespace BD2.Analizadores
         public void executeAction(int action, Token token)
         {
             int index;
-            if((action != 16 && action !=1) && memoria.getDatabase() == null)
+            if ((action != 16 && action !=1) && memoria.getDatabase() == null)
             {
                 throw new SGDBException("utilize o comando SET DATABASE...");
             }
+
             switch (action)
             {
                 case 0:
@@ -96,7 +95,7 @@ namespace BD2.Analizadores
                     metadados.setNome(token.getLexeme().ToLower());
                     break;
                 case 3:
-                    if (memoria.existeIndex(token.getLexeme().ToLower()))
+                    if (memoria.existeIndice(token.getLexeme().ToLower()))
                     {
                         throw new SemanticError("Index " + token.getLexeme().ToLower() + " já existe", token.getLinha());
                     }
@@ -199,11 +198,11 @@ namespace BD2.Analizadores
                     break;
                 case 13:
                     //Exclusão com verificação de foreing e exclusão das referencias
-                    memoria.excluirTable(token.getLexeme().ToLower());
+                    memoria.dropTable(token.getLexeme().ToLower());
                     break;
                 case 14:
                     //Exclusão de index
-                    if (memoria.existeIndex(token.getLexeme().ToLower()))
+                    if (memoria.existeIndice(token.getLexeme().ToLower()))
                     {
                         identificadores.Add(token.getLexeme().ToLower());
                         operacao = acao.ExcluirIndex;   
@@ -588,7 +587,7 @@ namespace BD2.Analizadores
                     break;
 
                 case acao.ExcluirIndex:
-                    memoria.excluirIndex(identificadores[0]);
+                    memoria.dropIndex(identificadores[0]);
                     memoria.salvarMetadados();
                     memoria.atualizar();
                     break;

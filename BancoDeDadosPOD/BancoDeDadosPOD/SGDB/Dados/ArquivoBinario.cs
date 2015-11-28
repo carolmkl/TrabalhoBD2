@@ -126,7 +126,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             this.path = path;
         }
 
-        public long insert(DadoIndice registro, long posicao)
+        public long insert(Registro registro, long posicao)
         {
             stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             bw = new BinaryWriter(stream);
@@ -143,14 +143,24 @@ namespace BancoDeDadosPOD.SGDB.Dados
             // insere a posicao do registro no arquivo da tabela
             bw.Write(posicao);
 
-            // grava o dado no indice
-            if (registro.tipo == TipoDado.Inteiro)
-                bw.Write(registro.getValorInt());
-            else
-                bw.Write(registro.getValorStr());
+            // Dados do registro
+            foreach (Dado d in registro.Dados)
+            {
+                // posicao ordinal do campo dentro da tabela
+                bw.Write(d.posicao);
+
+                // grava o dado no indice
+                if (d.tipo == TipoDado.Inteiro)
+                    bw.Write(d.getValorInt());
+                else
+                    bw.Write(d.getValorStr());
+            }
 
             br.Close();
             bw.Close();
+            // força a gravar no arquivo aquilo que ficou no buffer.
+            bw.Flush();
+
             return posicaoIni;
         }
 
