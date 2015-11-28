@@ -159,7 +159,7 @@ namespace BancoDeDadosPOD.SGDB
                     if (dt.Value.isForeing())
                     {
                         metaAux = recuperarMetadados(dt.Value.getForeing()[0]);
-                        metaAux.getDados()[dt.Value.getForeing()[1]].minusForeing();
+                        metaAux.getDados()[dt.Value.getForeing()[1]].decForeing();
                         salvarMetadados(metaAux);
                     }
                 }

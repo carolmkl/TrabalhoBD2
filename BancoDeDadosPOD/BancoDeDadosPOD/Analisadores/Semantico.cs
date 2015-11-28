@@ -170,7 +170,9 @@ namespace BD2.Analizadores
 
                     // so pra salvar a alteração de mais uma chave estrangeira
                     Metadados aux = memoria.recuperarMetadados(identificadores[1]);
-                    aux.getDados()[identificadores[1]].addForeing();
+                    //aux.getDadosColuna()[identificadores[1]].incForeing();
+                    //aux.getDados()[identificadores[1]].addForeing();
+                    aux.getDados()[identificadores[1]].incForeing();
                     memoria.salvarMetadados(aux);
 
                     identificadores.Clear();
@@ -560,7 +562,7 @@ namespace BD2.Analizadores
                     arquivoBinario = new ArquivoTabela(memoria.getPath()+"\\"+metadados.getNome()+".dat");
                     long posi = arquivoBinario.insert(registro);
 
-                    metadados.addRegistro();
+                    metadados.incRegistro();
                     metadados.addIndice(registro, posi, memoria.getPath());
                     memoria.salvarMetadados(metadados);
                     memoria.atualizar();

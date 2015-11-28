@@ -14,6 +14,13 @@ namespace BancoDeDadosPOD.SGDB.Dados
             this.path = path;
 
         }
+        
+        ~ArquivoTabela()
+        {
+            this.br.Close();
+            this.bw.Close();
+            this.stream.Close();
+        }
 
         public long insert(Registro registro)
         {
@@ -106,6 +113,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
                     r.Dados.Add(d);
                 }
+
                 td.Registros.Add(r);
             }
             br.Close();

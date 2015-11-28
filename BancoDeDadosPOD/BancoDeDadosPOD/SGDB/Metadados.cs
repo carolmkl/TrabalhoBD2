@@ -7,13 +7,14 @@ namespace BancoDeDadosPOD.SGDB
     [Serializable]
     public class DadosTabela
     {
-        string nomeCampo;
-        string tipo;
-        int tamanho;
-        bool primary;
-        int contForeing;
-        string[] foreing;
+        private string nomeCampo;
+        private string tipo;
+        private int tamanho;
+        private bool primary;
+        private int contForeing;
+        private string[] foreing;
 
+        #region *** Construtores ***
         public DadosTabela()
         {
             foreing = new string[2];
@@ -39,7 +40,9 @@ namespace BancoDeDadosPOD.SGDB
             this.foreing = new string[2];
             this.contForeing = 0;
         }
+        #endregion
 
+        #region *** Setters e Getters ***
         public string getNomeCampo()
         {
             return nomeCampo;
@@ -81,11 +84,6 @@ namespace BancoDeDadosPOD.SGDB
             this.tamanho = tamanho;
         }
 
-        public bool isPrimary()
-        {
-            return primary;
-        }
-
         public void setPrimary(bool primary)
         {
             this.primary = primary;
@@ -106,6 +104,12 @@ namespace BancoDeDadosPOD.SGDB
             foreing[0] = table;
             foreing[1] = colum;
         }
+        #endregion
+
+        public bool isPrimary()
+        {
+            return primary;
+        }
 
         public bool isForeing()
         {
@@ -117,12 +121,12 @@ namespace BancoDeDadosPOD.SGDB
             return contForeing>0;
         }
 
-        public void addForeing()
+        public void incForeing()
         {
             contForeing++;
         }
 
-        public void minusForeing()
+        public void decForeing()
         {
             contForeing--;
         }
@@ -135,12 +139,15 @@ namespace BancoDeDadosPOD.SGDB
         private string[] nomesCampos;
         private Dictionary<string[], List<int>> indices;
 
+        #region *** Construtores ***
         public Index(string[] nomesCampos)
         {
             indices = new Dictionary<string[], List<int>>();
             this.nomesCampos = nomesCampos;
         }
+        #endregion
 
+        #region *** Setters e Getters ***
         public string[] getNomesCampos()
         {
             return nomesCampos;
@@ -150,6 +157,7 @@ namespace BancoDeDadosPOD.SGDB
         {
             return indices;
         }
+        #endregion
 
         public void addIndice(string[] chave, List<int> posi)
         {
@@ -180,12 +188,14 @@ namespace BancoDeDadosPOD.SGDB
     public class Metadados
     {
         private string nome;
+
         //optei por dictonary pra facilitar a pesquisa
         private Dictionary<string, DadosTabela> dados;
         private List<string> nomesColunas;
         private Dictionary<string, string[]> tabelaIndices;
         private int contRegistros;
 
+        #region *** Construtores ***
         public Metadados()
         {
             dados = new Dictionary<string, DadosTabela>();
@@ -201,7 +211,9 @@ namespace BancoDeDadosPOD.SGDB
             tabelaIndices = new Dictionary<string, string[]>();
             contRegistros = 0;
         }
+        #endregion
 
+        #region *** Setters e Getters *** 
         public string getNome()
         {
             return nome;
@@ -212,10 +224,31 @@ namespace BancoDeDadosPOD.SGDB
             this.nome = nome;
         }
 
+        public List<string> getNomesColunas()
+        {
+            return nomesColunas;
+        }
+
+        public TipoDado getTipoDado(int i)
+        {
+            return dados[nomesColunas[i]].getTipoDado();
+        }
+
+        public Dictionary<string, string[]> getIndexes()
+        {
+            return tabelaIndices;
+        }
+
+        public int getNumeroRegistros()
+        {
+            return contRegistros;
+        }
+
         public Dictionary<string, DadosTabela> getDados()
         {
             return dados;
         }
+        #endregion
 
         public void addDados(DadosTabela dados)
         {
@@ -238,21 +271,6 @@ namespace BancoDeDadosPOD.SGDB
         private void addNomeColuna(string nome)
         {
             this.nomesColunas.Add(nome);
-        }
-
-        public List<string> getNomesColunas()
-        {
-            return nomesColunas;
-        }
-
-        public TipoDado getTipoDado(int i)
-        {
-            return dados[nomesColunas[i]].getTipoDado();
-        }
-
-        public Dictionary<string, string[]> getIndexes()
-        {
-            return tabelaIndices;
         }
 
         public void addIndice(Registro tabela, long lastPosi, string path)
@@ -306,12 +324,7 @@ namespace BancoDeDadosPOD.SGDB
             GerenciadorMemoria.getInstance().createIndex(nome);
         }
 
-        public int getNumeroRegistros()
-        {
-            return contRegistros;
-        }
-
-        public void addRegistro()
+        public void incRegistro()
         {
             contRegistros++;
         }
