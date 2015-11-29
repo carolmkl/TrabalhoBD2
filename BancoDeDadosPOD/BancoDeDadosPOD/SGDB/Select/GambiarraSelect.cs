@@ -48,20 +48,20 @@ namespace BancoDeDadosPOD.SGDB.Select
                 //lê cada registro
                 while (br.BaseStream.Position != br.BaseStream.Length)
                 {
-                    Registro r = new Registro(br.ReadInt64());
+                    RegistroTabela r = new RegistroTabela(br.ReadInt64());
                     count = br.ReadInt32();
                     bool insere = true;
                     //Lê cada dado dentro do registro
                     for (int i = 0; i < count && insere; i++)
                     {
-                        Dado d;
+                        DadoTabela d;
                         string nomeColuna = meta.getNomesColunas()[i];
                         TipoDado tipo = meta.getDados()[nomeColuna].getTipoDado();
                         string campo = meta.getNome() + "." + nomeColuna;
                         Filtro f = filtrosAND.ContainsKey(campo) ? filtrosAND[campo] : null;
                         if (tipo == TipoDado.Inteiro)
                         {
-                            d = new Dado(nomeColuna, tipo, br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
+                            d = new DadoTabela(nomeColuna, tipo, br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
                             if (f != null)
                             {
                                 switch (f.Op)
@@ -109,7 +109,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                             bool isValido = br.ReadBoolean();
                             byte[] valor = br.ReadBytes(tamanho);
                             string texto = new System.Text.ASCIIEncoding().GetString(valor);
-                            d = new Dado(nomeColuna, tipo, tamanho, isValido, texto);
+                            d = new DadoTabela(nomeColuna, tipo, tamanho, isValido, texto);
                             if (f != null)
                             {
                                 switch (f.Op)
@@ -147,11 +147,11 @@ namespace BancoDeDadosPOD.SGDB.Select
                         }
 
 
-                        r.Dados.Add(d);
+                        r.dados.Add(d);
                     }
                     if (insere)
                     {
-                        td.Registros.Add(r);
+                        td.registros.Add(r);
                     }
                     if (br.BaseStream.Position % tamRegistro != 0)
                         br.BaseStream.Position += tamRegistro - (br.BaseStream.Position % tamRegistro);

@@ -193,7 +193,7 @@ namespace BancoDeDadosPOD.SGDB
         private Dictionary<string, DadosTabela> dados;
         private List<string> nomesColunas;
         private Dictionary<string, string[]> tabelaIndices;
-        private int contRegistros;
+        private int contRegistroTabelas;
 
         #region *** Construtores ***
         public Metadados()
@@ -201,7 +201,7 @@ namespace BancoDeDadosPOD.SGDB
             dados = new Dictionary<string, DadosTabela>();
             nomesColunas = new List<string>();
             tabelaIndices = new Dictionary<string, string[]>();
-            contRegistros = 0;
+            contRegistroTabelas = 0;
         }
 
         public Metadados(String nome)
@@ -209,7 +209,7 @@ namespace BancoDeDadosPOD.SGDB
             this.setNome(nome);
             dados = new Dictionary<string, DadosTabela>();
             tabelaIndices = new Dictionary<string, string[]>();
-            contRegistros = 0;
+            contRegistroTabelas = 0;
         }
         #endregion
 
@@ -239,9 +239,9 @@ namespace BancoDeDadosPOD.SGDB
             return tabelaIndices;
         }
 
-        public int getNumeroRegistros()
+        public int getNumeroRegistrosTabela()
         {
-            return contRegistros;
+            return contRegistroTabelas;
         }
 
         public Dictionary<string, DadosTabela> getDados()
@@ -273,7 +273,7 @@ namespace BancoDeDadosPOD.SGDB
             this.nomesColunas.Add(nome);
         }
 
-        public void addIndice(Registro tabela, long lastPosi, string path)
+        public void addIndice(RegistroTabela tabela, long lastPosi, string path)
         {
             List<DadoIndice> dado;
             ArquivoIndice ai;
@@ -324,9 +324,9 @@ namespace BancoDeDadosPOD.SGDB
             GerenciadorMemoria.getInstance().createIndex(nome);
         }
 
-        public void incRegistro()
+        public void incRegistrosTabela()
         {
-            contRegistros++;
+            contRegistroTabelas++;
         }
 
         public override string ToString()

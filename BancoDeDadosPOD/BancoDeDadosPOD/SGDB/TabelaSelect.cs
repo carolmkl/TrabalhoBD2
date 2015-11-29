@@ -32,6 +32,7 @@ namespace BancoDeDadosPOD.SGDB
                 {
                     if (campos[pos].Equals(colunas[i])) break;
                 }
+
                 if (asc)
                 {
                     registros.Sort(delegate (string[] x, string[] y)
@@ -64,6 +65,7 @@ namespace BancoDeDadosPOD.SGDB
         {
             if (!igual(this.campos, outraTabela.Campos))
                 throw new SGDBException("Para união de 2 tabelas, os campos devem ser iguais");
+
             this.registros.AddRange(outraTabela.registros);
         }
 
@@ -76,12 +78,10 @@ namespace BancoDeDadosPOD.SGDB
         {
             if (!igual(this.campos, outraTabela.Campos))
                 throw new SGDBException("Para união de 2 tabelas, os campos devem ser iguais");
+
             this.registros.AddRange(outraTabela.registros);
             registros = registros.Distinct().ToList();
-
         }
-
-
 
         /// <summary>
         /// realiza o INNER JOIN da tabela atual com a tabela passada conforme parametros da listaJoin
@@ -166,6 +166,7 @@ namespace BancoDeDadosPOD.SGDB
                                 break;
                             }
                         }
+
                         if (insere)
                         {
                             string[] regTemp = new string[colunas];
@@ -175,7 +176,6 @@ namespace BancoDeDadosPOD.SGDB
                         }
                     }
                 }
-
             }
 
             return resultado;
@@ -227,6 +227,7 @@ namespace BancoDeDadosPOD.SGDB
         {
             if (reg.Length != campos.Length)
                 throw new SGDBException("Registro adicionado à tabela não condiz com a quantidade de campos");
+
             registros.Add(reg);
         }
 
@@ -238,28 +239,32 @@ namespace BancoDeDadosPOD.SGDB
         /// <returns></returns>
         public static TabelaSelect getTabelaSelect(TabelaDado tabelaDado)
         {
-            if(tabelaDado == null || tabelaDado.Registros == null || tabelaDado.Registros.Count == 0)
+            if(tabelaDado == null || tabelaDado.registros == null || tabelaDado.registros.Count == 0)
             {
                 return null;
             }
+
             TabelaSelect tabelaSelect = new TabelaSelect();
-            List<Dado> dados = tabelaDado.Registros[0].Dados;
+            List<DadoTabela> dados = tabelaDado.registros[0].dados;
             int colunas = dados.Count;
             tabelaSelect.campos = new string[colunas];
             for (int i = 0; i < colunas; i++)
             {
-                tabelaSelect.campos[i] = tabelaDado.Nome+"."+dados[i].nome;
+                tabelaSelect.campos[i] = tabelaDado.nome+"."+dados[i].nome;
             }
-            foreach (Registro registro in tabelaDado.Registros)
+
+            foreach (RegistroTabela registro in tabelaDado.registros)
             {
-                dados = registro.Dados;
+                dados = registro.dados;
                 string[] linha = new string[colunas];
                 for (int i = 0; i < colunas; i++)
                 {
                     linha[i] = dados[i].valor + "";
                 }
+
                 tabelaSelect.Registros.Add(linha);
             }
+
             return tabelaSelect;
         }
 
@@ -270,6 +275,7 @@ namespace BancoDeDadosPOD.SGDB
             {
                 retorno += item + " | ";
             }
+
             retorno += "\n";
             foreach (string[] item in registros)
             {
@@ -278,12 +284,11 @@ namespace BancoDeDadosPOD.SGDB
                 {
                     retorno += reg + " | ";
                 }
+
                 retorno += "\n";
             }
 
             return retorno;
         }
-
-
     }
 }

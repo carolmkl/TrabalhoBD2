@@ -21,6 +21,7 @@
         private ArquivoTabela arqTabela { get; }
         private ArquivoIndice arqIndice { get; }
 
+        #region *** Construtores ***
         public Base(string pathTabela, string pathIndice)
         {
             memoria = new Memoria();
@@ -34,8 +35,9 @@
             arqTabela = new ArquivoTabela(pathTabela);
             arqIndice = null;
         }
+        #endregion
 
-        public bool insert(Registro registro)
+        public bool insert(RegistroTabela registro)
         {
             // Aqui vai inserir na tabela e no indice logo em seguida
             // qqr problema, false, erros geram exceções
@@ -46,8 +48,7 @@
         public TabelaSelect returnDados(Metadados tabela)
         {
             string arqTabela = GerenciadorMemoria.getInstance().getPath() + "\\" + tabela.getNome() + ".dat";
-            return new ArquivoSelect(arqTabela).returnTudo(tabela.getNome(), arqTabela);
-
+            return new ArquivoTabela(arqTabela).returnTudo(tabela.getNome(), arqTabela);
         }
     }
 }

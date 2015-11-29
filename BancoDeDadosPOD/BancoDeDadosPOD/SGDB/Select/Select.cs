@@ -180,7 +180,7 @@ namespace BancoDeDadosPOD.SGDB.Select
             //ordena as tabelas por qtdade registros
             tabelas.Sort(delegate (Metadados m1, Metadados m2)
             {
-                return m1.getNumeroRegistros() > m2.getNumeroRegistros() ? 1 : -1;
+                return m1.getNumeroRegistrosTabela() > m2.getNumeroRegistrosTabela() ? 1 : -1;
             });
             foreach (Metadados s in tabelas)
             {

@@ -111,7 +111,7 @@ namespace BD2.Analizadores
                     // de identificadores
                     metadados = GerenciadorMemoria.getInstance().recuperarMetadados(token.getLexeme().ToLower());
                     /* arquivoBinario = new ArquivoBinario(memoria.getPath());*/
-                    if (metadados.getNumeroRegistros() > 0)
+                    if (metadados.getNumeroRegistrosTabela() > 0)
                     {
                         throw new SemanticError("Não se cria index em tabelas que já tenham dados", token.getLinha());
                     }
@@ -319,7 +319,7 @@ namespace BD2.Analizadores
                                 }
                                 else
                                 {
-                                    throw new SemanticError("Dado " + token.getLexeme() + " de tamanho incompativel", token.getLinha());
+                                    throw new SemanticError("DadoTabela " + token.getLexeme() + " de tamanho incompativel", token.getLinha());
                                 }
 
                             }
@@ -331,7 +331,7 @@ namespace BD2.Analizadores
                                 }
                                 else
                                 {
-                                    throw new SemanticError("Dado " + token.getLexeme() + " de tamanho incompativel(" + metadados.getDados()[metadados.getNomesColunas()[index]].getTamanho() + ")", token.getLinha());
+                                    throw new SemanticError("DadoTabela " + token.getLexeme() + " de tamanho incompativel(" + metadados.getDados()[metadados.getNomesColunas()[index]].getTamanho() + ")", token.getLinha());
                                 }
                             }
                         }
@@ -339,7 +339,7 @@ namespace BD2.Analizadores
                     }
                     else
                     {
-                        throw new SemanticError("Dado " + token.getLexeme() + " tem tipo incompativel com o campo " + metadados.getDados()[metadados.getNomesColunas()[index]] + " de tipo " + metadados.getDados()[metadados.getNomesColunas()[index]].geTipo(), token.getLinha());
+                        throw new SemanticError("DadoTabela " + token.getLexeme() + " tem tipo incompativel com o campo " + metadados.getDados()[metadados.getNomesColunas()[index]] + " de tipo " + metadados.getDados()[metadados.getNomesColunas()[index]].geTipo(), token.getLinha());
                     }
                     break;
                 case 21:
@@ -502,30 +502,29 @@ namespace BD2.Analizadores
                     
                     id = identificadores[0];
                     identificadores.RemoveAt(0);
-                    Registro registro = new Registro(-1);
+                    RegistroTabela registro = new RegistroTabela(-1);
                     metadados = memoria.recuperarMetadados(id);
                     
                     if (allColunas)
                     {
-                        Dado dado;
+                        DadoTabela DadoTabela;
                         for (int i = 0; i < identificadores.Count; i++)
                         {
                             if (identificadores[i].Equals("null"))
                             {
-                                dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[i].Replace("\'", ""));
+                                DadoTabela = new DadoTabela(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[i].Replace("\'", ""));
                             }
                             else
                             {
-                                dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[i].Replace("\'", ""));
+                                DadoTabela = new DadoTabela(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[i].Replace("\'", ""));
                             }
 
-                            registro.Dados.Add(dado);
-
+                            registro.dados.Add(DadoTabela);
                         }
                     }
                     else
                     {
-                        Dado dado = null;
+                        DadoTabela dado = null;
                         bool nacho = true;
                         for (int i = 0; i < metadados.getNomesColunas().Count; i++)
                         {
@@ -536,33 +535,33 @@ namespace BD2.Analizadores
                                 {
                                     if (identificadores[j + contColunas].Equals("null"))
                                     {
-                                        dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[j + contColunas].Replace("\'", ""));
+                                        dado = new DadoTabela(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, identificadores[j + contColunas].Replace("\'", ""));
                                     }
                                     else
                                     {
-                                        dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[j + contColunas].Replace("\'", ""));
+                                        dado = new DadoTabela(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), true, identificadores[j + contColunas].Replace("\'", ""));
                                     }
                                     nacho = false;
                                 }
                             }
                             if (nacho)
                             {
-                                dado = new Dado(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, "null");
+                                dado = new DadoTabela(metadados.getNomesColunas()[i], metadados.getTipoDado(i), (byte)metadados.getDados()[metadados.getNomesColunas()[i]].getTamanho(), false, "null");
                             }
 
-                            registro.Dados.Add(dado);
+                            registro.dados.Add(dado);
                         }
                         
                     }
                     Console.WriteLine("TO STRING DA TABELA");
                     
                     /*TabelaDado tabelaDado = new TabelaDado(id, memoria.getPath());
-                    tabelaDado.Registros.Add(registro);*/
+                    tabelaDado.Registros.Add(RegistroTabela);*/
                     // Form1.addMensagem(tabelaDado.ToString());
                     arquivoBinario = new ArquivoTabela(memoria.getPath()+"\\"+metadados.getNome()+".dat");
                     long posi = arquivoBinario.insert(registro);
 
-                    metadados.incRegistro();
+                    metadados.incRegistrosTabela();
                     metadados.addIndice(registro, posi, memoria.getPath());
                     memoria.salvarMetadados(metadados);
                     memoria.atualizar();
