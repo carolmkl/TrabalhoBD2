@@ -33,23 +33,19 @@ namespace BancoDeDadosPOD.SGDB.Dados
         }
         #endregion
 
-        private void insertIndices(RegistroTabela registro, long posicao)
+        public void insertIndice(string indice, RegistroIndice registro, long posicao)
         {
             try {
-                foreach (KeyValuePair<string, ArquivoIndice> indice in arqsIndices)
-                {
-                    indice.Value.insert(registro, posicao);
-                }
+                arqsIndices[indice].insert(registro, posicao);
             } catch (Exception e) {
                 throw new SGDBException("Houve erro na inserção do indice! " + e.Message);
             }
         }
 
-        public void insert(RegistroTabela registro)
+        public long insertTabela(RegistroTabela registro)
         {
             try {
-                long posicao = arqTabela.insert(registro);
-                insertIndices(registro, posicao);
+                return arqTabela.insert(registro);
             } catch (Exception e) {
                 throw new SGDBException("Houve erro na inserção do registro! " + e.Message);
             }
@@ -82,6 +78,39 @@ namespace BancoDeDadosPOD.SGDB.Dados
             return instanciaUnica;
         }
         #endregion
+
+        public void insert(string tabela, RegistroTabela registro)
+        {
+            Binarios binAux = arqBinarios[tabela];
+            long posicao = binAux.insertTabela(registro);
+            insertIndices(binAux, registro, posicao);
+        }
+
+        private void insertIndices(Binarios binario, RegistroTabela registro, long posicao)
+        {
+            /*
+            List<DadoIndice> dado;
+            ArquivoIndice ai;
+            foreach (KeyValuePair<string, string[]> item in tabelaIndices)
+            {
+                dado = new List<DadoIndice>();
+                ai = new ArquivoIndice(path + "\\" + item.Key + ".idx");
+                for (int i = 0; i < item.Value.Length; i++)
+                {
+                    // ***** inibido somente para compilar - Inicio *****
+                    // by Douglas Santos
+                    // Acredito que isto va mudar
+                    
+                    //DadoIndice dadoIndice = new DadoIndice(dadosColuna[item.Value[i]].getTipoDado(), tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
+                    //dado.Add(dadoIndice);
+                    
+                    // ***** inibido somente para compilar - Fim *****
+                    //dado.Add(tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
+                    //ai.insert(dadoIndice, lastPosi);
+                }
+            }
+            */
+        }
 
         public TabelaSelect returnDados(Metadados tabela)
         // Isto devera mudar para ser independente de 1 ou todos os registros
