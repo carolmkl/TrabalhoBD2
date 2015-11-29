@@ -4,18 +4,19 @@ namespace BancoDeDadosPOD.SGDB.Dados
 {
     public sealed class ArquivoTabela
     {
+        public string nome { get; internal set; }
+        public string path { get; internal set; }
         private Stream stream;
         private BinaryWriter bw;
         private BinaryReader br;
-        private string path;
 
-        #region *** Construtro e Destrutor ***
-        public ArquivoTabela(string path)
+        #region *** Construtor e Destrutor ***
+        public ArquivoTabela(string nome)
         {
+            this.nome = nome;
             this.stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             this.bw = new BinaryWriter(stream);
             this.br = new BinaryReader(stream);
-            this.path = path;
         }
         
         ~ArquivoTabela()
@@ -106,14 +107,32 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
     public sealed class ArquivoIndice
     {
+        public string nome { get; internal set; }
+        public string path { get; internal set; }
         public Stream stream;
         public BinaryWriter bw;
         public BinaryReader br;
-        public string path;
 
-        public ArquivoIndice(string path)
+        #region *** Construtor e Destrutor ****
+        public ArquivoIndice(string nome)
         {
-            this.path = path;
+            this.nome = nome;
+            this.stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            this.bw = new BinaryWriter(stream);
+            this.br = new BinaryReader(stream);
+        }
+
+        ~ArquivoIndice()
+        {
+            this.br.Close();
+            this.bw.Close();
+            this.stream.Close();
+        }
+        #endregion
+
+        public bool temDados()
+        {
+            return stream.Length > 0;
         }
 
         public long insert(RegistroTabela registro, long posicao)

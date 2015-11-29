@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BancoDeDadosPOD.SGDB.Dados
 {
@@ -21,41 +22,37 @@ namespace BancoDeDadosPOD.SGDB.Dados
     {
         private Memoria memoria { get; }
         private ArquivoTabela arqTabela { get; }
-        private ArquivoIndice arqIndice { get; } // transformar em uma lista
+        private Dictionary<string, ArquivoIndice> arqsIndices { get; }
 
         #region *** Construtores ***
-        private Binarios(string pathTabela, string pathIndice)
+        private Binarios(string nomeTabela)
         {
             this.memoria = new Memoria();
-            this.arqTabela = new ArquivoTabela(pathTabela);
-            this.arqIndice = new ArquivoIndice(pathIndice);
-        }
-
-        public Binarios(string pathTabela)
-        {
-            this.memoria = new Memoria();
-            this.arqTabela = new ArquivoTabela(pathTabela);
-            this.arqIndice = null;
+            this.arqTabela = new ArquivoTabela(nomeTabela);
+            this.arqsIndices = new Dictionary<string, ArquivoIndice>();
         }
         #endregion
 
-        public void insert(RegistroTabela registro)
-        // Isto devera mudar para inserir em todos os indices da mesma tabela
+        private void insertIndices(RegistroTabela registro, long posicao)
         {
             try {
-                long posicao = arqTabela.insert(registro);
-                arqIndice.insert(registro, posicao);
-            } catch (Exception e)
-            {
-                throw new SGDBException("Houve erro na inserção do registro! " + e.Message);
+                foreach (KeyValuePair<string, ArquivoIndice> indice in arqsIndices)
+                {
+                    indice.Value.insert(registro, posicao);
+                }
+            } catch (Exception e) {
+                throw new SGDBException("Houve erro na inserção do indice! " + e.Message);
             }
         }
 
-        public TabelaSelect returnDados(Metadados tabela)
-        // Isto devera mudar para ser independente de 1 ou todos os registros
+        public void insert(RegistroTabela registro)
         {
-            string arqTabela = GerenciadorMemoria.getInstance().getPath() + "\\" + tabela.getNome() + ".dat";
-            return new ArquivoTabela(arqTabela).returnTudo(tabela.getNome(), arqTabela);
+            try {
+                long posicao = arqTabela.insert(registro);
+                insertIndices(registro, posicao);
+            } catch (Exception e) {
+                throw new SGDBException("Houve erro na inserção do registro! " + e.Message);
+            }
         }
     }
 
@@ -63,8 +60,23 @@ namespace BancoDeDadosPOD.SGDB.Dados
     {
         /*
         TODO:
-        - Lista da classe de binarios
+        - Lista da classe de binarios [feito]
         - Acesso facilitado aos itens da lista 
         */
+        public Dictionary<string, Binarios> arqBinarios;
+
+        #region *** Construtores ***
+        public Base()
+        {
+            arqBinarios = new Dictionary<string, Binarios>();
+        }
+        #endregion
+
+        public TabelaSelect returnDados(Metadados tabela)
+        // Isto devera mudar para ser independente de 1 ou todos os registros
+        {
+            string arqTabela = GerenciadorMemoria.getInstance().getPath() + "\\" + tabela.getNome() + ".dat";
+            return new ArquivoTabela(arqTabela).returnTudo(tabela.getNome(), arqTabela);
+        }
     }
 }

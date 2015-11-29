@@ -114,6 +114,19 @@ namespace BancoDeDadosPOD.SGDB.Dados
         }
     }
 
+    // Classe responsável pelos dados de entrada e saida no arquivo de índice.
+    public sealed class IndiceTabela
+    {
+        public string nome { get; internal set; }
+        public List<RegistroIndice> registros { get; set; }
+
+        public IndiceTabela(string nome)
+        {
+            this.nome = nome;
+            this.registros = new List<RegistroIndice>();
+        }
+    }
+
     // Classe responsável por cada registro do indice.
     public sealed class RegistroIndice
     {
