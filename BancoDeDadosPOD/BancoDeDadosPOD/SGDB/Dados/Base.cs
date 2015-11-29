@@ -103,6 +103,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
                     DadoIndice dadoIndice = new DadoIndice(meta.getDados()[item.Value[i]].getTipoDado(), registro.dados[meta.getNomesColunas().IndexOf(item.Value[i])].valor);
                     registroIndice.dados.Add(dadoIndice);
                 }
+                // foi feito um registro agora é só adicionar
             }
         
         }
