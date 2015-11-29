@@ -135,7 +135,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             return stream.Length > 0;
         }
 
-        public long insert(RegistroTabela registro, long posicao)
+        public long insert(RegistroIndice registro, long posicao)
         {
             long posicaoIni = stream.Length;
             stream.Position = posicaoIni;
@@ -149,7 +149,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             bw.Write(posicao);
 
             // Dados do RegistroTabela
-            foreach (DadoTabela d in registro.dados)
+            foreach (DadoIndice d in registro.dados)
             {
                 // posicao ordinal do campo dentro da tabela
                 bw.Write(d.posicao);
