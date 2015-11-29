@@ -63,7 +63,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         - Lista da classe de binarios [feito]
         - Acesso facilitado aos itens da lista 
         */
-        private Base instanciaUnica;
+        private static Base instanciaUnica;
         public Dictionary<string, Binarios> arqBinarios;
 
         #region *** Construtores ***
@@ -74,12 +74,12 @@ namespace BancoDeDadosPOD.SGDB.Dados
         #endregion
 
         #region *** Getters e Setters ***
-        public Base getInstance()
+        public static Base getInstance()
         {
-            if (this.instanciaUnica == null)
-                this.instanciaUnica = new Base();
+            if (instanciaUnica == null)
+                instanciaUnica = new Base();
 
-            return this.instanciaUnica;
+            return instanciaUnica;
         }
         #endregion
 

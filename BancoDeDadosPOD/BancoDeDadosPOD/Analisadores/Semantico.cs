@@ -41,9 +41,11 @@ namespace BD2.Analizadores
 
         // acho bom saber o que vai ser executado na ação 0 por isso dessa variavel, precisamos definir códigos pra ela
         private acao operacao;
+
         private GerenciadorMemoria memoria;
         private Form1 form1;
         ArquivoTabela arquivoBinario;
+        Base interfaceComum;
 
         public Semantico()
         {
@@ -54,6 +56,7 @@ namespace BD2.Analizadores
 
             acaoZero();
             memoria = GerenciadorMemoria.getInstance();
+            interfaceComum = Base.getInstance();
         }
 
         public Semantico(Form1 form1)
@@ -66,6 +69,7 @@ namespace BD2.Analizadores
 
             acaoZero();
             memoria = GerenciadorMemoria.getInstance();
+            interfaceComum = Base.getInstance();
         }
 
         public void executeAction(int action, Token token)
@@ -554,10 +558,11 @@ namespace BD2.Analizadores
                         
                     }
                     Console.WriteLine("TO STRING DA TABELA");
-                    
+
                     /*TabelaDado tabelaDado = new TabelaDado(id, memoria.getPath());
                     tabelaDado.Registros.Add(RegistroTabela);*/
                     // Form1.addMensagem(tabelaDado.ToString());
+                   
                     arquivoBinario = new ArquivoTabela(memoria.getPath()+"\\"+metadados.getNome()+".dat");
                     long posi = arquivoBinario.insert(registro);
 
