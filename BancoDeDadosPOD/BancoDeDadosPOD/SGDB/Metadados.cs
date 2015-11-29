@@ -188,8 +188,6 @@ namespace BancoDeDadosPOD.SGDB
     public class Metadados
     {
         private string nome;
-
-        //optei por dictonary pra facilitar a pesquisa
         private Dictionary<string, DadosTabela> dados;
         private List<string> nomesColunas;
         private Dictionary<string, string[]> tabelaIndices;

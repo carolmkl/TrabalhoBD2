@@ -1,4 +1,6 @@
-﻿namespace BancoDeDadosPOD.SGDB.Dados
+﻿using System;
+
+namespace BancoDeDadosPOD.SGDB.Dados
 {
     /*
     Metodos necessarios para select
@@ -15,40 +17,54 @@
     tabelaTemDados(string nomeTabela); - true se a tabela tem dados, false se não tiver
     int inserirDado(TabelaDado tabelaDado) - vai inserir o dado no arquivo da tabela;
     */
-    class Base
+    public sealed class Binarios
     {
         private Memoria memoria { get; }
         private ArquivoTabela arqTabela { get; }
-        private ArquivoIndice arqIndice { get; }
+        private ArquivoIndice arqIndice { get; } // transformar em uma lista
 
         #region *** Construtores ***
-        public Base(string pathTabela, string pathIndice)
+        private Binarios(string pathTabela, string pathIndice)
         {
-            memoria = new Memoria();
-            arqTabela = new ArquivoTabela(pathTabela);
-            arqIndice = new ArquivoIndice(pathIndice);
+            this.memoria = new Memoria();
+            this.arqTabela = new ArquivoTabela(pathTabela);
+            this.arqIndice = new ArquivoIndice(pathIndice);
         }
 
-        public Base(string pathTabela)
+        public Binarios(string pathTabela)
         {
-            memoria = new Memoria();
-            arqTabela = new ArquivoTabela(pathTabela);
-            arqIndice = null;
+            this.memoria = new Memoria();
+            this.arqTabela = new ArquivoTabela(pathTabela);
+            this.arqIndice = null;
         }
         #endregion
 
-        public bool insert(RegistroTabela registro)
+        public void insert(RegistroTabela registro)
+        // Isto devera mudar para inserir em todos os indices da mesma tabela
         {
-            // Aqui vai inserir na tabela e no indice logo em seguida
-            // qqr problema, false, erros geram exceções
-            // true = fica tranquilo querido, tudo certo!
-            return false;
+            try {
+                long posicao = arqTabela.insert(registro);
+                arqIndice.insert(registro, posicao);
+            } catch (Exception e)
+            {
+                throw new SGDBException("Houve erro na inserção do registro! " + e.Message);
+            }
         }
 
         public TabelaSelect returnDados(Metadados tabela)
+        // Isto devera mudar para ser independente de 1 ou todos os registros
         {
             string arqTabela = GerenciadorMemoria.getInstance().getPath() + "\\" + tabela.getNome() + ".dat";
             return new ArquivoTabela(arqTabela).returnTudo(tabela.getNome(), arqTabela);
         }
+    }
+
+    public sealed class Base
+    {
+        /*
+        TODO:
+        - Lista da classe de binarios
+        - Acesso facilitado aos itens da lista 
+        */
     }
 }

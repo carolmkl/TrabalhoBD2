@@ -120,6 +120,7 @@ namespace BancoDeDadosPOD.SGDB
                             break;
                         }
                     }
+
                     //define em que indice o valor será verificado na 2a tabela;
                     for (int i = 0; i < outraTabela.Campos.Length; i++)
                     {
@@ -129,6 +130,7 @@ namespace BancoDeDadosPOD.SGDB
                             break;
                         }
                     }
+
                     //se os indices foram definidos corretamente compara registro a registro das 2 tabelas e insere no resultado se for igual
                     if (colEsq != -1 && colDir != -1)
                     {
