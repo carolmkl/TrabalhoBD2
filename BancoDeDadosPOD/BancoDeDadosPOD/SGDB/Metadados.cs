@@ -312,15 +312,12 @@ namespace BancoDeDadosPOD.SGDB
             {
                 tabelaIndices["primary" + nome] = campos.ToArray();
                 GerenciadorMemoria.getInstance().createIndex("primary" + nome);
-                // TODO
-                //douglas.inserirIndice(nome)
             }
         }
 
         public void criarIndice(string nome, string[] campos)
         {
             tabelaIndices[nome] = campos;
-            // TODO
             GerenciadorMemoria.getInstance().createIndex(nome);
         }
 

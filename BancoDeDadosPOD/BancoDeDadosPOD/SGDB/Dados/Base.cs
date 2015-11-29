@@ -83,33 +83,28 @@ namespace BancoDeDadosPOD.SGDB.Dados
         {
             Binarios binAux = arqBinarios[tabela];
             long posicao = binAux.insertTabela(registro);
-            insertIndices(binAux, registro, posicao);
+            insertIndices(binAux, registro, posicao, tabela);
         }
 
-        private void insertIndices(Binarios binario, RegistroTabela registro, long posicao)
+        private void insertIndices(Binarios binario, RegistroTabela registro, long posicao, string tabela)
         {
-            /*
-            List<DadoIndice> dado;
-            ArquivoIndice ai;
-            foreach (KeyValuePair<string, string[]> item in tabelaIndices)
+            
+            RegistroIndice registroIndice;
+            Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(tabela);
+            foreach (KeyValuePair<string, string[]> item in meta.getIndexes())
             {
-                dado = new List<DadoIndice>();
-                ai = new ArquivoIndice(path + "\\" + item.Key + ".idx");
+                registroIndice = new RegistroIndice();
                 for (int i = 0; i < item.Value.Length; i++)
                 {
                     // ***** inibido somente para compilar - Inicio *****
                     // by Douglas Santos
                     // Acredito que isto va mudar
                     
-                    //DadoIndice dadoIndice = new DadoIndice(dadosColuna[item.Value[i]].getTipoDado(), tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
-                    //dado.Add(dadoIndice);
-                    
-                    // ***** inibido somente para compilar - Fim *****
-                    //dado.Add(tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
-                    //ai.insert(dadoIndice, lastPosi);
+                    DadoIndice dadoIndice = new DadoIndice(meta.getDados()[item.Value[i]].getTipoDado(), registro.dados[meta.getNomesColunas().IndexOf(item.Value[i])].valor);
+                    registroIndice.dados.Add(dadoIndice);
                 }
             }
-            */
+        
         }
 
         public TabelaSelect returnDados(Metadados tabela)
