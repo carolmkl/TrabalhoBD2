@@ -9,6 +9,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         private Stream stream;
         private BinaryWriter bw;
         private BinaryReader br;
+        private long posicaoIni;
 
         #region *** Construtor e Destrutor ***
         public ArquivoTabela(string nome)
@@ -33,10 +34,18 @@ namespace BancoDeDadosPOD.SGDB.Dados
             return stream.Length > 0;
         }
 
+        private void atualizarPosicaoIni()
+        {
+            if (posicaoIni != stream.Length)
+                posicaoIni = stream.Length;
+
+            if (stream.Position != posicaoIni)
+                stream.Position = posicaoIni;
+        }
+
         public long insert(RegistroTabela RegistroTabela)
         {
-            long posicaoIni = stream.Length;
-            stream.Position = posicaoIni;
+            atualizarPosicaoIni();
 
             // Posição do RegistroTabela
             bw.Write(posicaoIni);
@@ -58,11 +67,14 @@ namespace BancoDeDadosPOD.SGDB.Dados
                     bw.Write(d.getValorInt());
                 else
                 {
-                    byte[] valor = new byte[d.tamanho];
-                    new System.Text.ASCIIEncoding().GetBytes(d.getValorStr().PadRight(d.tamanho)).CopyTo(valor,0);
+                    // qual o problema aqui?? testeis as duas formas antes de fazer.
+                    // deixe sua resposta aqui.
 
-                    bw.Write(valor);
-                    //bw.Write(d.getValorStr().PadRight(d.tamanho));
+                    //byte[] valor = new byte[d.tamanho];
+                    //new System.Text.ASCIIEncoding().GetBytes(d.getValorStr().PadRight(d.tamanho)).CopyTo(valor,0);
+                    //bw.Write(valor);
+
+                    bw.Write(d.getValorStr().PadRight(d.tamanho));
                 }
             }
 
@@ -81,22 +93,28 @@ namespace BancoDeDadosPOD.SGDB.Dados
             {
                 RegistroTabela r = new RegistroTabela(br.ReadInt64());
                 count = br.ReadInt32();
-                //Form1.addMensagem("Count colunas" + count); // somente para depuração
-                for (int i = 0; i < count; i++)
-                {
-                    DadoTabela d;
-                    if (meta.getDados()[meta.getNomesColunas()[i]].getTipoDado() == TipoDado.Inteiro)
-                    {
-                        //Form1.addMensagem("Inteiro"); // somente para depuração
-                        d = new DadoTabela(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
-                    }
-                    else
-                    {
-                        //Form1.addMensagem("Char"); // somente para depuração
-                        d = new DadoTabela(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadString());
-                    }
+                Form1.addMensagem("Count colunas" + count); // somente para depuração
 
-                    r.dados.Add(d);
+                try {
+                    for (int i = 0; i < count; i++)
+                    {
+                        DadoTabela d;
+                        if (meta.getDados()[meta.getNomesColunas()[i]].getTipoDado() == TipoDado.Inteiro)
+                        {
+                            Form1.addMensagem("Inteiro"); // somente para depuração
+                            d = new DadoTabela(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
+                        }
+                        else
+                        {
+                            Form1.addMensagem("Char"); // somente para depuração
+                            d = new DadoTabela(meta.getNomesColunas()[i], meta.getDados()[meta.getNomesColunas()[i]].getTipoDado(), br.ReadByte(), br.ReadBoolean(), br.ReadString());
+                        }
+
+                        r.dados.Add(d);
+                    }
+                } catch(System.Exception e)
+                {
+                   Form1.addMensagem(e.Message);
                 }
 
                 td.registros.Add(r);

@@ -68,6 +68,12 @@ namespace BancoDeDadosPOD.SGDB.Dados
         {
             return arqBinarios[tabela].select();
         }
+
+        // Desalocar recursos para permitir alterações diretas no arquivo.
+        public bool desalocarBinarios(string tabela)
+        {
+            return arqBinarios.Remove(tabela);
+        }
     }
 
     public sealed class Binarios
