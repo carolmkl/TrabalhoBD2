@@ -562,12 +562,13 @@ namespace BD2.Analizadores
                     /*TabelaDado tabelaDado = new TabelaDado(id, memoria.getPath());
                     tabelaDado.Registros.Add(RegistroTabela);*/
                     // Form1.addMensagem(tabelaDado.ToString());
-                   
-                    arquivoBinario = new ArquivoTabela(memoria.getPath()+"\\"+metadados.getNome()+".dat");
-                    long posi = arquivoBinario.insert(registro);
+
+                    //arquivoBinario = new ArquivoTabela(memoria.getPath()+"\\"+metadados.getNome()+".dat");
+                    //long posi = arquivoBinario.insert(registro);
+                    Base.getInstance().insert(metadados.getNome(), registro);
 
                     metadados.incRegistrosTabela();
-                    metadados.addIndice(registro, posi, memoria.getPath());
+                    //metadados.addIndice(registro, posi, memoria.getPath());
                     memoria.salvarMetadados(metadados);
                     memoria.atualizar();
 

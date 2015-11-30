@@ -37,15 +37,21 @@ namespace BancoDeDadosPOD.SGDB.Dados
             if (instanciaUnica == null)
                 instanciaUnica = new Base();
 
+            if (instanciaUnica.arqBinarios.Count == 0)
+                instanciaUnica.carregarBinarios();
+
             return instanciaUnica;
         }
         #endregion
 
-        private void carregarBinarios()
+        public void carregarBinarios()
         {
-            foreach (KeyValuePair<string, Metadados> item in GerenciadorMemoria.getInstance().metadados)
+            if (GerenciadorMemoria.getInstance().metadados != null)
             {
-                arqBinarios.Add(item.Key, new Binarios(item.Key));
+                foreach (KeyValuePair<string, Metadados> item in GerenciadorMemoria.getInstance().metadados)
+                {
+                    arqBinarios.Add(item.Key, new Binarios(item.Key));
+                }
             }
         }
 
