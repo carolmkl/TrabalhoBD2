@@ -28,6 +28,7 @@ namespace BancoDeDadosPOD.SGDB.Select
 
         public TabelaSelect returnDados(Dictionary<string, Filtro> filtrosAND, Metadados tabela)
         {
+            /*
             TabelaDado td;
             BinaryReader br = null;
             try
@@ -45,6 +46,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                     tamRegistro += dados.getTamanho() + 2;
                     //if (dados.getTipoDado() == TipoDado.String) tamRegistro++;
                 }
+
                 //lê cada registro
                 while (br.BaseStream.Position != br.BaseStream.Length)
                 {
@@ -146,25 +148,26 @@ namespace BancoDeDadosPOD.SGDB.Select
                             }
                         }
 
-
                         r.dados.Add(d);
                     }
+
                     if (insere)
                     {
                         td.registros.Add(r);
                     }
+
                     if (br.BaseStream.Position % tamRegistro != 0)
                         br.BaseStream.Position += tamRegistro - (br.BaseStream.Position % tamRegistro);
                 }
-
             }
             finally
             {
                 br.Close();
             }
             return TabelaSelect.getTabelaSelect(td);
+            */
 
+            return Base.getInstance().returnDados(filtrosAND, tabela.getNome());
         }
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BancoDeDadosPOD.SGDB.Select;
+using System;
 using System.Collections.Generic;
 
 namespace BancoDeDadosPOD.SGDB.Dados
@@ -67,6 +68,12 @@ namespace BancoDeDadosPOD.SGDB.Dados
         // Isto devera mudar para ser independente de 1 ou todos os registros
         {
             return arqBinarios[tabela].select();
+        }
+
+        public TabelaSelect returnDados(Dictionary<string, Filtro> filtrosAND, string tabela)
+        // Isto devera mudar para ser independente de 1 ou todos os registros
+        {
+            return arqBinarios[tabela].select(filtrosAND);
         }
 
         // Desalocar recursos para permitir alterações diretas no arquivo.
@@ -168,6 +175,12 @@ namespace BancoDeDadosPOD.SGDB.Dados
             //string arqTabela = GerenciadorMemoria.getInstance().getPath() + "\\" + tabela.getNome() + ".dat";
             //return new ArquivoTabela(arqTabela).returnTudo(tabela.getNome(), arqTabela);
             TabelaSelect retorno = arqTabela.returnTudo();
+            return retorno;
+        }
+
+        public TabelaSelect select(Dictionary<string, Filtro> filtrosAND)
+        {
+            TabelaSelect retorno = arqTabela.returnFiltrado(filtrosAND);
             return retorno;
         }
     }
