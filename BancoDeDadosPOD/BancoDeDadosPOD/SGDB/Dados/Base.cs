@@ -149,12 +149,14 @@ namespace BancoDeDadosPOD.SGDB.Dados
             }
         }
 
+        // Desalocar recursos para permitir alterações diretas no arquivo.
         public void desalocarIndices()
         {
             foreach (KeyValuePair<string, ArquivoIndice> item in arqsIndices)
-            item.Value.desalocar();
+                item.Value.desalocar();
         }
 
+        // Desalocar recursos para permitir alterações diretas no arquivo.
         public void desalocarTabela()
         {
             arqTabela.desalocar();
