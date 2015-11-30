@@ -485,7 +485,7 @@ namespace BD2.Analizadores
                 default:
                     throw new SGDBException("Ação " + action + " não implementada.");
             }
-            Console.WriteLine("Ação #" + action + ", Token: " + token);
+            //Console.WriteLine("Ação #" + action + ", Token: " + token);
         }
 
         private void execucaoComandoReal()
@@ -557,7 +557,7 @@ namespace BD2.Analizadores
                         }
                         
                     }
-                    Console.WriteLine("TO STRING DA TABELA");
+                   // Console.WriteLine("TO STRING DA TABELA");
 
                     /*TabelaDado tabelaDado = new TabelaDado(id, memoria.getPath());
                     tabelaDado.Registros.Add(RegistroTabela);*/
