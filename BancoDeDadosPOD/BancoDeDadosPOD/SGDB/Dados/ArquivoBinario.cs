@@ -159,7 +159,15 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 {
                     DadoTabela d;
                     //Form1.addMensagem(i.ToString());
+
+// *** erro aqui - inicio ***
+                    // select localidade.* from localidade where localidade.cd_localidade = 1;
+                    // da erro qdo i = 4
+                    // mas quem deve limitar para nao chegar no 4 ?
+
                     string nomeColuna = meta.getNomesColunas()[i];
+// *** erro aqui - Fim ***
+
                     TipoDado tipo = meta.getDados()[nomeColuna].getTipoDado();
                     string campo = meta.getNome() + "." + nomeColuna;
                     Filtro f = filtrosAND.ContainsKey(campo) ? filtrosAND[campo] : null;
