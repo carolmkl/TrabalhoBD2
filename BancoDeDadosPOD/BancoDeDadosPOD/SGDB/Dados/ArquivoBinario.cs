@@ -29,6 +29,13 @@ namespace BancoDeDadosPOD.SGDB.Dados
         }
         #endregion
 
+        public void desalocar()
+        {
+            this.br.Dispose();
+            this.bw.Dispose();
+            this.stream.Dispose();
+        }
+
         public bool temDados()
         {
             return stream.Length > 0;
@@ -36,8 +43,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
         private void atualizarPosicaoIni()
         {
-            if (posicaoIni != stream.Length)
-                posicaoIni = stream.Length;
+            posicaoIni = stream.Length;
 
             if (stream.Position != posicaoIni)
                 stream.Position = posicaoIni;
@@ -149,6 +155,13 @@ namespace BancoDeDadosPOD.SGDB.Dados
             this.stream.Close();
         }
         #endregion
+
+        public void desalocar()
+        {
+            this.br.Dispose();
+            this.bw.Dispose();
+            this.stream.Dispose();
+        }
 
         public bool temDados()
         {

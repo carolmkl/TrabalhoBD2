@@ -72,6 +72,9 @@ namespace BancoDeDadosPOD.SGDB.Dados
         // Desalocar recursos para permitir alterações diretas no arquivo.
         public bool desalocarBinarios(string tabela)
         {
+            arqBinarios[tabela].desalocarTabela();
+            arqBinarios[tabela].desalocarIndices();
+
             return arqBinarios.Remove(tabela);
         }
     }
@@ -144,6 +147,17 @@ namespace BancoDeDadosPOD.SGDB.Dados
             } catch (Exception e) {
                 throw new SGDBException("Houve erro na inserção do registro! " + e.Message);
             }
+        }
+
+        public void desalocarIndices()
+        {
+            foreach (KeyValuePair<string, ArquivoIndice> item in arqsIndices)
+            item.Value.desalocar();
+        }
+
+        public void desalocarTabela()
+        {
+            arqTabela.desalocar();
         }
 
         public TabelaSelect select()
