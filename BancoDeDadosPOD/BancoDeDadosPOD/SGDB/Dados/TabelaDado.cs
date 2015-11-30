@@ -13,13 +13,11 @@ namespace BancoDeDadosPOD.SGDB.Dados
     public class TabelaDado
     {
         public string nome { get; set; }
-        private string path;
         public List<RegistroTabela> registros { get; set; }
 
-        public TabelaDado(string nome, string path)
+        public TabelaDado(string nome)
         {
             this.nome = nome;
-            this.path = path;
             registros = new List<RegistroTabela>();
         }
 

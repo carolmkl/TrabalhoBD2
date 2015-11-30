@@ -37,7 +37,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                 br = new BinaryReader(file);
 
                 int count;
-                td = new TabelaDado(tabela.getNome(), arquivo);
+                td = new TabelaDado(tabela.getNome());
                 Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(tabela.getNome());
                 int tamRegistro = 12;
                 foreach (DadosTabela dados in meta.getDados().Values)

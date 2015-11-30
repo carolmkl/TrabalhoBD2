@@ -149,7 +149,8 @@ namespace BancoDeDadosPOD.SGDB.Select
                     if (where.ListaFiltro == null || where.ListaFiltro.Count == 0)
                     {
                         //se não tiver filtro retorna tudo
-                        tabelaSelect = new Binarios(arqTabela).returnDados(tabelas[0]);
+                        //tabelaSelect = new Binarios(arqTabela).returnDados(tabelas[0]);
+                        tabelaSelect = Base.getInstance().returnDados(tabelas[0].getNome());
                     }
                     //traz os resultados filtrados por grupos de AND e depois junta com os OR's
                     foreach (Dictionary<string, Filtro> filtrosAND in where.ListaFiltro)
@@ -164,7 +165,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                 {
                     //se nao tiver filtro retorna tudo
 
-                    tabelaSelect = new Binarios(arqTabela).returnDados(tabelas[0]);
+                    tabelaSelect = Base.getInstance().returnDados(tabelas[0].getNome());
                 }
                 //envia comando para a TabelaSelect ordenar os registros
                 if (ordem.Count > 0)

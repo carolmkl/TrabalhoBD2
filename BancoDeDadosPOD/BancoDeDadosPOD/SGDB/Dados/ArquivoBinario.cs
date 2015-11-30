@@ -14,6 +14,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public ArquivoTabela(string nome)
         {
             this.nome = nome;
+            this.path = GerenciadorMemoria.getInstance().getPath() + "\\" + nome + ".dat";
             this.stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             this.bw = new BinaryWriter(stream);
             this.br = new BinaryReader(stream);
@@ -71,10 +72,10 @@ namespace BancoDeDadosPOD.SGDB.Dados
             return posicaoIni;
         }
 
-        public TabelaSelect returnTudo(string nome, string path)
+        public TabelaSelect returnTudo()
         {
             int count;
-            TabelaDado td = new TabelaDado(nome, path);
+            TabelaDado td = new TabelaDado(nome);
             Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(nome);
             while (br.BaseStream.Position != br.BaseStream.Length)
             {
@@ -117,6 +118,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public ArquivoIndice(string nome)
         {
             this.nome = nome;
+            this.path = GerenciadorMemoria.getInstance().getPath() + "\\" + nome + ".idx";
             this.stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             this.bw = new BinaryWriter(stream);
             this.br = new BinaryReader(stream);

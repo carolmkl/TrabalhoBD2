@@ -16,7 +16,7 @@ namespace BancoDeDadosPOD.SGDB
         private string dirBaseDados;
 
         // Metadados da Database selecionada
-        private Dictionary<string, Metadados> metadados; //nome tabela, metadados da tabela
+        public Dictionary<string, Metadados> metadados { get; internal set; } //nome tabela, metadados da tabela
 
         // Instancia unica
         private static GerenciadorMemoria singleton;
