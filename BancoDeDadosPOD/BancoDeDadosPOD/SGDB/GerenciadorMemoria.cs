@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BancoDeDadosPOD.SGDB.Dados;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
@@ -152,6 +153,7 @@ namespace BancoDeDadosPOD.SGDB
         {
             if (permitirDropTable(nome))
             {
+                Base.getInstance().desalocarBinarios(nome);
                 Metadados metaExcluir, metaAux;
                 metaExcluir = recuperarMetadados(nome);
                 foreach (KeyValuePair<string, DadosTabela> dt in metaExcluir.getDados())
