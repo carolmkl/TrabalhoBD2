@@ -118,6 +118,7 @@
             this.txtMensagens.Multiline = true;
             this.txtMensagens.Name = "txtMensagens";
             this.txtMensagens.ReadOnly = true;
+            this.txtMensagens.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtMensagens.Size = new System.Drawing.Size(660, 196);
             this.txtMensagens.TabIndex = 0;
             // 

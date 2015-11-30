@@ -151,13 +151,14 @@ namespace BancoDeDadosPOD.SGDB.Dados
             //lê cada registro
             while (br.BaseStream.Position != br.BaseStream.Length)
             {
-                RegistroTabela r = new RegistroTabela(br.ReadInt64());
+                RegistroTabela r = new RegistroTabela(br.BaseStream.Position);
                 count = br.ReadInt32();
                 bool insere = true;
                 //Lê cada dado dentro do registro
                 for (int i = 0; i < count && insere; i++)
                 {
                     DadoTabela d;
+                    //Form1.addMensagem(i.ToString());
                     string nomeColuna = meta.getNomesColunas()[i];
                     TipoDado tipo = meta.getDados()[nomeColuna].getTipoDado();
                     string campo = meta.getNome() + "." + nomeColuna;
