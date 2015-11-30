@@ -86,6 +86,13 @@ namespace BancoDeDadosPOD
         public static void setResultado(TabelaSelect tabela, Dictionary<string, string> retorno)
         {
             gridView.Columns.Clear();
+
+            if (tabela == null)
+            {
+                addMensagem(String.Format("{0} linhas selecionadas.", 0));
+                return;
+            }
+
             addMensagem(String.Format("{0} linhas selecionadas.", tabela.Registros.Count));
             int[] indices = new int[retorno.Count];
             for (int i = 0; i < retorno.Count; i++)
@@ -106,6 +113,7 @@ namespace BancoDeDadosPOD
                     }
                 }
             }
+
             if (tabela == null)
             {
                 string[] linha = new string[retorno.Count];
@@ -119,6 +127,7 @@ namespace BancoDeDadosPOD
                     {
                         linha[i] = registro[indices[i]];
                     }
+
                     gridView.Rows.Add(linha);
                 }
         }
