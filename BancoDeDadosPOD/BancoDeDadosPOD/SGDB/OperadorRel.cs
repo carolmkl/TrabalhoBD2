@@ -1,6 +1,6 @@
 ﻿namespace BancoDeDadosPOD.SGDB.Select
 {
-    enum OperadorRel
+    public enum OperadorRel
     {
         Igual,
         MaiorQue,

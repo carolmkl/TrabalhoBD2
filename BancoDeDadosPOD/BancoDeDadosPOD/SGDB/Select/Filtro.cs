@@ -14,6 +14,15 @@ namespace BancoDeDadosPOD.SGDB.Select
         private bool isAND;
         private bool isOR;
 
+        public Filtro() { }
+
+        public Filtro(string lValue, OperadorRel op, string rValue)
+        {
+            this.lValue = lValue;
+            this.op = op;
+            this.rValue = rValue;
+        }
+
         /// <summary>
         /// Valor utilizado do lado esquerdo da operação
         /// </summary>

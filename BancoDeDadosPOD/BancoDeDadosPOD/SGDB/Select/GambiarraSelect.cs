@@ -28,6 +28,7 @@ namespace BancoDeDadosPOD.SGDB.Select
 
         public TabelaSelect returnDados(Metadados tabela)
         {
+            try { Base.getInstance().desalocarBinarios(tabela.getNome()); } catch { }
             TabelaSelect ts = null;
             FileStream file = null;
             BinaryReader br = null;
@@ -103,9 +104,9 @@ namespace BancoDeDadosPOD.SGDB.Select
 
             return ts;
         }
-        public TabelaSelect returnDados(Dictionary<string, Filtro> filtrosAND, Metadados tabela)
+        public TabelaSelect returnDados(List<Filtro> filtrosAND, Metadados tabela)
         {
-
+            try { Base.getInstance().desalocarBinarios(tabela.getNome()); } catch { }
             TabelaSelect ts = null;
             FileStream file = null;
             BinaryReader br = null;
@@ -145,14 +146,19 @@ namespace BancoDeDadosPOD.SGDB.Select
                             TipoDado tipo = meta.getDados()[nomeColuna].getTipoDado();
                             string valor = "";
                             string campo = meta.getNome() + "." + nomeColuna;
-                            Filtro f = filtrosAND.ContainsKey(campo) ? filtrosAND[campo] : null;
+
+                            List<Filtro> fCampo = new List<Filtro>();
+                            foreach (Filtro f in filtrosAND)
+                            {
+                                if (f.LValue.Equals(campo)) fCampo.Add(f);
+                            }
                             if (tipo == TipoDado.Inteiro)
                             {
                                 byte tamanho = br.ReadByte();
                                 bool isValido = br.ReadBoolean();
                                 int numero = br.ReadInt32();
                                 valor = isValido ? numero + "" : "NULL";
-                                if (f != null)
+                                foreach (Filtro f in fCampo)
                                 {
                                     switch (f.Op)
                                     {
@@ -200,7 +206,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                                 byte[] literal = br.ReadBytes(tamanho);
                                 string texto = new System.Text.ASCIIEncoding().GetString(literal);
                                 valor = isValido ? texto.TrimEnd() : "NULL";
-                                if (f != null)
+                                foreach (Filtro f in fCampo)
                                 {
                                     switch (f.Op)
                                     {

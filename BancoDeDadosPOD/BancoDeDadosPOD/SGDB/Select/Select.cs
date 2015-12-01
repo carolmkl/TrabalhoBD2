@@ -136,7 +136,7 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// <param name="filtrosAND"></param>
         /// <param name="tabela"></param>
         /// <returns></returns>
-        private TabelaSelect returnDados(Dictionary<string, Filtro> filtrosAND, Metadados tabela)
+        private TabelaSelect returnDados(List<Filtro> filtrosAND, Metadados tabela)
         {
             //método do Douglas
             //return Base.getInstance().returnDados(filtrosAND, tabela.getNome());
@@ -181,7 +181,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                         tabelaSelect = returnDados(tabelas[0]);
                     }
                     //traz os resultados filtrados por grupos de AND e depois junta com os OR's
-                    foreach (Dictionary<string, Filtro> filtrosAND in where.ListaFiltro)
+                    foreach (List<Filtro> filtrosAND in where.ListaFiltro)
                     {
                         TabelaSelect tabelaFiltro = null;
                         tabelaFiltro = returnDados(filtrosAND, tabelas[0]);
@@ -208,32 +208,125 @@ namespace BancoDeDadosPOD.SGDB.Select
             //ordena as tabelas por qtdade registros
             tabelas.Sort(delegate (Metadados m1, Metadados m2)
             {
-                return m1.getNumeroRegistrosTabela() > m2.getNumeroRegistrosTabela() ? 1 : -1;
+                return m1.getNumeroRegistrosTabela() > m2.getNumeroRegistrosTabela() ? -1 : 1;
             });
-            foreach (Metadados s in tabelas)
+
+
+            Dictionary<Metadados, Where> filtros = new Dictionary<Metadados, Where>();
+            //separa os filtros referentes a cada tabela e, se tiver filtro, joga a tabela no inicio da ordenação
+            for (int i = 0; i < tabelas.Count; i++)
+            {
+                Metadados m = tabelas[i];
+                Where filtroE = new Where();
+                //separa os filtros
+                foreach (List<Filtro> filtrosAND in where.ListaFiltro)
+                {
+                    List<Filtro> maisFiltro = (filtrosAND.Where(f => f.LValue.StartsWith(m.getNome())).ToList());
+                    filtroE.ListaFiltro.Add(maisFiltro);
+                }
+                //ordena pro inicio
+                if (filtroE.ListaFiltro.Count > 0)
+                {
+                    m = tabelas[i];
+                    tabelas.Remove(m);
+                    tabelas.Insert(0, m);
+                }
+                filtros.Add(m, filtroE);
+            }
+            //seleciona cada tabela separadamente
+            foreach (Metadados m in tabelas)
             {
                 TabelaSelect tabelaFiltro = null;
-                //filtra as colunas relacionadas com a tabela
-                List<string> camposBuscar = retorno.Keys.Where(c => c.StartsWith(s.getNome())).ToList<string>();
-                //O Join pode ter colunas que não constam como retorno, mas é necessário para juntar as tabelas depois
-                //Adicionando campos de join para retorno.
-                foreach (Filtro f in where.ListaJoin)
-                {
-                    if (f.LValue.StartsWith(s.getNome()) && !camposBuscar.Contains(f.LValue))
-                        camposBuscar.Add(f.LValue);
-                    if (f.RValue.StartsWith(s.getNome()) && !camposBuscar.Contains(f.RValue))
-                        camposBuscar.Add(f.RValue);
-                }
                 //traz os resultados filtrados por grupos de AND e depois junta com os OR's
-                foreach (Dictionary<string, Filtro> filtrosAND in where.ListaFiltro)
+                if (filtros[m].ListaFiltro.Count > 0)
                 {
-                    TabelaSelect tabelaFiltroOR = null;
-                    //informa apenas os filtros relacionados com a tabela em questão
-                    tabelaFiltroOR = returnDados(filtrosAND.Where(filtro => filtro.Key.StartsWith(s.getNome())).ToDictionary(p => p.Key, p => p.Value), tabelas[0]);
-                    if (tabelaFiltro == null) tabelaFiltro = tabelaFiltroOR;
-                    else tabelaFiltro.uniaoDistinct(tabelaFiltroOR);
+                    foreach (List<Filtro> filtrosAND in where.ListaFiltro)
+                    {
+                        TabelaSelect tabelaFiltroOR = null;
+                        //informa apenas os filtros relacionados com a tabela em questão
+                        tabelaFiltroOR = returnDados(filtrosAND, m);
+                        if (tabelaFiltro == null) tabelaFiltro = tabelaFiltroOR;
+                        else tabelaFiltro.uniaoDistinct(tabelaFiltroOR);
+                    }
+                }
+                else
+                {
+                    tabelaFiltro = returnDados(m);
                 }
 
+                filtros.Remove(m);
+                //Adicionando campos de join como filtro.
+                foreach (Filtro f in where.ListaJoin)
+                {
+                    if (f.LValue.StartsWith(m.getNome()))
+                    {
+                        Metadados outroM = null;
+                        foreach (Metadados meta in filtros.Keys)
+                        {
+                            if (f.RValue.StartsWith(meta.getNome()))
+                            {
+                                outroM = meta;
+                                break;
+                            }
+                        }
+                        //insere os registros de join como filtro para as proximas tabelas
+                        if (outroM != null)
+                        {
+                            List<Filtro> maisFiltro = new List<Filtro>();
+                            int colEsq = 0;
+                            for (int i = 0; i < tabelaFiltro.Campos.Length; i++)
+                            {
+                                if (tabelaFiltro.Campos[i].Equals(f.LValue))
+                                {
+                                    colEsq = i;
+                                    break;
+                                }
+                            }
+                            foreach (string[] reg in tabelaFiltro.Registros)
+                            {
+                                maisFiltro.Add(new Filtro(f.RValue, OperadorRel.Igual, reg[colEsq]));
+                            }
+                            foreach (List<Filtro> oldFiltro in filtros[outroM].ListaFiltro)
+                            {
+                                oldFiltro.AddRange(maisFiltro);
+                            }
+                        }
+                    }
+                    if (f.RValue.StartsWith(m.getNome()))
+                    {
+                        Metadados outroM = null;
+                        foreach (Metadados meta in filtros.Keys)
+                        {
+                            if (f.LValue.StartsWith(meta.getNome()))
+                            {
+                                outroM = meta;
+                                break;
+                            }
+                        }
+                        //insere os registros de join como filtro para as proximas tabelas
+                        if (outroM != null)
+                        {
+                            List<Filtro> maisFiltro = new List<Filtro>();
+                            int colDir = 0;
+                            for (int i = 0; i < tabelaFiltro.Campos.Length; i++)
+                            {
+                                if (tabelaFiltro.Campos[i].Equals(f.LValue))
+                                {
+                                    colDir = i;
+                                    break;
+                                }
+                            }
+                            foreach (string[] reg in tabelaFiltro.Registros)
+                            {
+                                maisFiltro.Add(new Filtro(f.LValue, OperadorRel.Igual, reg[colDir]));
+                            }
+                            foreach (List<Filtro> oldFiltro in filtros[outroM].ListaFiltro)
+                            {
+                                oldFiltro.AddRange(maisFiltro);
+                            }
+                        }
+                    }
+                }
                 //se tem mais tabelas faz o join
                 if (tabelaSelect == null) tabelaSelect = tabelaFiltro;
                 else tabelaSelect = tabelaSelect.join(tabelaFiltro, Where.ListaJoin);
@@ -343,10 +436,10 @@ namespace BancoDeDadosPOD.SGDB.Select
             estrutura.Append("WHERE: ");
             if (where != null)
             {
-                foreach (Dictionary<string, Filtro> lista in where.ListaFiltro)
+                foreach (List<Filtro> lista in where.ListaFiltro)
                 {
                     estrutura.Append("(");
-                    foreach (Filtro f in lista.Values)
+                    foreach (Filtro f in lista)
                     {
                         estrutura.Append(f.LValue + " " + f.Op + " " + f.RValue + " AND ");
                     }
