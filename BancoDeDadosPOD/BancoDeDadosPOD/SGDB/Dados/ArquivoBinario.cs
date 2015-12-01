@@ -9,7 +9,8 @@ namespace BancoDeDadosPOD.SGDB.Dados
     public sealed class ArquivoTabela
     {
         #region constantes
-        public const long QTD_BUFFER_REG = 100; // Quantidade de registros no buffer;
+        public const long QTD_BUFFER_REG = 1000; // Quantidade de registros no buffer;
+        public const long UM_MEGABYTE = 1048576; // Um mega byte;
         #endregion
 
         #region variaveis
@@ -24,6 +25,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         private Stream stream;
         private BinaryWriter bw;
         private BinaryReader br;
+        private MemoryStream ms;
         #endregion
 
         #region *** Construtor e Destrutor ***
@@ -69,7 +71,17 @@ namespace BancoDeDadosPOD.SGDB.Dados
         private void atualizarTamBuffer(RegistroTabela registro)
         {
             if (buffer == null)
-                buffer = new Byte[QTD_BUFFER_REG * registro.getRealTamanhoEmBytes()];
+            {
+                long tamBuffer = QTD_BUFFER_REG * registro.getRealTamanhoEmBytes();
+
+                if (tamBuffer > UM_MEGABYTE)
+                    buffer = new Byte[UM_MEGABYTE];
+                else
+                    buffer = new Byte[tamBuffer];
+
+                ms = new MemoryStream(buffer);
+                br = new BinaryReader(ms);
+            }
         }
 
         public long insert(RegistroTabela registro)
