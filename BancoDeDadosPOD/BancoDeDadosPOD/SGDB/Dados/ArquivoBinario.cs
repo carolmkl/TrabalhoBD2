@@ -81,6 +81,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
                 ms = new MemoryStream(buffer);
                 br = new BinaryReader(ms);
+                //bw = new BinaryWriter(ms);
             }
         }
 
@@ -109,14 +110,9 @@ namespace BancoDeDadosPOD.SGDB.Dados
                     bw.Write(d.getValorInt());
                 else
                 {
-                    // qual o problema aqui?? testeis as duas formas antes de fazer.
-                    // TODOS OS PROBLEMAS. NÃO MEXA NESSA P...
-
                     byte[] valor = new byte[d.tamanho];
                     new System.Text.ASCIIEncoding().GetBytes(d.getValorStr().PadRight(d.tamanho)).CopyTo(valor, 0);
                     bw.Write(valor);
-
-                    //bw.Write(d.getValorStr().PadRight(d.tamanho));
                 }
             }
 
@@ -138,7 +134,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         */
         public void commit()
         {
-            bw.Flush();
+            bw.Flush(); // força gravar no arquivo aquilo que ficou no buffer.
         }
 
         public TabelaSelect returnTudo()
