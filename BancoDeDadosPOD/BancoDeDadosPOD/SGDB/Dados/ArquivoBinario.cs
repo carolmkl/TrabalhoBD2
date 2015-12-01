@@ -24,7 +24,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             this.bw = new BinaryWriter(stream);
             this.br = new BinaryReader(stream);
         }
-        
+
         ~ArquivoTabela()
         {
             this.br.Close();
@@ -78,13 +78,13 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 else
                 {
                     // qual o problema aqui?? testeis as duas formas antes de fazer.
-                    // deixe sua resposta aqui.
+                    // TODOS OS PROBLEMAS. NÃO MEXA NESSA P...
 
-                    //byte[] valor = new byte[d.tamanho];
-                    //new System.Text.ASCIIEncoding().GetBytes(d.getValorStr().PadRight(d.tamanho)).CopyTo(valor,0);
-                    //bw.Write(valor);
+                    byte[] valor = new byte[d.tamanho];
+                    new System.Text.ASCIIEncoding().GetBytes(d.getValorStr().PadRight(d.tamanho)).CopyTo(valor, 0);
+                    bw.Write(valor);
 
-                    bw.Write(d.getValorStr().PadRight(d.tamanho));
+                    //bw.Write(d.getValorStr().PadRight(d.tamanho));
                 }
             }
 
@@ -98,7 +98,6 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public void naoEhInsert()
         {
             bw.Flush();
-                
         }
 
         public TabelaSelect returnTudo()
@@ -113,7 +112,8 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 count = br.ReadInt32();
                 //Form1.addMensagem("Count colunas" + count); // somente para depuração
 
-                try {
+                try
+                {
                     for (int i = 0; i < count; i++)
                     {
                         DadoTabela d;
@@ -130,9 +130,10 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
                         r.dados.Add(d);
                     }
-                } catch(System.Exception e)
+                }
+                catch (System.Exception e)
                 {
-                   Form1.addMensagem(e.Message);
+                    Form1.addMensagem(e.Message);
                 }
 
                 td.registros.Add(r);
@@ -148,7 +149,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             int tamRegistro = 12;
             Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(nome);
             TabelaDado td = new TabelaDado(nome);
-                
+
             foreach (DadosTabela dados in meta.getDados().Values)
             {
                 tamRegistro += dados.getTamanho() + 2;
@@ -167,13 +168,13 @@ namespace BancoDeDadosPOD.SGDB.Dados
                     DadoTabela d;
                     //Form1.addMensagem(i.ToString());
 
-// *** erro aqui - inicio ***
+                    // *** erro aqui - inicio ***
                     // select localidade.* from localidade where localidade.cd_localidade = 1;
                     // da erro qdo i = 4
                     // mas quem deve limitar para nao chegar no 4 ?
 
                     string nomeColuna = meta.getNomesColunas()[i];
-// *** erro aqui - Fim ***
+                    // *** erro aqui - Fim ***
 
                     TipoDado tipo = meta.getDados()[nomeColuna].getTipoDado();
                     string campo = meta.getNome() + "." + nomeColuna;

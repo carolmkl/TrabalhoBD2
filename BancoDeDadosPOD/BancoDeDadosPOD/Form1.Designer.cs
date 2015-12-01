@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.txtComando = new System.Windows.Forms.TextBox();
             this.btnExecuta = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -54,7 +53,8 @@
             this.txtComando.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtComando.Size = new System.Drawing.Size(675, 164);
             this.txtComando.TabIndex = 0;
-            this.txtComando.Text = resources.GetString("txtComando.Text");
+            this.txtComando.Text = "set database correio;\r\nselect localidade.* from localidade where localidade.sg_uf" +
+    "=\'AC\';";
             // 
             // btnExecuta
             // 

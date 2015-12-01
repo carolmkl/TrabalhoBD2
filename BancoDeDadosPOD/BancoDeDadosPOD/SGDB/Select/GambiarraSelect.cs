@@ -26,148 +26,247 @@ namespace BancoDeDadosPOD.SGDB.Select
             return instance;
         }
 
-        public TabelaSelect returnDados(Dictionary<string, Filtro> filtrosAND, Metadados tabela)
+        public TabelaSelect returnDados(Metadados tabela)
         {
-            /*
-            TabelaDado td;
+            TabelaSelect ts = null;
+            FileStream file = null;
             BinaryReader br = null;
             try
             {
                 string arquivo = mem.getPath() + "\\" + tabela.getNome() + ".dat";
-                FileStream file = new FileStream(arquivo, FileMode.Open);
-                br = new BinaryReader(file);
-
-                int count;
-                td = new TabelaDado(tabela.getNome());
-                Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(tabela.getNome());
-                int tamRegistro = 12;
-                foreach (DadosTabela dados in meta.getDados().Values)
+                file = new FileStream(arquivo, FileMode.Open);
+                using (br = new BinaryReader(file))
                 {
-                    tamRegistro += dados.getTamanho() + 2;
-                    //if (dados.getTipoDado() == TipoDado.String) tamRegistro++;
-                }
+                    int count;
+                    ts = new TabelaSelect();
 
-                //lê cada registro
-                while (br.BaseStream.Position != br.BaseStream.Length)
-                {
-                    RegistroTabela r = new RegistroTabela(br.ReadInt64());
-                    count = br.ReadInt32();
-                    bool insere = true;
-                    //Lê cada dado dentro do registro
-                    for (int i = 0; i < count && insere; i++)
+                    Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(tabela.getNome());
+                    int colunas = meta.getNomesColunas().Count;
+                    ts.Campos = new string[colunas];
+                    for (int i = 0; i < colunas; i++)
                     {
-                        DadoTabela d;
-                        string nomeColuna = meta.getNomesColunas()[i];
-                        TipoDado tipo = meta.getDados()[nomeColuna].getTipoDado();
-                        string campo = meta.getNome() + "." + nomeColuna;
-                        Filtro f = filtrosAND.ContainsKey(campo) ? filtrosAND[campo] : null;
-                        if (tipo == TipoDado.Inteiro)
-                        {
-                            d = new DadoTabela(nomeColuna, tipo, br.ReadByte(), br.ReadBoolean(), br.ReadInt32());
-                            if (f != null)
-                            {
-                                switch (f.Op)
-                                {
-                                    case OperadorRel.Igual:
-                                        if (f.RValue.ToLower().Equals("null"))
-                                        {
-                                            if (d.isValido) insere = false;
-                                        }
-                                        else
-                                        {
-                                            if (d.getValorInt() != Convert.ToInt32(f.RValue)) insere = false;
-                                        }
-                                        break;
-                                    case OperadorRel.MaiorQue:
-                                        if (d.getValorInt() <= Convert.ToInt32(f.RValue)) insere = false;
-                                        break;
-                                    case OperadorRel.MenorQue:
-                                        if (d.getValorInt() >= Convert.ToInt32(f.RValue)) insere = false;
-                                        break;
-                                    case OperadorRel.MaiorIgualA:
-                                        if (d.getValorInt() < Convert.ToInt32(f.RValue)) insere = false;
-                                        break;
-                                    case OperadorRel.MenorIgualA:
-                                        if (d.getValorInt() > Convert.ToInt32(f.RValue)) insere = false;
-                                        break;
-                                    case OperadorRel.Diferente:
-                                        if (f.RValue.ToLower().Equals("null"))
-                                        {
-                                            if (!d.isValido) insere = false;
-                                        }
-                                        else
-                                        {
-                                            if (d.getValorInt() == Convert.ToInt32(f.RValue)) insere = false;
-                                        }
-                                        break;
-                                    default:
-                                        throw new SGDBException("Passou onde nao devia: GambiarraSelect.retornaDados.Inteiro.Default.");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            byte tamanho = br.ReadByte();
-                            bool isValido = br.ReadBoolean();
-                            byte[] valor = br.ReadBytes(tamanho);
-                            string texto = new System.Text.ASCIIEncoding().GetString(valor);
-                            d = new DadoTabela(nomeColuna, tipo, tamanho, isValido, texto);
-                            if (f != null)
-                            {
-                                switch (f.Op)
-                                {
-                                    case OperadorRel.Igual:
-                                        if (f.RValue.ToLower().Equals("null"))
-                                        {
-                                            if (d.isValido) insere = false;
-                                        }
-                                        else
-                                        {
-                                            byte[] filtro = new byte[d.tamanho];
-                                            new System.Text.ASCIIEncoding().GetBytes(f.RValue.PadRight(d.tamanho)).CopyTo(filtro, 0);
-                                            string filtro2 = new System.Text.ASCIIEncoding().GetString(filtro);
-                                            if (!texto.Equals(filtro2)) insere = false;
-                                        }
-                                        break;
-                                    case OperadorRel.Diferente:
-                                        if (f.RValue.ToLower().Equals("null"))
-                                        {
-                                            if (!d.isValido) insere = false;
-                                        }
-                                        else
-                                        {
-                                            byte[] filtro = new byte[d.tamanho];
-                                            new System.Text.ASCIIEncoding().GetBytes(f.RValue.PadRight(d.tamanho)).CopyTo(filtro, 0);
-                                            string filtro2 = new System.Text.ASCIIEncoding().GetString(filtro);
-                                            if (texto.Equals(filtro2)) insere = false;
-                                        }
-                                        break;
-                                    default:
-                                        throw new SemanticError("Comparação de literais só pode ser igual ou diferente");
-                                }
-                            }
-                        }
-
-                        r.dados.Add(d);
+                        ts.Campos[i] = meta.getNome() + "." + meta.getNomesColunas()[i];
                     }
 
-                    if (insere)
+                    //lê cada registro
+                    while (br.BaseStream.Position != br.BaseStream.Length)
                     {
-                        td.registros.Add(r);
-                    }
+                        string[] registro = new string[colunas];
+                        RegistroTabela r = new RegistroTabela(br.ReadInt64());
+                        count = br.ReadInt32();
+                        //Lê cada dado dentro do registro
+                        for (int i = 0; i < count; i++)
+                        {
+                            string nomeColuna = meta.getNomesColunas()[i];
+                            TipoDado tipo = meta.getDados()[nomeColuna].getTipoDado();
+                            string valor = "";
+                            if (tipo == TipoDado.Inteiro)
+                            {
+                                byte tamanho = br.ReadByte();
+                                bool isValido = br.ReadBoolean();
+                                int numero = br.ReadInt32();
+                                valor = isValido ? numero + "" : "NULL";
+                            }
+                            else
+                            {
+                                byte tamanho = br.ReadByte();
+                                bool isValido = br.ReadBoolean();
+                                byte[] literal = br.ReadBytes(tamanho);
+                                string texto = new System.Text.ASCIIEncoding().GetString(literal);
+                                valor = isValido ? texto : "NULL";
+                            }
 
-                    if (br.BaseStream.Position % tamRegistro != 0)
-                        br.BaseStream.Position += tamRegistro - (br.BaseStream.Position % tamRegistro);
+                            registro[i] = valor;
+                        }
+
+                        ts.Registros.Add(registro);
+
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                Console.ReadLine();
             }
             finally
             {
-                br.Close();
+                if (br != null)
+                {
+                    br.Close();
+                }
+                if (file != null)
+                {
+                    file.Close();
+                }
             }
-            return TabelaSelect.getTabelaSelect(td);
-            */
 
-            return Base.getInstance().returnDados(filtrosAND, tabela.getNome());
+            return ts;
+        }
+        public TabelaSelect returnDados(Dictionary<string, Filtro> filtrosAND, Metadados tabela)
+        {
+
+            TabelaSelect ts = null;
+            FileStream file = null;
+            BinaryReader br = null;
+            try
+            {
+                string arquivo = mem.getPath() + "\\" + tabela.getNome() + ".dat";
+                file = new FileStream(arquivo, FileMode.Open);
+                using (br = new BinaryReader(file))
+                {
+                    int count;
+                    ts = new TabelaSelect();
+
+                    Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(tabela.getNome());
+                    int colunas = meta.getNomesColunas().Count;
+                    ts.Campos = new string[colunas];
+                    for (int i = 0; i < colunas; i++)
+                    {
+                        ts.Campos[i] = meta.getNome() + "." + meta.getNomesColunas()[i];
+                    }
+                    int tamRegistro = 12;
+                    foreach (DadosTabela dados in meta.getDados().Values)
+                    {
+                        tamRegistro += dados.getTamanho() + 2;
+                    }
+
+                    //lê cada registro
+                    while (br.BaseStream.Position != br.BaseStream.Length)
+                    {
+                        string[] registro = new string[colunas];
+                        long posicao = br.ReadInt64();
+                        count = br.ReadInt32();
+                        bool insere = true;
+                        //Lê cada dado dentro do registro
+                        for (int i = 0; i < count && insere; i++)
+                        {
+                            string nomeColuna = meta.getNomesColunas()[i];
+                            TipoDado tipo = meta.getDados()[nomeColuna].getTipoDado();
+                            string valor = "";
+                            string campo = meta.getNome() + "." + nomeColuna;
+                            Filtro f = filtrosAND.ContainsKey(campo) ? filtrosAND[campo] : null;
+                            if (tipo == TipoDado.Inteiro)
+                            {
+                                byte tamanho = br.ReadByte();
+                                bool isValido = br.ReadBoolean();
+                                int numero = br.ReadInt32();
+                                valor = isValido ? numero + "" : "NULL";
+                                if (f != null)
+                                {
+                                    switch (f.Op)
+                                    {
+                                        case OperadorRel.Igual:
+                                            if (f.RValue.ToLower().Equals("null"))
+                                            {
+                                                if (isValido) insere = false;
+                                            }
+                                            else
+                                            {
+                                                if (numero != Convert.ToInt32(f.RValue)) insere = false;
+                                            }
+                                            break;
+                                        case OperadorRel.MaiorQue:
+                                            if (numero <= Convert.ToInt32(f.RValue)) insere = false;
+                                            break;
+                                        case OperadorRel.MenorQue:
+                                            if (numero >= Convert.ToInt32(f.RValue)) insere = false;
+                                            break;
+                                        case OperadorRel.MaiorIgualA:
+                                            if (numero < Convert.ToInt32(f.RValue)) insere = false;
+                                            break;
+                                        case OperadorRel.MenorIgualA:
+                                            if (numero > Convert.ToInt32(f.RValue)) insere = false;
+                                            break;
+                                        case OperadorRel.Diferente:
+                                            if (f.RValue.ToLower().Equals("null"))
+                                            {
+                                                if (!isValido) insere = false;
+                                            }
+                                            else
+                                            {
+                                                if (numero == Convert.ToInt32(f.RValue)) insere = false;
+                                            }
+                                            break;
+                                        default:
+                                            throw new SGDBException("Passou onde nao devia: GambiarraSelect.retornaDados.Inteiro.Default.");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                byte tamanho = br.ReadByte();
+                                bool isValido = br.ReadBoolean();
+                                byte[] literal = br.ReadBytes(tamanho);
+                                string texto = new System.Text.ASCIIEncoding().GetString(literal);
+                                valor = isValido ? texto.TrimEnd() : "NULL";
+                                if (f != null)
+                                {
+                                    switch (f.Op)
+                                    {
+                                        case OperadorRel.Igual:
+                                            if (f.RValue.ToLower().Equals("null"))
+                                            {
+                                                if (isValido) insere = false;
+                                            }
+                                            else
+                                            {
+                                                byte[] filtro = new byte[tamanho];
+                                                new System.Text.ASCIIEncoding().GetBytes(f.RValue.PadRight(tamanho)).CopyTo(filtro, 0);
+                                                string filtro2 = new System.Text.ASCIIEncoding().GetString(filtro);
+                                                if (!valor.Equals(filtro2)) insere = false;
+                                            }
+                                            break;
+                                        case OperadorRel.Diferente:
+                                            if (f.RValue.ToLower().Equals("null"))
+                                            {
+                                                if (isValido) insere = false;
+                                            }
+                                            else
+                                            {
+                                                byte[] filtro = new byte[tamanho];
+                                                new System.Text.ASCIIEncoding().GetBytes(f.RValue.PadRight(tamanho)).CopyTo(filtro, 0);
+                                                string filtro2 = new System.Text.ASCIIEncoding().GetString(filtro);
+                                                if (valor.Equals(filtro2)) insere = false;
+                                            }
+                                            break;
+                                        default:
+                                            throw new SemanticError("Comparação de literais só pode ser igual ou diferente");
+                                    }
+                                }
+                            }
+
+                            registro[i] = valor;
+                        }
+
+                        if (insere)
+                        {
+                            ts.Registros.Add(registro);
+                        }
+
+                        if (br.BaseStream.Position % tamRegistro != 0)
+                            br.BaseStream.Position += tamRegistro - (br.BaseStream.Position % tamRegistro);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.StackTrace);
+                Console.ReadLine();
+            }
+            finally
+            {
+                if (br != null)
+                {
+                    br.Close();
+                }
+                if (file != null)
+                {
+                    file.Close();
+                }
+            }
+            return ts;
         }
     }
 }

@@ -117,33 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="txtComando.Text" xml:space="preserve">
-    <value>create database correio;
-set database correio;
-CREATE TABLE bairro 
-(
-  cd_bairro INTEGER,
-  nm_bairro VARCHAR(75),
-  sg_uf CHAR(2)
-);
-CREATE TABLE localidade 
-( 
-  cd_localidade INTEGER,
-  nm_localidade VARCHAR(60),
-  nr_cep CHAR(8),
-  sg_uf CHAR(2)
-);
-CREATE TABLE logradouro
-(
-  cd_logradouro INTEGER,
-  cd_localidade INTEGER,
-  cd_bairro INTEGER,
-  tp_logradouro VARCHAR(30),  
-  nm_logradouro VARCHAR(70),
-  nr_cep CHAR(8),
-  sg_uf CHAR(2)
-);
-
-select logradouro.* from logradouro;</value>
-  </data>
 </root>

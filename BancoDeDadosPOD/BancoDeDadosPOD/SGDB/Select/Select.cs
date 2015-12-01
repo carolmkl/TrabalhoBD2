@@ -129,6 +129,36 @@ namespace BancoDeDadosPOD.SGDB.Select
             retorno[key] = apelido;
         }
 
+
+        /// <summary>
+        /// este método define qual o método será chamado para o select com where
+        /// </summary>
+        /// <param name="filtrosAND"></param>
+        /// <param name="tabela"></param>
+        /// <returns></returns>
+        private TabelaSelect returnDados(Dictionary<string, Filtro> filtrosAND, Metadados tabela)
+        {
+            //método do Douglas
+            //return Base.getInstance().returnDados(filtrosAND, tabela.getNome());
+
+            //método da Carol
+            return GambiarraSelect.getInstance().returnDados(filtrosAND, tabela);
+        }
+
+        /// <summary>
+        /// este método define qual o método será chamado para o select sem where
+        /// </summary>
+        /// <param name="tabela"></param>
+        /// <returns></returns>
+        private TabelaSelect returnDados(Metadados tabela)
+        {
+            //método do Douglas
+            //return Base.getInstance().returnDados(tabela.getNome());
+
+            //método da Carol
+            return GambiarraSelect.getInstance().returnDados(tabela);
+        }
+
         /// <summary>
         /// método responsável por retornar o resultado do SELECT
         /// </summary>
@@ -148,13 +178,13 @@ namespace BancoDeDadosPOD.SGDB.Select
                     {
                         //se não tiver filtro retorna tudo
                         //tabelaSelect = new Binarios(arqTabela).returnDados(tabelas[0]);
-                        tabelaSelect = Base.getInstance().returnDados(tabelas[0].getNome());
+                        tabelaSelect = returnDados(tabelas[0]);
                     }
                     //traz os resultados filtrados por grupos de AND e depois junta com os OR's
                     foreach (Dictionary<string, Filtro> filtrosAND in where.ListaFiltro)
                     {
                         TabelaSelect tabelaFiltro = null;
-                        tabelaFiltro = GambiarraSelect.getInstance().returnDados(filtrosAND, tabelas[0]);
+                        tabelaFiltro = returnDados(filtrosAND, tabelas[0]);
                         if (tabelaSelect == null) tabelaSelect = tabelaFiltro;
                         else tabelaSelect.uniaoDistinct(tabelaFiltro);
                     }
@@ -163,7 +193,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                 {
                     //se nao tiver filtro retorna tudo
 
-                    tabelaSelect = Base.getInstance().returnDados(tabelas[0].getNome());
+                    tabelaSelect = returnDados(tabelas[0]);
                 }
                 //envia comando para a TabelaSelect ordenar os registros
                 if (ordem.Count > 0)
@@ -199,7 +229,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                 {
                     TabelaSelect tabelaFiltroOR = null;
                     //informa apenas os filtros relacionados com a tabela em questão
-                    tabelaFiltroOR = GambiarraSelect.getInstance().returnDados(filtrosAND.Where(filtro => filtro.Key.StartsWith(s.getNome())).ToDictionary(p => p.Key, p => p.Value), tabelas[0]);
+                    tabelaFiltroOR = returnDados(filtrosAND.Where(filtro => filtro.Key.StartsWith(s.getNome())).ToDictionary(p => p.Key, p => p.Value), tabelas[0]);
                     if (tabelaFiltro == null) tabelaFiltro = tabelaFiltroOR;
                     else tabelaFiltro.uniaoDistinct(tabelaFiltroOR);
                 }
