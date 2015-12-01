@@ -61,7 +61,16 @@ namespace BancoDeDadosPOD.SGDB.Dados
         {
             Binarios binAux = arqBinarios[tabela];
             long posicao = binAux.insertTabela(registro);
+            // By Evandro Mais uma confiscada
             binAux.insertIndices(registro, posicao, tabela);
+        }
+
+        public void naoEhInsert()
+        {
+            foreach (KeyValuePair<string, Binarios> item in arqBinarios)
+            {
+                item.Value.naoEhInsert();
+            }
         }
 
         public TabelaSelect returnDados(string tabela)
@@ -154,6 +163,11 @@ namespace BancoDeDadosPOD.SGDB.Dados
             } catch (Exception e) {
                 throw new SGDBException("Houve erro na inserção do registro! " + e.Message);
             }
+        }
+
+        public void naoEhInsert()
+        {
+            arqTabela.naoEhInsert();
         }
 
         // Desalocar recursos para permitir alterações diretas no arquivo.

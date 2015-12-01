@@ -9,7 +9,7 @@ using BancoDeDadosPOD.SGDB.Dados;
 namespace BD2.Analizadores
 {
 
-    public class Semantico : Constants
+    public class Semantico : Constants, IDisposable
     {
         private enum acao : int { Nada = 0, CriarTabela, InserirDados, Select, CriarIndex, ExcluirIndex };
         private List<string> identificadores;
@@ -40,11 +40,11 @@ namespace BD2.Analizadores
         private int contColunas;
 
         // acho bom saber o que vai ser executado na ação 0 por isso dessa variavel, precisamos definir códigos pra ela
-        private acao operacao;
+        private acao operacao, anterior;
 
         private GerenciadorMemoria memoria;
         private Form1 form1;
-        ArquivoTabela arquivoBinario;
+        //ArquivoTabela arquivoBinario;
         Base interfaceComum;
 
         public Semantico()
@@ -66,10 +66,16 @@ namespace BD2.Analizadores
             select = Select.singleton();
             valoresColunas = new List<ValoresCampos>();
             fromTabelas = new List<string>();
+            anterior = acao.Nada;
 
             acaoZero();
             memoria = GerenciadorMemoria.getInstance();
             interfaceComum = Base.getInstance();
+        }
+
+        ~Semantico()
+        {
+            Base.getInstance().naoEhInsert();
         }
 
         public void executeAction(int action, Token token)
@@ -491,6 +497,11 @@ namespace BD2.Analizadores
         private void execucaoComandoReal()
         {
             string id;
+            if (operacao != acao.InserirDados && anterior == acao.InserirDados)
+            {
+                Base.getInstance().naoEhInsert();
+                memoria.salvarMetadados();
+            }
             switch (operacao)
             {
                 case acao.Nada:
@@ -569,7 +580,7 @@ namespace BD2.Analizadores
 
                     metadados.incRegistrosTabela();
                     //metadados.addIndice(registro, posi, memoria.getPath());
-                    memoria.salvarMetadados(metadados);
+                    //memoria.salvarMetadados(metadados);
                     memoria.atualizar();
 
                     break;
@@ -601,7 +612,8 @@ namespace BD2.Analizadores
                 default:
                     throw new SGDBException("Ação Real" + operacao + " não implementada.");
             }
-            Console.WriteLine(metadados.StringIndices());
+            anterior = operacao;
+            //Console.WriteLine(metadados.StringIndices());
         }
 
         private void acaoZero()
@@ -615,6 +627,11 @@ namespace BD2.Analizadores
             allColunas = true;
             contColunas = 0;
             operacao = 0;
+        }
+
+        public void Dispose()
+        {
+            Base.getInstance().naoEhInsert();
         }
     }
 }

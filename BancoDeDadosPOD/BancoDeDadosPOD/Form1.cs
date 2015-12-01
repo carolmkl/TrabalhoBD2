@@ -56,10 +56,12 @@ namespace BancoDeDadosPOD
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
                 addMensagem("Executando...");
+                Semantico semantico = new Semantico(this);
                 Lexico lexico = new Lexico(comandos);
                 Sintatico sintatico = new Sintatico();
-                Semantico semantico = new Semantico(this);
                 sintatico.parse(lexico, semantico);
+                semantico.Dispose();
+                semantico = null;
                 sw.Stop();
                 TimeSpan tempo = sw.Elapsed;
                 addMensagem(String.Format("Sucesso!!! Tempo de Execução: {0}min {1}s {2}ms", tempo.Minutes, tempo.Seconds, tempo.Milliseconds));

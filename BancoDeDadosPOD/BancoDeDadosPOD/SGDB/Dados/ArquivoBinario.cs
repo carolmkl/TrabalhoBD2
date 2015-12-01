@@ -89,9 +89,16 @@ namespace BancoDeDadosPOD.SGDB.Dados
             }
 
             // força a gravar no arquivo aquilo que ficou no buffer.
-            bw.Flush();
+            // by Evandro estou conficando isso vai ficar em metodo separado(naoEhInsert) pra um teste
+            // bw.Flush();
 
             return posicaoIni;
+        }
+
+        public void naoEhInsert()
+        {
+            bw.Flush();
+                
         }
 
         public TabelaSelect returnTudo()
