@@ -632,6 +632,7 @@ namespace BD2.Analizadores
         public void Dispose()
         {
             Base.getInstance().naoEhInsert();
+            memoria.salvarMetadados();
         }
     }
 }
