@@ -1,4 +1,5 @@
 ﻿using BancoDeDadosPOD.SGDB;
+using BancoDeDadosPOD.SGDB.Dados;
 using BD2.Analizadores;
 using System;
 using System.Collections.Generic;
@@ -63,6 +64,9 @@ namespace BancoDeDadosPOD
                 semantico.Dispose();
                 semantico = null;
                 sw.Stop();
+
+                Base.getInstance().commit();
+
                 TimeSpan tempo = sw.Elapsed;
                 addMensagem(String.Format("Sucesso!!! Tempo de Execução: {0}min {1}s {2}ms", tempo.Minutes, tempo.Seconds, tempo.Milliseconds));
             }

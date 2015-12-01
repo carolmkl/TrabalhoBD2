@@ -8,18 +8,31 @@ namespace BancoDeDadosPOD.SGDB.Dados
 {
     public sealed class ArquivoTabela
     {
+        #region constantes
+        public const long QTD_BUFFER_REG = 100; // Quantidade de registros no buffer;
+        #endregion
+
+        #region variaveis
         public string nome { get; internal set; }
         public string path { get; internal set; }
+        private long posicaoIni;
+        private byte[] buffer;
+        //private long countCommitImplicito;
+        #endregion
+
+        #region streams
         private Stream stream;
         private BinaryWriter bw;
         private BinaryReader br;
-        private long posicaoIni;
+        #endregion
 
         #region *** Construtor e Destrutor ***
         public ArquivoTabela(string nome)
         {
             this.nome = nome;
             this.path = GerenciadorMemoria.getInstance().getPath() + "\\" + nome + ".dat";
+            //this.countCommitImplicito = 0;
+
             this.stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             this.bw = new BinaryWriter(stream);
             this.br = new BinaryReader(stream);
@@ -53,18 +66,25 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 stream.Position = posicaoIni;
         }
 
-        public long insert(RegistroTabela RegistroTabela)
+        private void atualizarTamBuffer(RegistroTabela registro)
+        {
+            if (buffer == null)
+                buffer = new Byte[QTD_BUFFER_REG * registro.getRealTamanhoEmBytes()];
+        }
+
+        public long insert(RegistroTabela registro)
         {
             atualizarPosicaoIni();
+            atualizarTamBuffer(registro);
 
             // Posição do RegistroTabela
             bw.Write(posicaoIni);
 
             // Quantidade de colunas do RegistroTabela
-            bw.Write(RegistroTabela.dados.Count);
+            bw.Write(registro.dados.Count);
 
             // Dados do RegistroTabela
-            foreach (DadoTabela d in RegistroTabela.dados)
+            foreach (DadoTabela d in registro.dados)
             {
                 // tamanho do DadoTabela de acordo com o metadados em bytes
                 bw.Write(d.tamanho);
@@ -89,13 +109,22 @@ namespace BancoDeDadosPOD.SGDB.Dados
             }
 
             // força a gravar no arquivo aquilo que ficou no buffer.
-            // by Evandro estou conficando isso vai ficar em metodo separado(naoEhInsert) pra um teste
-            // bw.Flush();
+            //if (countCommitImplicito >= QTD_REG_FLUSH)
+            //{
+            //    bw.Flush();
+            //    countCommitImplicito = 0;
+            //}
 
             return posicaoIni;
         }
 
+        /*
         public void naoEhInsert()
+        {
+            bw.Flush();
+        }
+        */
+        public void commit()
         {
             bw.Flush();
         }
