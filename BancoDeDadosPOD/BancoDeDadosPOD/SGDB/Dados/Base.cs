@@ -56,6 +56,14 @@ namespace BancoDeDadosPOD.SGDB.Dados
             }
         }
 
+        public void commit()
+        {
+            foreach(KeyValuePair<string, Binarios > item in arqBinarios)
+            {
+                item.Value.commit();
+            }
+        }
+
         // Insere o registro na tabela e nos indices.
         public void insert(string tabela, RegistroTabela registro)
         {
@@ -65,6 +73,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             binAux.insertIndices(registro, posicao, tabela);
         }
 
+        /*
         public void naoEhInsert()
         {
             foreach (KeyValuePair<string, Binarios> item in arqBinarios)
@@ -72,15 +81,14 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 item.Value.naoEhInsert();
             }
         }
+        */
 
         public TabelaSelect returnDados(string tabela)
-        // Isto devera mudar para ser independente de 1 ou todos os registros
         {
             return arqBinarios[tabela].select();
         }
 
         public TabelaSelect returnDados(Dictionary<string, Filtro> filtrosAND, string tabela)
-        // Isto devera mudar para ser independente de 1 ou todos os registros
         {
             return arqBinarios[tabela].select(filtrosAND);
         }
@@ -120,6 +128,11 @@ namespace BancoDeDadosPOD.SGDB.Dados
             {
                 arqsIndices.Add(item.Key, new ArquivoIndice(item.Key));
             }
+        }
+
+        public void commit()
+        {
+            arqTabela.commit();
         }
 
         // Insere um registroindice.
@@ -165,10 +178,12 @@ namespace BancoDeDadosPOD.SGDB.Dados
             }
         }
 
+        /*
         public void naoEhInsert()
         {
             arqTabela.naoEhInsert();
         }
+        */
 
         // Desalocar recursos para permitir alterações diretas no arquivo.
         public void desalocarIndices()

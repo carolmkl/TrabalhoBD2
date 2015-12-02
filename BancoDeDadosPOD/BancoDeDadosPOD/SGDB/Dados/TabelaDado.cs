@@ -56,6 +56,20 @@ namespace BancoDeDadosPOD.SGDB.Dados
         {
             return posicao;
         }
+
+        // Indica o tamanho real em bytes de cada registro.
+        public long getRealTamanhoEmBytes()
+        {
+            long soma = 8; // o long da posição
+
+            // soma de todos os dados
+            foreach (DadoTabela d in dados)
+            {
+                soma += d.getRealTamanhoEmBytes();
+            }
+
+            return soma;
+        }
     }
 
     // Classe responsável por cada dado dentro de cada registro dentro da tabela.
@@ -109,6 +123,13 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public int getValorInt()
         {
             return Convert.ToInt32(this.valor);
+        }
+
+        // Indica o tamanho real em bytes de cada dado que será gravado no registro.
+        public long getRealTamanhoEmBytes()
+        {
+            // isValido + tamanho + valor = tamanho real em bytes;
+            return 2 + tamanho; 
         }
     }
 

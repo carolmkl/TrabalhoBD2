@@ -72,11 +72,12 @@ namespace BD2.Analizadores
             memoria = GerenciadorMemoria.getInstance();
             interfaceComum = Base.getInstance();
         }
-
+        /*
         ~Semantico()
         {
             Base.getInstance().naoEhInsert();
         }
+        */
 
         public void executeAction(int action, Token token)
         {
@@ -499,7 +500,7 @@ namespace BD2.Analizadores
             string id;
             if (operacao != acao.InserirDados && anterior == acao.InserirDados)
             {
-                Base.getInstance().naoEhInsert();
+                //Base.getInstance().naoEhInsert();
                 memoria.salvarMetadados();
             }
             switch (operacao)
@@ -631,7 +632,7 @@ namespace BD2.Analizadores
 
         public void Dispose()
         {
-            Base.getInstance().naoEhInsert();
+            //Base.getInstance().naoEhInsert();
             memoria.salvarMetadados();
         }
     }
