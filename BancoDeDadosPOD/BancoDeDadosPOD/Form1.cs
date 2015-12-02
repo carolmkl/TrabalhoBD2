@@ -98,8 +98,14 @@ namespace BancoDeDadosPOD
                 addMensagem(String.Format("{0} linhas selecionadas.", 0));
                 return;
             }
-
-            addMensagem(String.Format("{0} linhas selecionadas.", tabela.Registros.Count));
+            if (tabela.Registros.Count < Base.QTD_MAX_REGISTROS)
+            {
+                addMensagem(String.Format("{0} linhas selecionadas.", tabela.Registros.Count));
+            }
+            else
+            {
+                addMensagem(String.Format("Retornado primeiras {0} linhas selecionadas.\nFavor refinar a pesquisa!", tabela.Registros.Count));
+            }
             int[] indices = new int[retorno.Count];
             for (int i = 0; i < retorno.Count; i++)
             {

@@ -22,6 +22,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
     public sealed class Base
     {
         private static Base instanciaUnica;
+        public const int QTD_MAX_REGISTROS = 40000;
         public Dictionary<string, Binarios> arqBinarios;
 
         #region *** Construtores ***

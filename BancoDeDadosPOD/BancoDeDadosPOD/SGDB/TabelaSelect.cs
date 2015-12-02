@@ -66,7 +66,9 @@ namespace BancoDeDadosPOD.SGDB
             if (!igual(this.campos, outraTabela.Campos))
                 throw new SGDBException("Para união de 2 tabelas, os campos devem ser iguais");
 
-            this.registros.AddRange(outraTabela.registros);
+            registros.AddRange(outraTabela.registros);
+            if (registros.Count > Base.QTD_MAX_REGISTROS)
+                registros.RemoveRange(Base.QTD_MAX_REGISTROS, Registros.Count - Base.QTD_MAX_REGISTROS);
         }
 
         /// <summary>
@@ -81,6 +83,8 @@ namespace BancoDeDadosPOD.SGDB
 
             this.registros.AddRange(outraTabela.registros);
             registros = registros.Distinct().ToList();
+            if (registros.Count > Base.QTD_MAX_REGISTROS)
+                registros.RemoveRange(Base.QTD_MAX_REGISTROS, Registros.Count - Base.QTD_MAX_REGISTROS);
         }
 
         /// <summary>
@@ -102,7 +106,7 @@ namespace BancoDeDadosPOD.SGDB
             outraTabela.Campos.CopyTo(resultado.Campos, iniDir);
 
             List<int[]> colFiltro = new List<int[]>();//lista contendo os indices em que serão verificados a igualdade
-            
+
             //popula colFiltro
             foreach (Filtro filtro in listaJoin)
             {
@@ -146,6 +150,8 @@ namespace BancoDeDadosPOD.SGDB
                 {
                     foreach (string[] regDir in outraTabela.Registros)
                     {
+                        if (resultado.Registros.Count > Base.QTD_MAX_REGISTROS)
+                            break;
                         string[] regTemp = new string[colunas];
                         regEsq.CopyTo(regTemp, 0);
                         regDir.CopyTo(regTemp, iniDir);
@@ -168,6 +174,8 @@ namespace BancoDeDadosPOD.SGDB
                                 break;
                             }
                         }
+                        if (resultado.Registros.Count > Base.QTD_MAX_REGISTROS)
+                            insere = false;
 
                         if (insere)
                         {
@@ -179,6 +187,8 @@ namespace BancoDeDadosPOD.SGDB
                     }
                 }
             }
+            if (resultado.Registros.Count > Base.QTD_MAX_REGISTROS)
+                resultado.Registros.RemoveRange(Base.QTD_MAX_REGISTROS, resultado.Registros.Count - Base.QTD_MAX_REGISTROS);
 
             return resultado;
         }
@@ -241,7 +251,7 @@ namespace BancoDeDadosPOD.SGDB
         /// <returns></returns>
         public static TabelaSelect getTabelaSelect(TabelaDado tabelaDado)
         {
-            if(tabelaDado == null || tabelaDado.registros == null || tabelaDado.registros.Count == 0)
+            if (tabelaDado == null || tabelaDado.registros == null || tabelaDado.registros.Count == 0)
             {
                 return null;
             }
@@ -252,7 +262,7 @@ namespace BancoDeDadosPOD.SGDB
             tabelaSelect.campos = new string[colunas];
             for (int i = 0; i < colunas; i++)
             {
-                tabelaSelect.campos[i] = tabelaDado.nome+"."+dados[i].nome;
+                tabelaSelect.campos[i] = tabelaDado.nome + "." + dados[i].nome;
             }
 
             foreach (RegistroTabela registro in tabelaDado.registros)
