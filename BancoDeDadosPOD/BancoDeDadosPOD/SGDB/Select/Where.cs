@@ -8,15 +8,20 @@ namespace BancoDeDadosPOD.SGDB.Select
 {
     class Where
     {
-        private List<List<Filtro>> listaFiltro; //A lista mais externa contém os agrupamentos de OU
-        //o List interno contem o nome do campo filtrado (LValue) e o Filtro
+        //A lista mais externa contém os agrupamentos de OU
+        //o List interno contem o agrupamento AND
+        private List<List<Filtro>> listaFiltro; 
+
         private List<Filtro> listaJoin;
+        
+        //dictionary para incluir a faixa de valores para filtrar conforme Join.
+        private Dictionary<string, List<string>> filtroJoin;
 
         public Where()
         {
             listaFiltro = new List<List<Filtro>>();
             listaJoin = new List<Filtro>();
-
+            filtroJoin = new Dictionary<string, List<string>>();
         }
 
         public void addJoin(Filtro join)
@@ -66,6 +71,19 @@ namespace BancoDeDadosPOD.SGDB.Select
             set
             {
                 listaJoin = value;
+            }
+        }
+
+        public Dictionary<string, List<string>> FiltroJoin
+        {
+            get
+            {
+                return filtroJoin;
+            }
+
+            set
+            {
+                filtroJoin = value;
             }
         }
     }

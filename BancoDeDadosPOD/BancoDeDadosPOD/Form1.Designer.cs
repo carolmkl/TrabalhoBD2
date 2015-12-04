@@ -37,6 +37,8 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.btnLimpa = new System.Windows.Forms.Button();
             this.btn_CarregaArquivo = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtQtdRegistros = new System.Windows.Forms.MaskedTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabResultado.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -53,8 +55,8 @@
             this.txtComando.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtComando.Size = new System.Drawing.Size(675, 164);
             this.txtComando.TabIndex = 0;
-            this.txtComando.Text = "set database correio;\r\nselect localidade.* from localidade where localidade.sg_uf" +
-    "=\'AC\';";
+            this.txtComando.Text = "set database correio2;\r\nselect localidade.* from localidade where localidade.cd_l" +
+    "ocalidade = 1 or localidade.nm_localidade = \'Acrelândia\';";
             // 
             // btnExecuta
             // 
@@ -153,11 +155,32 @@
             this.btn_CarregaArquivo.UseVisualStyleBackColor = true;
             this.btn_CarregaArquivo.Click += new System.EventHandler(this.btn_CarregaArquivo_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(310, 190);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(166, 13);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Quantidade Máxima de Registros:";
+            // 
+            // txtQtdRegistros
+            // 
+            this.txtQtdRegistros.Location = new System.Drawing.Point(482, 187);
+            this.txtQtdRegistros.Mask = "999999";
+            this.txtQtdRegistros.Name = "txtQtdRegistros";
+            this.txtQtdRegistros.Size = new System.Drawing.Size(100, 20);
+            this.txtQtdRegistros.TabIndex = 8;
+            this.txtQtdRegistros.Text = "40000";
+            this.txtQtdRegistros.TextChanged += new System.EventHandler(this.txtQtdRegistros_TextChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(700, 454);
+            this.Controls.Add(this.txtQtdRegistros);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.btn_CarregaArquivo);
             this.Controls.Add(this.btnLimpa);
             this.Controls.Add(this.tabResultado);
@@ -186,6 +209,8 @@
         private System.Windows.Forms.TextBox txtMensagens;
         private System.Windows.Forms.Button btnLimpa;
         private System.Windows.Forms.Button btn_CarregaArquivo;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.MaskedTextBox txtQtdRegistros;
     }
 }
 

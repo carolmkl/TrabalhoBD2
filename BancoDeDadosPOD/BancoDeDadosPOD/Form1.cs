@@ -182,5 +182,11 @@ namespace BancoDeDadosPOD
                 }
             }
         }
+
+        private void txtQtdRegistros_TextChanged(object sender, EventArgs e)
+        {
+            if (txtQtdRegistros.Text == "") txtQtdRegistros.Text = 0 + "";
+            Base.QTD_MAX_REGISTROS = Convert.ToInt32(txtQtdRegistros.Text);
+        }
     }
 }

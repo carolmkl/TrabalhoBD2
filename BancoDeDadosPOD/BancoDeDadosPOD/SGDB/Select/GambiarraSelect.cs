@@ -104,7 +104,7 @@ namespace BancoDeDadosPOD.SGDB.Select
 
             return ts;
         }
-        public TabelaSelect returnDados(List<Filtro> filtrosAND, Metadados tabela)
+        public TabelaSelect returnDados(List<Filtro> filtrosAND, Dictionary<string, List<string>> filtrosJoin, Metadados tabela)
         {
             try { Base.getInstance().desalocarBinarios(tabela.getNome()); } catch { }
             TabelaSelect ts = null;
@@ -122,6 +122,10 @@ namespace BancoDeDadosPOD.SGDB.Select
                     Metadados meta = GerenciadorMemoria.getInstance().recuperarMetadados(tabela.getNome());
                     int colunas = meta.getNomesColunas().Count;
                     ts.Campos = new string[colunas];
+                    for (int i = 0; i < colunas; i++)
+                    {
+                        ts.Campos[i] = meta.getNome() + "." + meta.getNomesColunas()[i];
+                    }
 
                     //calcula o tamanho de cada registro
                     int tamRegistro = 12;
@@ -143,8 +147,12 @@ namespace BancoDeDadosPOD.SGDB.Select
                         {
                             if (f.LValue.Equals(ts.Campos[i])) filtrosCampo[i].Add(f);
                         }
+                        if (filtrosJoin.ContainsKey(ts.Campos[i]))
+                        {
+                            posMax = posicionaPonteiroArquivo(filtrosJoin[ts.Campos[i]], br, tamRegistro, posPrimary);
+                        }
                         //se o campo for PrimaryKey organiza o filtro
-                        if (filtrosCampo[i].Count > 0 && meta.getDados()[meta.getNomesColunas()[i]].isPrimary())
+                        else if (filtrosCampo[i].Count > 0 && meta.getDados()[meta.getNomesColunas()[i]].isPrimary())
                         {
                             ordenaFiltros(filtrosCampo[i]);
                             //define o intervalo de consulta do arquivo caso exista filtro de chave primaria
@@ -214,6 +222,10 @@ namespace BancoDeDadosPOD.SGDB.Select
                                             throw new SGDBException("Passou onde nao devia: GambiarraSelect.retornaDados.Inteiro.Default.");
                                     }
                                 }
+                                if(insere && filtrosJoin.ContainsKey(campo))
+                                {
+                                    insere = filtrosJoin[campo].Exists(s => s.Equals(valor));
+                                }
                             }
                             else
                             {
@@ -235,7 +247,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                                             {
                                                 byte[] filtro = new byte[tamanho];
                                                 new System.Text.ASCIIEncoding().GetBytes(f.RValue.PadRight(tamanho)).CopyTo(filtro, 0);
-                                                string filtro2 = new System.Text.ASCIIEncoding().GetString(filtro);
+                                                string filtro2 = new System.Text.ASCIIEncoding().GetString(filtro).TrimEnd();
                                                 if (!valor.Equals(filtro2)) insere = false;
                                             }
                                             break;
@@ -248,7 +260,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                                             {
                                                 byte[] filtro = new byte[tamanho];
                                                 new System.Text.ASCIIEncoding().GetBytes(f.RValue.PadRight(tamanho)).CopyTo(filtro, 0);
-                                                string filtro2 = new System.Text.ASCIIEncoding().GetString(filtro);
+                                                string filtro2 = new System.Text.ASCIIEncoding().GetString(filtro).TrimEnd();
                                                 if (valor.Equals(filtro2)) insere = false;
                                             }
                                             break;
@@ -256,6 +268,11 @@ namespace BancoDeDadosPOD.SGDB.Select
                                             throw new SemanticError("Comparação de literais só pode ser igual ou diferente");
                                     }
                                 }
+                                if (insere && filtrosJoin.ContainsKey(campo))
+                                {
+                                    insere = filtrosJoin[campo].Exists(s => s.Equals(valor));
+                                }
+
                             }
 
                             registro[i] = valor;
@@ -335,6 +352,26 @@ namespace BancoDeDadosPOD.SGDB.Select
                     }
                 }
             }
+
+            br.BaseStream.Position = posMin;
+            return posMax;
+        }
+
+        /// <summary>
+        /// Como os inserts no banco de dados estão ordenados por Primary Key
+        /// caso seja feita um select filtrando por este, uma consulta binária é realizada.
+        /// Posiciona o ponteiro do buffer no local inicial e retorna a posicao máxima para busca
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="br"></param>
+        /// <param name="tamRegistro"></param>
+        /// <param name="posPrimary"></param>
+        private long posicionaPonteiroArquivo(List<string> list, BinaryReader br, int tamRegistro, int posPrimary)
+        {
+            long posMin = 0; //para posicionar o binario
+            long posMax = br.BaseStream.Length; //para retorno
+            posMin = getPosicaoMin(Convert.ToInt32(list.First()), br, tamRegistro, posPrimary, posMax);
+            posMax = getPosicaoMax(Convert.ToInt32(list.Last()), br, tamRegistro, posPrimary, posMin);
 
             br.BaseStream.Position = posMin;
             return posMax;

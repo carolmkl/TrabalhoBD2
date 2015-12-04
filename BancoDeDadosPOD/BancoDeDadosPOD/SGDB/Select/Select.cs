@@ -136,13 +136,13 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// <param name="filtrosAND"></param>
         /// <param name="tabela"></param>
         /// <returns></returns>
-        private TabelaSelect returnDados(List<Filtro> filtrosAND, Metadados tabela)
+        private TabelaSelect returnDados(List<Filtro> filtrosAND,Dictionary<string,List<string>> filtrosJoin, Metadados tabela)
         {
             //método do Douglas
             //return Base.getInstance().returnDados(filtrosAND, tabela.getNome());
 
             //método da Carol
-            return GambiarraSelect.getInstance().returnDados(filtrosAND, tabela);
+            return GambiarraSelect.getInstance().returnDados(filtrosAND, filtrosJoin, tabela);
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                     foreach (List<Filtro> filtrosAND in where.ListaFiltro)
                     {
                         TabelaSelect tabelaFiltro = null;
-                        tabelaFiltro = returnDados(filtrosAND, tabelas[0]);
+                        tabelaFiltro = returnDados(filtrosAND,new Dictionary<string, List<string>>(), tabelas[0]);
                         if (tabelaSelect == null) tabelaSelect = tabelaFiltro;
                         else tabelaSelect.uniaoDistinct(tabelaFiltro);
                     }
@@ -234,8 +234,9 @@ namespace BancoDeDadosPOD.SGDB.Select
                 filtros.Add(m, filtroE);
             }
             //seleciona cada tabela separadamente
-            foreach (Metadados m in tabelas)
+            while (tabelas.Count > 0)
             {
+                Metadados m = tabelas.First();
                 TabelaSelect tabelaFiltro = null;
                 //traz os resultados filtrados por grupos de AND e depois junta com os OR's
                 if (filtros[m].ListaFiltro.Count > 0)
@@ -244,7 +245,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                     {
                         TabelaSelect tabelaFiltroOR = null;
                         //informa apenas os filtros relacionados com a tabela em questão
-                        tabelaFiltroOR = returnDados(filtrosAND, m);
+                        tabelaFiltroOR = returnDados(filtrosAND,filtros[m].FiltroJoin, m);
                         if (tabelaFiltro == null) tabelaFiltro = tabelaFiltroOR;
                         else tabelaFiltro.uniaoDistinct(tabelaFiltroOR);
                     }
@@ -254,8 +255,10 @@ namespace BancoDeDadosPOD.SGDB.Select
                     tabelaFiltro = returnDados(m);
                 }
 
+                tabelas.Remove(m);
                 filtros.Remove(m);
                 //Adicionando campos de join como filtro.
+                
                 foreach (Filtro f in where.ListaJoin)
                 {
                     if (f.LValue.StartsWith(m.getNome()))
@@ -272,7 +275,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                         //insere os registros de join como filtro para as proximas tabelas
                         if (outroM != null)
                         {
-                            List<Filtro> maisFiltro = new List<Filtro>();
+                            List<string> maisFiltro = new List<string>();
                             int colEsq = 0;
                             for (int i = 0; i < tabelaFiltro.Campos.Length; i++)
                             {
@@ -284,12 +287,14 @@ namespace BancoDeDadosPOD.SGDB.Select
                             }
                             foreach (string[] reg in tabelaFiltro.Registros)
                             {
-                                maisFiltro.Add(new Filtro(f.RValue, OperadorRel.Igual, reg[colEsq]));
+                                maisFiltro.Add(reg[colEsq]);
                             }
-                            foreach (List<Filtro> oldFiltro in filtros[outroM].ListaFiltro)
-                            {
-                                oldFiltro.AddRange(maisFiltro);
-                            }
+                            maisFiltro.Sort();
+                            filtros[outroM].FiltroJoin.Add(f.LValue, maisFiltro);
+
+                            //joga o outroM para ser o proximo a pesquisar
+                            tabelas.Remove(outroM);
+                            tabelas.Insert(0, outroM);
                         }
                     }
                     if (f.RValue.StartsWith(m.getNome()))
@@ -306,7 +311,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                         //insere os registros de join como filtro para as proximas tabelas
                         if (outroM != null)
                         {
-                            List<Filtro> maisFiltro = new List<Filtro>();
+                            List<string> maisFiltro = new List<string>();
                             int colDir = 0;
                             for (int i = 0; i < tabelaFiltro.Campos.Length; i++)
                             {
@@ -318,15 +323,17 @@ namespace BancoDeDadosPOD.SGDB.Select
                             }
                             foreach (string[] reg in tabelaFiltro.Registros)
                             {
-                                maisFiltro.Add(new Filtro(f.LValue, OperadorRel.Igual, reg[colDir]));
+                                maisFiltro.Add(reg[colDir]);
                             }
-                            foreach (List<Filtro> oldFiltro in filtros[outroM].ListaFiltro)
-                            {
-                                oldFiltro.AddRange(maisFiltro);
-                            }
+                            maisFiltro.Sort();
+                            filtros[outroM].FiltroJoin.Add(f.RValue, maisFiltro);
+
+                            //joga o outroM para ser o proximo a pesquisar
+                            tabelas.Remove(outroM);
+                            tabelas.Insert(0, outroM);
                         }
                     }
-                }
+                }/**/
                 //se tem mais tabelas faz o join
                 if (tabelaSelect == null) tabelaSelect = tabelaFiltro;
                 else tabelaSelect = tabelaSelect.join(tabelaFiltro, Where.ListaJoin);

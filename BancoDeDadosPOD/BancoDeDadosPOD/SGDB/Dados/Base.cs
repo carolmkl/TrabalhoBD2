@@ -22,7 +22,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
     public sealed class Base
     {
         private static Base instanciaUnica;
-        public const int QTD_MAX_REGISTROS = 40000;
+        private static int qTD_MAX_REGISTROS = 40000;
         public Dictionary<string, Binarios> arqBinarios;
 
         #region *** Construtores ***
@@ -44,6 +44,19 @@ namespace BancoDeDadosPOD.SGDB.Dados
 
             return instanciaUnica;
         }
+        public static int QTD_MAX_REGISTROS
+        {
+            get
+            {
+                return qTD_MAX_REGISTROS;
+            }
+
+            set
+            {
+                qTD_MAX_REGISTROS = value;
+            }
+        }
+
         #endregion
 
         public void carregarBinarios()
@@ -70,19 +83,8 @@ namespace BancoDeDadosPOD.SGDB.Dados
         {
             Binarios binAux = arqBinarios[tabela];
             long posicao = binAux.insertTabela(registro);
-            // By Evandro Mais uma confiscada
             binAux.insertIndices(registro, posicao, tabela);
         }
-
-        /*
-        public void naoEhInsert()
-        {
-            foreach (KeyValuePair<string, Binarios> item in arqBinarios)
-            {
-                item.Value.naoEhInsert();
-            }
-        }
-        */
 
         public TabelaSelect returnDados(string tabela)
         {

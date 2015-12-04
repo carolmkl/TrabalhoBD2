@@ -63,7 +63,7 @@ namespace BancoDeDadosPOD.SGDB
         /// <param name="outraTabela"></param>
         public void uniao(TabelaSelect outraTabela)
         {
-            if (!igual(this.campos, outraTabela.Campos))
+            if (!isIgual(this.campos, outraTabela.Campos))
                 throw new SGDBException("Para união de 2 tabelas, os campos devem ser iguais");
 
             registros.AddRange(outraTabela.registros);
@@ -78,13 +78,19 @@ namespace BancoDeDadosPOD.SGDB
         /// <param name="outraTabela"></param>
         public void uniaoDistinct(TabelaSelect outraTabela)
         {
-            if (!igual(this.campos, outraTabela.Campos))
+            if (!isIgual(this.campos, outraTabela.Campos))
                 throw new SGDBException("Para união de 2 tabelas, os campos devem ser iguais");
 
-            this.registros.AddRange(outraTabela.registros);
-            registros = registros.Distinct().ToList();
-            if (registros.Count > Base.QTD_MAX_REGISTROS)
-                registros.RemoveRange(Base.QTD_MAX_REGISTROS, Registros.Count - Base.QTD_MAX_REGISTROS);
+            foreach (string[] outroR in outraTabela.Registros)
+            {
+                if (registros.Count > Base.QTD_MAX_REGISTROS) break;
+                bool igual = false;
+                foreach (string[] r in Registros)
+                {
+                    igual = isIgual(r, outroR);
+                }
+                if (!igual) Registros.Add(outroR);
+            }
         }
 
         /// <summary>
@@ -199,7 +205,7 @@ namespace BancoDeDadosPOD.SGDB
         /// <param name="l1">valor a ser comparado com l2</param>
         /// <param name="l2">valor a ser comparado com l1</param>
         /// <returns></returns>
-        private bool igual(string[] l1, string[] l2)
+        private bool isIgual(string[] l1, string[] l2)
         {
             if (l1.Length != l2.Length) return false;
             for (int i = 0; i < l1.Length; i++)
@@ -301,6 +307,27 @@ namespace BancoDeDadosPOD.SGDB
             }
 
             return retorno;
+        }
+    }
+
+    /// <summary>
+    /// classe de suporte criada para comparar os registros para o UniaoDistinct
+    /// </summary>
+    class Comparer : IEqualityComparer<string[]>
+    {
+        public bool Equals(string[] x, string[] y)
+        {
+            if (x.Length != y.Length) return false;
+            for (int i = 0; i < x.Length; i++)
+            {
+                if (!x[i].Equals(y[i])) return false;
+            }
+            return true;
+        }
+
+        public int GetHashCode(string[] obj)
+        {
+            return obj.GetHashCode();
         }
     }
 }
