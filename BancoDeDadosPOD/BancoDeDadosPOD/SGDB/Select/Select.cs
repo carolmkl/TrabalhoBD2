@@ -138,11 +138,10 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// <returns></returns>
         private TabelaSelect returnDados(List<Filtro> filtrosAND,Dictionary<string,List<string>> filtrosJoin, Metadados tabela)
         {
-            //método do Douglas
-            //return Base.getInstance().returnDados(filtrosAND, tabela.getNome());
+            return Base.getInstance().arqBinarios[tabela.getNome()].returnDados(filtrosAND, filtrosJoin, tabela);
 
             //método da Carol
-            return GambiarraSelect.getInstance().returnDados(filtrosAND, filtrosJoin, tabela);
+            //return GambiarraSelect.getInstance().returnDados(filtrosAND, filtrosJoin, tabela);
         }
 
         /// <summary>
@@ -152,11 +151,10 @@ namespace BancoDeDadosPOD.SGDB.Select
         /// <returns></returns>
         private TabelaSelect returnDados(Metadados tabela)
         {
-            //método do Douglas
-            //return Base.getInstance().returnDados(tabela.getNome());
+            return Base.getInstance().arqBinarios[tabela.getNome()].returnDados(tabela);
 
             //método da Carol
-            return GambiarraSelect.getInstance().returnDados(tabela);
+            //return GambiarraSelect.getInstance().returnDados(tabela);
         }
 
         /// <summary>

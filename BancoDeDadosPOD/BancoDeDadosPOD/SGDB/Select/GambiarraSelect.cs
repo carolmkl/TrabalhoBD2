@@ -10,6 +10,10 @@ using BD2.Analizadores;
 
 namespace BancoDeDadosPOD.SGDB.Select
 {
+    /// <summary>
+    /// métodos transferidos para a classe Binarios, no arquivo SGDB/Dados/Base.cs
+    /// mantendo a classe para registro...
+    /// </summary>
     class GambiarraSelect
     {
         private static GambiarraSelect instance;

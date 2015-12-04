@@ -24,7 +24,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         #region streams
         private Stream stream;
         private BinaryWriter bw;
-        private BinaryReader br;
+        public BinaryReader br { get; internal set; }
         private MemoryStream ms;
         #endregion
 
