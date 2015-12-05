@@ -7,25 +7,11 @@ using System.IO;
 
 namespace BancoDeDadosPOD.SGDB.Dados
 {
-    /*
-    Metodos necessarios para select
-    tabelaSelect returnDados(String tabela) //select * from tabela;
-    tabelaSelect returnDados(List<string> colunas, string tabela) //select tabela.campo1 from tabela;
-    tabelaSelect returnDados(List<Filtro> filtro, List<string> colunas, string tabela) //select tabela.campo1 from tabela where tabela.campo1 = 0 AND ...;
-
-    Evoluiu para:
-    TabelaSelect returnDados(Metadados tabela)
-    private TabelaSelect returnDados(List<Filtro> filtrosAND, Metadados tabela)
-
-    metodos necessario para Evandro
-    salvarIndice(string[] valor, int lastPosi); - o nome já diz ele salva os dados com a posição no índice
-    tabelaTemDados(string nomeTabela); - true se a tabela tem dados, false se não tiver
-    int inserirDado(TabelaDado tabelaDado) - vai inserir o dado no arquivo da tabela;
-    */
+    // Classe que faz a centralização do modulo de persistencia de dados.
     public sealed class Base
     {
         private static Base instanciaUnica;
-        private static int qTD_MAX_REGISTROS = 40000;
+        public int qtd_max_registros { get; set; }
         public Dictionary<string, Binarios> arqBinarios;
 
         #region *** Construtores ***
@@ -40,28 +26,19 @@ namespace BancoDeDadosPOD.SGDB.Dados
         public static Base getInstance()
         {
             if (instanciaUnica == null)
+            {
                 instanciaUnica = new Base();
+                instanciaUnica.qtd_max_registros = 40000;
+            }
 
             if (instanciaUnica.arqBinarios.Count == 0)
                 instanciaUnica.carregarBinarios();
 
             return instanciaUnica;
         }
-        public static int QTD_MAX_REGISTROS
-        {
-            get
-            {
-                return qTD_MAX_REGISTROS;
-            }
-
-            set
-            {
-                qTD_MAX_REGISTROS = value;
-            }
-        }
-
         #endregion
 
+        // Carrega e aloca todos os arquivos de dados.
         public void carregarBinarios()
         {
             if (GerenciadorMemoria.getInstance().metadados != null)
@@ -73,6 +50,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             }
         }
 
+        // Ah! vai dizer!?
         public void commit()
         {
             foreach (KeyValuePair<string, Binarios> item in arqBinarios)
@@ -88,6 +66,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             long posicao = binAux.insertTabela(registro);
             binAux.insertIndices(registro, posicao, tabela);
         }
+
         // Desalocar recursos para permitir alterações diretas no arquivo.
         public bool desalocarBinarios(string tabela)
         {
@@ -98,6 +77,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
         }
     }
 
+    // Cada objeto desta classe se refere a um grupo de arquivos de dados, tabela e seus indices.
     public sealed class Binarios
     {
         private ArquivoTabela arqTabela { get; }
@@ -123,6 +103,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             }
         }
 
+        // Adivinha: o que ele faz?
         public void commit()
         {
             arqTabela.commit();
@@ -165,6 +146,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             }
         }
 
+        // Insere apenas 1 registro na tabela.
         public long insertTabela(RegistroTabela registro)
         {
             try
@@ -190,7 +172,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             arqTabela.desalocar();
         }
 
-
+        // retorna todos os dados de uma tabela.
         public TabelaSelect returnDados(Metadados tabela)
         {
             TabelaSelect ts = null;
@@ -240,7 +222,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
                     }
 
                     ts.Registros.Add(registro);
-                    if (ts.Registros.Count >= Base.QTD_MAX_REGISTROS) break;
+                    if (ts.Registros.Count >= Base.getInstance().qtd_max_registros) break;
                 }
             }
             catch (Exception ex)
@@ -250,6 +232,8 @@ namespace BancoDeDadosPOD.SGDB.Dados
             }
             return ts;
         }
+
+        // Retorna os dados filtrados de uma tabela.
         public TabelaSelect returnDados(List<Filtro> filtrosAND, Dictionary<string, List<string>> filtrosJoin, Metadados tabela)
         {
             TabelaSelect ts = null;
@@ -421,7 +405,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
                     if (insere)
                     {
                         ts.Registros.Add(registro);
-                        if (ts.Registros.Count >= Base.QTD_MAX_REGISTROS) break;
+                        if (ts.Registros.Count >= Base.getInstance().qtd_max_registros) break;
                     }
 
                     if (br.BaseStream.Position % tamRegistro != 0)
@@ -581,6 +565,7 @@ namespace BancoDeDadosPOD.SGDB.Dados
             return max + tamRegistro;
         }
 
+        // Ordena os filtros do selec, para facilitar o trabalho
         private void ordenaFiltros(List<Filtro> filtros)
         {
             filtros.Sort(delegate (Filtro f1, Filtro f2)
