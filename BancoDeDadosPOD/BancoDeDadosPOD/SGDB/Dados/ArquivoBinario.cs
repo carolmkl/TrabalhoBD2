@@ -8,24 +8,23 @@ namespace BancoDeDadosPOD.SGDB.Dados
 {
     public sealed class ArquivoTabela
     {
-        #region constantes
-        public const long QTD_BUFFER_REG = 1000; // Quantidade de registros no buffer;
-        public const long UM_MEGABYTE = 1048576; // Um mega byte;
-        #endregion
+        //#region constantes
+        //public const long QTD_BUFFER_REG = 1000; // Quantidade de registros no buffer;
+        //public const long UM_MEGABYTE = 1048576; // Um mega byte;
+        //#endregion
 
         #region variaveis
         public string nome { get; internal set; }
         public string path { get; internal set; }
         private long posicaoIni;
-        private byte[] buffer;
-        //private long countCommitImplicito;
+        //private byte[] buffer;
         #endregion
 
         #region streams
         private Stream stream;
         private BinaryWriter bw;
         public BinaryReader br { get; internal set; }
-        private MemoryStream ms;
+        //private MemoryStream ms;
         #endregion
 
         #region *** Construtor e Destrutor ***
@@ -33,7 +32,6 @@ namespace BancoDeDadosPOD.SGDB.Dados
         {
             this.nome = nome;
             this.path = GerenciadorMemoria.getInstance().getPath() + "\\" + nome + ".dat";
-            //this.countCommitImplicito = 0;
 
             this.stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             this.bw = new BinaryWriter(stream);
@@ -68,6 +66,10 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 stream.Position = posicaoIni;
         }
 
+        /*
+        // Este buffer ficou inutilizado pela linha:
+        // new System.Text.ASCIIEncoding().GetBytes(d.getValorStr().PadRight(d.tamanho)).CopyTo(valor, 0);
+        // do método de insert
         private void atualizarTamBuffer(RegistroTabela registro)
         {
             if (buffer == null)
@@ -84,11 +86,12 @@ namespace BancoDeDadosPOD.SGDB.Dados
                 //bw = new BinaryWriter(ms);
             }
         }
+        */
 
         public long insert(RegistroTabela registro)
         {
             atualizarPosicaoIni();
-            atualizarTamBuffer(registro);
+            //atualizarTamBuffer(registro);
 
             // Posição do RegistroTabela
             bw.Write(posicaoIni);
@@ -110,28 +113,17 @@ namespace BancoDeDadosPOD.SGDB.Dados
                     bw.Write(d.getValorInt());
                 else
                 {
+                    // Desta forma o tamanho da string é sempre a mesma,
+                    // porém o buffer nao pode ser usado.
                     byte[] valor = new byte[d.tamanho];
                     new System.Text.ASCIIEncoding().GetBytes(d.getValorStr().PadRight(d.tamanho)).CopyTo(valor, 0);
                     bw.Write(valor);
                 }
             }
 
-            // força a gravar no arquivo aquilo que ficou no buffer.
-            //if (countCommitImplicito >= QTD_REG_FLUSH)
-            //{
-            //    bw.Flush();
-            //    countCommitImplicito = 0;
-            //}
-
             return posicaoIni;
         }
 
-        /*
-        public void naoEhInsert()
-        {
-            bw.Flush();
-        }
-        */
         public void commit()
         {
             bw.Flush(); // força gravar no arquivo aquilo que ficou no buffer.

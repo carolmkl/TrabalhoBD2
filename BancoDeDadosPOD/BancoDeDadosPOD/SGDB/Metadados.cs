@@ -271,32 +271,6 @@ namespace BancoDeDadosPOD.SGDB
             this.nomesColunas.Add(nome);
         }
 
-        /*
-        public void addIndice(RegistroTabela tabela, long lastPosi, string path)
-        {
-            List<DadoIndice> dado;
-            ArquivoIndice ai;
-            foreach (KeyValuePair<string, string[]> item in tabelaIndices)
-            {
-                dado = new List<DadoIndice>();
-                ai = new ArquivoIndice(path+"\\"+item.Key+".idx");
-                for (int i = 0; i < item.Value.Length; i++)
-                {
-                    // ***** inibido somente para compilar - Inicio *****
-                    // by Douglas Santos
-                    // Acredito que isto va mudar
-                    
-                    //DadoIndice dadoIndice = new DadoIndice(dadosColuna[item.Value[i]].getTipoDado(), tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
-                    //dado.Add(dadoIndice);
-                    
-                    // ***** inibido somente para compilar - Fim *****
-                    //dado.Add(tabela.Dados[nomesColunas.IndexOf(item.Value[i])].valor);
-                    //ai.insert(dadoIndice, lastPosi);
-                }
-            }
-        }
-        */
-
         public void criarIndiciePrimary()
         {
             List<string> campos = new List<string>();

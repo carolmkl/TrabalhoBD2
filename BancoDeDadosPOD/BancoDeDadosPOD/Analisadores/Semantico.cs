@@ -421,7 +421,7 @@ namespace BD2.Analizadores
                     break;
                 case 22:
                     //token do apelido da cláusula AS. O SELECT adiciona o apelido no último campo adicionado.
-                    //clausulaAs[identificadores.Last()] = token.getLexeme(); //Carol: esta linha é necessária?
+                    //clausulaAs[identificadores.Last()] = token.getLexeme(); // esta linha é necessária?
                     if(select.Where != null)
                     {
                         //se já passou pelo where, provavelmente está no ORDER BY
@@ -444,7 +444,7 @@ namespace BD2.Analizadores
                     foreach (String col in memoria.recuperarMetadados(tabela).getNomesColunas())
                     {
                         string coluna = tabela + "." + col;
-                        identificadores.Add(coluna); //Carol: estou inserindo no identificadores também porque ainda não sei se isto será usado em outro momento
+                        identificadores.Add(coluna); //estou inserindo no identificadores também porque ainda não sei se isto será usado em outro momento
                         select.addRetorno(coluna);
                     }
                     select.Asterisco = true;

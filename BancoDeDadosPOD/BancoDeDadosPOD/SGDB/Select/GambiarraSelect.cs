@@ -85,7 +85,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                         }
 
                         ts.Registros.Add(registro);
-                        if (ts.Registros.Count >= Base.QTD_MAX_REGISTROS) break;
+                        if (ts.Registros.Count >= Base.getInstance().qtd_max_registros) break;
                     }
                 }
             }
@@ -285,7 +285,7 @@ namespace BancoDeDadosPOD.SGDB.Select
                         if (insere)
                         {
                             ts.Registros.Add(registro);
-                            if (ts.Registros.Count >= Base.QTD_MAX_REGISTROS) break;
+                            if (ts.Registros.Count >= Base.getInstance().qtd_max_registros) break;
                         }
 
                         if (br.BaseStream.Position % tamRegistro != 0)

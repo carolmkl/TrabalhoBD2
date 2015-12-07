@@ -98,7 +98,7 @@ namespace BancoDeDadosPOD
                 addMensagem(String.Format("{0} linhas selecionadas.", 0));
                 return;
             }
-            if (tabela.Registros.Count < Base.QTD_MAX_REGISTROS)
+            if (tabela.Registros.Count < Base.getInstance().qtd_max_registros)
             {
                 addMensagem(String.Format("{0} linhas selecionadas.", tabela.Registros.Count));
             }
@@ -186,7 +186,7 @@ namespace BancoDeDadosPOD
         private void txtQtdRegistros_TextChanged(object sender, EventArgs e)
         {
             if (txtQtdRegistros.Text == "") txtQtdRegistros.Text = 0 + "";
-            Base.QTD_MAX_REGISTROS = Convert.ToInt32(txtQtdRegistros.Text);
+            Base.getInstance().qtd_max_registros = Convert.ToInt32(txtQtdRegistros.Text);
         }
     }
 }

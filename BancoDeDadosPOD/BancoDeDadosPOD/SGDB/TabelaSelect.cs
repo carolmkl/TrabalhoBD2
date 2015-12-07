@@ -67,8 +67,8 @@ namespace BancoDeDadosPOD.SGDB
                 throw new SGDBException("Para união de 2 tabelas, os campos devem ser iguais");
 
             registros.AddRange(outraTabela.registros);
-            if (registros.Count > Base.QTD_MAX_REGISTROS)
-                registros.RemoveRange(Base.QTD_MAX_REGISTROS, Registros.Count - Base.QTD_MAX_REGISTROS);
+            if (registros.Count > Base.getInstance().qtd_max_registros)
+                registros.RemoveRange(Base.getInstance().qtd_max_registros, Registros.Count - Base.getInstance().qtd_max_registros);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace BancoDeDadosPOD.SGDB
 
             foreach (string[] outroR in outraTabela.Registros)
             {
-                if (registros.Count > Base.QTD_MAX_REGISTROS) break;
+                if (registros.Count > Base.getInstance().qtd_max_registros) break;
                 bool igual = false;
                 foreach (string[] r in Registros)
                 {
@@ -156,7 +156,7 @@ namespace BancoDeDadosPOD.SGDB
                 {
                     foreach (string[] regDir in outraTabela.Registros)
                     {
-                        if (resultado.Registros.Count > Base.QTD_MAX_REGISTROS)
+                        if (resultado.Registros.Count > Base.getInstance().qtd_max_registros)
                             break;
                         string[] regTemp = new string[colunas];
                         regEsq.CopyTo(regTemp, 0);
@@ -180,7 +180,7 @@ namespace BancoDeDadosPOD.SGDB
                                 break;
                             }
                         }
-                        if (resultado.Registros.Count > Base.QTD_MAX_REGISTROS)
+                        if (resultado.Registros.Count > Base.getInstance().qtd_max_registros)
                             insere = false;
 
                         if (insere)
@@ -193,8 +193,8 @@ namespace BancoDeDadosPOD.SGDB
                     }
                 }
             }
-            if (resultado.Registros.Count > Base.QTD_MAX_REGISTROS)
-                resultado.Registros.RemoveRange(Base.QTD_MAX_REGISTROS, resultado.Registros.Count - Base.QTD_MAX_REGISTROS);
+            if (resultado.Registros.Count > Base.getInstance().qtd_max_registros)
+                resultado.Registros.RemoveRange(Base.getInstance().qtd_max_registros, resultado.Registros.Count - Base.getInstance().qtd_max_registros);
 
             return resultado;
         }
