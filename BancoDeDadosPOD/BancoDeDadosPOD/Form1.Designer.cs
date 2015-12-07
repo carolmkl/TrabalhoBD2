@@ -55,6 +55,8 @@
             this.txtComando.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtComando.Size = new System.Drawing.Size(675, 164);
             this.txtComando.TabIndex = 0;
+            this.txtComando.Text = "set database correio2;\r\nselect localidade.* from localidade where localidade.cd_l" +
+    "ocalidade = 1 or localidade.nm_localidade = \'Acrelândia\';";
             // 
             // btnExecuta
             // 
